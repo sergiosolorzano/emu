@@ -32,13 +32,9 @@ def create_empty_module(module_name, initial_dir):
 	os.chdir(modules_dir)
 
     #create module file and chmod
-	#path_and_fn = os.path.join(modules_dir, module_name)
 	path_and_fn = Path(modules_dir) / module_name
 	path_and_fn.touch()
-	#comm = ["touch", path_and_fn]
-	#subprocess.run(comm)
 	print("-"*40)
-	#print(f"Executed command {comm}")
 	print(f"File created: {path_and_fn}")
 	
 	#return back to initial dir
@@ -67,15 +63,6 @@ def write_snippet_to_file(filename,path,snippet, access_mode):
 		Path(full_path).write_text(snippet)
 		print(Path(full_path).read_text())
 
-		# with open(full_path, "w") as out_module:
-		# 	for c in snippet:
-		# 		out_module.write(c)
-		# out_module.seek(0)
-		# with open(full_path,"r") as out_module:
-		# 	for line in out_module.readlines():
-		# 		print("line")
-		#print(f"At write snippet to file: fname {filename} path {path} pathfilename {full_path} snippet {snippet} length {len(snippet)}")
-
 def clean_up_module(code):
 	code = code.replace("```", "")
 	return code
@@ -99,23 +86,6 @@ def write_to_file(filename,path,content):
 			with Path(full_path).open("w") as target: 
 				json.dump(content, target)
 				print(); print(f"\033[43mResponse saved to JSON file {full_path}\033[0m");
-
-		# with open(full_path,"w") as out_module:
-
-		# 	if ext == "py":
-		# 		#print(f"At save to file: fname {filename} path {path} pathfilename {full_path} text {text} length {len(text)}")
-		# 		out_module.write("#!/usr/bin/env python3\n\n")
-		# 		for c in text:
-		# 			out_module.write(c)
-		# 		comm = ["sudo", "chmod", "+x", full_path]
-		# 		subprocess.run(comm)
-		# 		print(f"Executed command {comm}")
-		# 		print("-"*40); print()
-		# 		print(f"\033[43mCode saved to module file {full_path}\033[0m")
-		# 	#TODO: add extension choice for json files
-		# 	elif ext == "json":
-		# 		json.dump(text,out_module)
-		# 		print(); print(f"\033[43mResponse saved to JSON file {full_path}\033[0m");
 
 def get_dict_value_save_to_file(gpt_response, initial_dir):
     print(); print("-"*40)
@@ -160,13 +130,6 @@ def read_file_stored_to_buffer(filename,path):
 		with Path(full_path).open(encoding="UTF-8") as buff:
 			return json.load(buff)
 
-		# with open(full_path,"r") as in_module:
-		# 	if ext != "json":
-		# 		return(in_module.read())
-		# 		#print(f"At read from file: fname {filename} path {path} pathfilename in buffer {buff}")
-		# 	#json
-		# 	return(json.load(in_module))
-
 def print_json_on_screen(json_data):
         #print(); print("JSON Data:\n");
         print(json.dumps(json_data, indent=2, separators=(',', ':')))
@@ -174,11 +137,8 @@ def print_json_on_screen(json_data):
 def delete_all_dir_files(target_dir):
 		#del all project module files
 		with os.scandir(target_dir) as this_dir:
-		#for file_name in os.scandir(target_dir):
-			#if file_name.is_file(os.path.join(modules_dir, file_name)):
 			for file_name in this_dir:
 				if file_name.is_file():
-			#if file_name.is_file():
 					os.remove(os.path.join(modules_dir, file_name))
 
 def create_dir(target_dir):

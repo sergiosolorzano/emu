@@ -24,16 +24,9 @@ def num_tokens_from_messages(messages, model=oai.deployment_name[1]):
 
 #read from gpt-response the list of modules to create, create these in directory
 def get_response_value_for_key(gpt_response, key):
-    #parsed_response = json.loads(gpt_response)
-
-	#create dict of module names/description and add to labelled list
-    for k,v in gpt_response.items():
-        if k == key:
-            value = gpt_response[key]
-            return value
-
+    return gpt_response[key]
+	
 def count_values_for_keycontain(gpt_response, keycontain):
-    #parsed_response = json.loads(gpt_response)
     count = 0
     for k,v in gpt_response.items():
         if keycontain in k:

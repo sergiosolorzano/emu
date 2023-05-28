@@ -9,6 +9,9 @@ import time
 import threading
 from pathlib import Path
 
+#profiler
+import cProfile
+
 #self import modules
 import file_management as fm
 
@@ -68,7 +71,7 @@ def request_menu(oai_req_instance, choice=None):
                 oai_req_instance.validate_and_clean_json()
                 #Save code into module file
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
-                break
+                return False
             case '2':
                 #request enhancements to code
                 request_args = oai_req_instance.build_request_input_and_argparse_args()
@@ -77,7 +80,7 @@ def request_menu(oai_req_instance, choice=None):
                 oai_req_instance.validate_and_clean_json()
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
-                break
+                return False
             case '3':
                 #request enhancements to code
                 request_args = oai_req_instance.build_request_exception_handl_req_args()
@@ -86,7 +89,7 @@ def request_menu(oai_req_instance, choice=None):
                 oai_req_instance.validate_and_clean_json()
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
-                break
+                return False
             case '4':
                 #request enhancements to code
                 request_args = oai_req_instance.build_request_unittest_args()
@@ -107,13 +110,13 @@ def request_menu(oai_req_instance, choice=None):
                         #TODO: remove, for debugging
                         fm.write_to_file(fm.m_json_filename,fm.json_dir, oai_req_instance.get_gpt_response())
                         break
-                break
+                return False
             case '5':
                 #TODO user custom requested enhancements to code
                 #custom_json='''''
                 #self.validate_and_clean_json(custom_json)
                 print(); print(f"\033[41mPending Implementation.\033[0m")
-                break
+                return False
             case '6':
                 #run unittests
                 #TODO: remove - for debugging
@@ -127,47 +130,56 @@ def request_menu(oai_req_instance, choice=None):
                 oai_req_instance.run_unittests()
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
-                break
+                return False
             case '7':
                 #TODO: update for main to execute with user inputs, not uttest
                 print(); print(f"\033[41mPending Implementation.\033[0m")
-                break    
+                return False    
             case '8':
                 #TODO: run program and enter debug log loop
                 print(); print(f"\033[41mPending Implementation.\033[0m")
-                break
+                return False
             case '9':
                 #consider sphinx to present to users for Read the Docs platform support
                 print(); print(f"\033[41mPending Implementation.\033[0m")
-                break  
+                return False  
             case '10':
                 #run all menu configurations
                 print(); print("-"*40);print()
                 #TODO: update range to menu range
                 for i in range(1,10):
                     request_menu(oai_req_instance, str(i))
-                break
+                return False
             case '11':
                 #exit program
-                print(); print(f"\033[43mThe program has exited at your request.\033[0m");print()
-                exit(0)
-                break
+                return True
             case _:
                 print(); print(f"\033[41mInvalid Option\033[0m")
-                break
+                return False
 
 def main():
     #set showing request text on screen
     oai_requests.Openai_Requests.set_show_request(True)
     #create openai request instance
     oai_req_instance = oai_requests.Openai_Requests()
-    
-    #launch menu
-    while True:
-        #print(); print("-"*40);print()
-        request_menu(oai_req_instance)
 
-    #exit()
+    exit_user_request = False
+
+    #launch menu
+    while exit_user_request == False:
+        #print(); print("-"*40);print()
+        exit_user_request = request_menu(oai_req_instance)
+
+    #profiler
+    print(); print("="*10,end=""); print("Profiler Stats",end="");print("="*10)
+    import pstats
+    p = pstats.Stats("profiler_data.out")
+
+    print(); print("="*10,end=""); print("Total Cumulative Stats",end="");print("="*10)
+    p.sort_stats("cumulative").print_stats(5)
+
+    print(); print(f"\033[43mThe program has exited at the user's request.\033[0m");print()
+    #exit(0)
 
     #Run the program
     # print(); print("-"*40)
@@ -191,4 +203,11 @@ def main():
 
 if __name__ == "__main__":
     #true if your code is invoked directly(stand-alone), e.g. python3 source_file.py
-    main()
+    #main()
+
+    cProfile.run("main()","profiler_data.out")
+
+
+
+
+    

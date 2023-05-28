@@ -82,7 +82,6 @@ def write_to_file(filename,path,content):
 			print("-"*40); print()
 			print(f"\033[43mCode saved to module file {full_path}\033[0m")
 		elif ext == "json":
-			#with Path(full_path).open("w", encoding="UTF-8") as target: 
 			with Path(full_path).open("w") as target: 
 				json.dump(content, target)
 				print(); print(f"\033[43mResponse saved to JSON file {full_path}\033[0m");

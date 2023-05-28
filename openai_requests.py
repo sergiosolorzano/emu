@@ -278,7 +278,6 @@ class Openai_Requests:
 
     #get list of cli command to execute unit tests
     def create_unittest_cli_list(self, unittest_cli_c_list):
-        #print(); print("-"*40)
         #Create Unittest cli command List
         num_unittests = ut.count_values_for_keycontain(self.gpt_response,u_test.unittest_cli_command_key)
         print(); print("Gather list of unit test cli commands to run.")

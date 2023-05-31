@@ -53,7 +53,7 @@ def spinning_timer(message, stop_evt):
     while not stop_evt.is_set():
         print('\r\033[92m' + message + spinner[idx] + '\033[0m', end='')
         idx = (idx + 1) % len(spinner)
-        time.sleep(0.17)  # Delay for 0.17 seconds
+        time.sleep(0.17) #secs
 
 
 

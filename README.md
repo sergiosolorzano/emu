@@ -30,6 +30,8 @@ Repo file structure:
 ├── sg_utils.py				#request management utilities
 └── simple_selfgen.py		#Menu block. Requires pointing scripts that import self_config.py (e.g sys.path.append) to dir where you save self_config.py
 ```
+---------------------------------------------
+
 Configuring OpenAI model and temperature per request:
 For now you can set these for each request in function arguments:
 
@@ -37,9 +39,15 @@ Script: simple_selfgen.py
 Functions:
 	request_raw_code()
 	request_code_enhancement()
-Use Keyword Arguments. Example:
+	validate_and_clean_json()
+Use Keyword Arguments for Functions:
 	new_temp = 0.2
 	new_engine = oai.codex_engine_deployment_name or oai.gpt_engine_deployment_name
 
+---------------------------------------------
 
+Updating the JSON file for Custom Requests:
+Path to JSON: File/dir variables declared at file_management.py
+Expected JSON structure: Flat no nesting.
 
+---------------------------------------------

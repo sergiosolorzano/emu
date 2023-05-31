@@ -145,3 +145,8 @@ def delete_all_dir_files(target_dir):
 def create_dir(target_dir):
         #os.makedirs(target_dir, exist_ok=True)
         target_dir.mkdir(parents=False, exist_ok=True)
+
+def insert_script_in_json(a_script):
+    json_dict_obj = {"module":"a_script"}
+    #return json obj
+    return json.loads(json_dict_obj)

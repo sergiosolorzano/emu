@@ -35,18 +35,27 @@ import file_management as fm
 def request_menu(oai_req_instance, choice=None):
     print(); print("-"*40);print()
     print("1.  Raw Code: Program Description Code")
-    print("2.  User Input and Argparse")
-    print("3.  Exception Handling and Logging")
-    print("4.  Add Unittest Code")
-    print("5.  User custom request")
-    print("6.  Run Unittest")
-    print("7.  Run Program and enter debug/log loop")
-    print("8.  Add Docstrings to program code.")
-    print("9.  User Set Menu Sequence")
-    print("10. Run All")
-    print("11. Exit")
+    print("2.  Load Raw Code Script From File")
+    print("3.  User Input and Argparse")
+    print("4.  Exception Handling and Logging")
+    print("5.  Add Unittest Code")
+    print("6.  User custom request")
+    print("7.  Run Unittest")
+    print("8.  Run Program and enter debug/log loop")
+    print("9.  Add Docstrings to program code.")
+    print("10.  User Set Menu Sequence")
+    print("11. Run All")
+    print("12. Exit")
 
     #TODO: move version_module() to class
+
+    #delete project files / create project dirs where scripts will be stored
+    fm.create_dir(Path(fm.modules_dir))
+    fm.create_dir(Path(fm.json_dir))
+
+    #del all project module files
+    #TODO option to delete
+    fm.delete_all_dir_files(fm.modules_dir)
 
     while True:
         print()
@@ -57,15 +66,9 @@ def request_menu(oai_req_instance, choice=None):
 
         match choice:
             case '1':
-                #create project dirs where scripts will be stored
-                fm.create_dir(Path(fm.modules_dir))
-                fm.create_dir(Path(fm.json_dir))
-
-                #del all project module files
-                #TODO option to delete
-                fm.delete_all_dir_files(fm.modules_dir)
-
+                
                 #request code
+                oai_req_instance.program_description = "Program Description: " + input("Enter Program Description and Features: ")
                 oai_req_instance.request_raw_code(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 #Validate and correct JSON object
                 oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
@@ -73,6 +76,25 @@ def request_menu(oai_req_instance, choice=None):
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
                 return False
             case '2':
+                #get path to json file
+                while True:
+                    path_to_script = input(f"Enter Path to {raw_code.program_language} Script: ");
+                    #check user updated custom json for the request
+                    if not os.path.isfile(path_to_script):
+                        print(f"\033[1;31m[ERROR]\033[0m Cannot Find Script File {path_to_script}.\033[0m")
+                        continue
+                    else: 
+                        print("Script Found.")
+                        break
+                
+                print()
+                oai_req_instance.program_description = "Program Description: " + input("Enter Short Program Description: "); print()
+
+                #hack to step script as a gpt code response for continued conversation with gpt
+                user_script = fm.read_file_stored_to_buffer(os.path.basename(path_to_script), os.path.dirname(path_to_script))
+                oai_req_instance.gpt_response =  fm.insert_script_in_json(user_script)
+                return False
+            case '3':
                 #request enhancements to code
                 request_args = oai_req_instance.build_request_input_and_argparse_args()
                 oai_req_instance.request_code_enhancement(*request_args, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
@@ -81,7 +103,7 @@ def request_menu(oai_req_instance, choice=None):
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
                 return False
-            case '3':
+            case '4':
                 #request enhancements to code
                 request_args = oai_req_instance.build_request_exception_handl_req_args()
                 oai_req_instance.request_code_enhancement(*request_args, new_temp = 0.2, new_engine = oai.codex_engine_deployment_name)
@@ -90,7 +112,7 @@ def request_menu(oai_req_instance, choice=None):
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
                 return False
-            case '4':
+            case '5':
                 #request enhancements to code
                 request_args = oai_req_instance.build_request_unittest_args()
                 while True:
@@ -111,17 +133,17 @@ def request_menu(oai_req_instance, choice=None):
                         fm.write_to_file(fm.m_json_filename,fm.json_dir, oai_req_instance.get_gpt_response())
                         break
                 return False
-            case '5':
+            case '6':
                 inputs = get_user_inputs_custom_request()
                 #check user updated custom json for the request
                 if isinstance(inputs, bool) and inputs == False:
                     print(f"\n\033[1;31m[ERROR]\033[0m Cannot process request if the custom json file is not updated.\033[0m")
                     return False
 
-                if not os.path.exists(os.path.join(fm.m_custom_json_dirname + "/" + fm.m_custom_json_filename)):
-                    print(); print(f"\033[41mCustom JSON file not available.\033[0m")
-                    break
-                print(); print("TEMP - To Remove: Custom JSON READ:"); fm.print_json_on_screen(fm.read_file_stored_to_buffer(fm.m_custom_json_filename, fm.m_custom_json_dirname)); print()
+                path_to_json = os.path.join(fm.m_custom_json_dirname + "/" + fm.m_custom_json_filename)
+                if not os.path.exists(path_to_json):
+                    print(); print(f"\n\033[1;31m[ERROR]\033[0m Cannot Find Custom JSON File {path_to_json}.\033[0m")
+                    return False
                 custom_json = fm.read_file_stored_to_buffer(fm.m_custom_json_filename, fm.m_custom_json_dirname)
 
                 #build prompt request
@@ -140,7 +162,7 @@ def request_menu(oai_req_instance, choice=None):
 
                 #print(); print(f"\033[41mPending Implementation.\033[0m")
                 return False
-            case '6':
+            case '7':
                 #run unittests
                 #TODO: remove - for debugging
                 #if not os.path.exists(os.path.join(fm.json_dir + "/" + fm.m_json_filename)):
@@ -154,26 +176,26 @@ def request_menu(oai_req_instance, choice=None):
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
                 return False
-            case '7':
+            case '8':
                 #TODO: run program and enter debug log loop
                 print(); print(f"\033[41mPending Implementation.\033[0m")
                 return False
-            case '8':
+            case '9':
                 #consider sphinx to present to users for Read the Docs platform support
                 print(); print(f"\033[41mPending Implementation.\033[0m")
                 return False  
-            case '9':
+            case '10':
                 #TODO: User Set Menu Sequence
                 print(); print(f"\033[41mPending Implementation.\033[0m")
                 return False    
-            case '10':
+            case '11':
                 #run all menu configurations
                 print(); print("-"*40);print()
                 #TODO: update range to menu range
                 for i in range(1,10):
                     request_menu(oai_req_instance, str(i))
                 return False
-            case '11':
+            case '12':
                 #exit program
                 return True
             case _:

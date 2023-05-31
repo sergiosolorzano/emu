@@ -52,7 +52,7 @@ module_requirements = '''Code Requirements:
 '''
 #(3) program() has the arguments it receives from user input
 
-json_required_format ='''.JSON Required Format Template:
+json_required_format ='''JSON Required Format Template:
 {
 "module":"Insert here the code you produced as described in Program Description leaving no spaces from the beginning to the first character inserted"
 }

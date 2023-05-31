@@ -214,17 +214,16 @@ class Openai_Requests:
 
         return self.gpt_response
 
-    #request initial code according to program description
+    #build request for initial code according to program description
     def request_raw_code(self, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
-        #build request
         #Get raw code JSON object
         #TODO user input
-        self.program_description = "Program Description: " + "the program is a calculator, collects two numbers from a user and the arithmetic operation to perform being a choice of sum, subtract, multiply or divide. Then print the result."
-        #program_description = "Program Description: " + "The program will prompt the user to enter a sentence or paragraph, and it will count the number of words in the input."
-        #program_description = "Program Description: " + "The program will generate a random number, and the user will be prompted to guess the number. The program will provide feedback on whether the guess is too high, too low, or correct."
-        #program_description = "Program Description: " + "The program allows the user to add tasks to a todo list, view the list, and mark tasks as completed."
-        #program_description = "Program Description: " + "The program allows the user to add tasks to a todo list, view the list, and mark tasks as completed. The code writes, updates and read the resulting list to a file."
-        #program_description = "Program Description: " + input("")
+        #self.program_description = "Program Description: " + "the program is a calculator, collects two numbers from a user and the arithmetic operation to perform being a choice of sum, subtract, multiply or divide. Then print the result."
+        #self.program_description = "Program Description: " + "The program will prompt the user to enter a sentence or paragraph, and it will count the number of words in the input."
+        #self.program_description = "Program Description: " + "The program will generate a random number, and the user will be prompted to guess the number. The program will provide feedback on whether the guess is too high, too low, or correct."
+        #self.program_description = "Program Description: " + "The program allows the user to add tasks to a todo list, view the list, and mark tasks as completed."
+        #self.program_description = "Program Description: " + "The program allows the user to add tasks to a todo list, view the list, and mark tasks as completed. The code writes, updates and read the resulting list to a file."
+        #self.program_description = "Program Description: " + input("")
         
         #request args
         summary_new_request = "Request raw program code."

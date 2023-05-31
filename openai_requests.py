@@ -30,6 +30,7 @@ import input_and_argparse_rq as input_and_argparse
 import error_hndl__logging_rq as error_log_hndl
 import unittest_rq as u_test
 import unittest_cli_comm_rq as unittest_cli_comm
+import custom_req as c_r
 #import my utils
 import sg_utils as ut
 
@@ -61,7 +62,14 @@ class Openai_Requests:
         return cls.show_request
 
     #request module code
-    def send_request(self, sys_mssg, request_to_gpt, summary_new_request):
+    def send_request(self, sys_mssg, request_to_gpt, summary_new_request, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
+        #set engine
+        tmp_deployment_name = oai.deployment_name
+        oai.deployment_name = new_engine
+        #set engine temp
+        temp_oai_temp =  oai.temperature
+        oai.temperature = new_temp
+
         this_conversation =[]
 
         system_message = {"role": "system", "content": sys_mssg}
@@ -84,7 +92,8 @@ class Openai_Requests:
             print(f"\n\033[1;97mRequest: CumTokens:{oai.cum_tokens} Req_Tokens:{request_tokens}\033[0m: {request_to_gpt}")
         else:
             print(f"\n\033[1;97mRequest Sent: CumTokens:{oai.cum_tokens} Req_Tokens:{request_tokens}\033[0m")
-        #print()
+        
+        print(); print(f"\033[1;97mModel Settings:\033[0m Engine: {oai.deployment_name[1]}, Temperature: {oai.temperature}")
 
         #start timer
         stop_event = threading.Event()
@@ -114,7 +123,11 @@ class Openai_Requests:
         #print(f"\n\033[1;92mResponse: CumTokens:{oai.cum_tokens} RespTokens:{this_conversation_tokens}\033[0m\033[92m: {response['choices'][0]['message']['content']:<10} \n\033[0m")
         pretty_json_response = json.dumps(json.loads(response['choices'][0]['message']['content']), indent=2, separators=(',', ':'))
         print(f"\n\033[1;92mResponse: CumTokens:{oai.cum_tokens} RespTokens:{this_conversation_tokens}\n\033[0m\033[92m{pretty_json_response}\n\033[0m")
-        #print()
+        
+        #re-set engine
+        oai.deployment_name = tmp_deployment_name
+        #re-set temp
+        oai.temperature = temp_oai_temp
 
         self.gpt_response = json.loads(response['choices'][0]['message']['content'].strip("\n"))
         return self.gpt_response
@@ -157,6 +170,28 @@ class Openai_Requests:
         args_tpl = (summary_new_request,sys_mssg,request_to_gpt)
         return args_tpl
 
+    def build_request_custom_user_args(self, custom_sys_req_input, custom_conv_req_input, custom_json):
+        json_required_format ='''JSON Object Template:'''
+        custom_sys_req_input = c_r.sys_mssg + ". " + custom_sys_req_input
+        custom_json_str = json.dumps(custom_json).replace("\n","")
+        custom_conv_req_input = str("Your job for this request: " + custom_conv_req_input.replace("\n","") + ". " 
+        + f"This is the description of what the program does in the the code found in the value for key 'module' of the JSON object':{self.program_description}."
+        + f"You will make specific changes to this JSON object: {self.gpt_response}."
+        + c_r.json_object_requirements + ". " + custom_json_str + "\n"
+        + c_r.comments)
+
+        #build request and send
+        request_args = ("Your Custom Request",custom_sys_req_input,custom_conv_req_input)
+
+        return request_args
+
+        summary_new_request = "Add Unit tests to the code."
+        sys_mssg = u_test.sys_mssg
+        request_to_gpt = f'''You will make specific changes to this JSON object: {self.gpt_response}.
+        \nThis is the description of what the program does in the the code found in the value for key 'module' of the JSON object':
+        \n{self.program_description}. {ut.concat_dict_to_string(u_test.unittest_instructions_dict)}
+        '''
+
     #build args for request to re-generate unit test cli commands
     def build_request_regenerate_unittest_cli_comm_args(self):
         #request args
@@ -171,36 +206,16 @@ class Openai_Requests:
 
     #build args for miscellaneous code enhancements
     def request_code_enhancement(self, *request_args, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
-        #set engine
-        tmp_deployment_name = oai.deployment_name
-        oai.deployment_name = new_engine
-        #set engine temp
-        temp_oai_temp =  oai.temperature
-        oai.temperature = new_temp
-        print(); print(f"Settings - Engine: {oai.deployment_name[1]}, Temperature: {oai.temperature}")
-        
         #unpack request args
         summary_new_request,sys_mssg,request_to_gpt = request_args
         
         #send request
-        self.gpt_response = self.send_request(sys_mssg, request_to_gpt, summary_new_request)
+        self.gpt_response = self.send_request(sys_mssg, request_to_gpt, summary_new_request, new_temp = new_temp, new_engine = new_engine)
 
-        #re-set engine
-        oai.deployment_name = tmp_deployment_name
-        #re-set temp
-        oai.temperature = temp_oai_temp
-        
         return self.gpt_response
 
     #request initial code according to program description
     def request_raw_code(self, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
-        #set engine
-        tmp_deployment_name = oai.deployment_name
-        oai.deployment_name = new_engine
-        #set engine temp
-        temp_oai_temp =  oai.temperature
-        oai.temperature = new_temp
-
         #build request
         #Get raw code JSON object
         #TODO user input
@@ -216,12 +231,7 @@ class Openai_Requests:
         sys_mssg = raw_code.sys_mssg
         request_to_gpt = ut.concat_dict_to_string(raw_code.raw_instructions_dict) + "\n\n" + self.program_description
         #send request
-        self.gpt_response = self.send_request(sys_mssg, request_to_gpt, summary_new_request)
-
-        #re-set engine
-        oai.deployment_name = tmp_deployment_name
-        #re-set temperature
-        oai.temperature = temp_oai_temp
+        self.gpt_response = self.send_request(sys_mssg, request_to_gpt, summary_new_request, new_temp = new_temp, new_engine = new_engine)
 
         return self.gpt_response
 
@@ -230,13 +240,6 @@ class Openai_Requests:
         print(); print("-"*40);print()
         print("Validate JSON Object format.")
         
-        #set engine
-        tmp_deployment_name = oai.deployment_name
-        oai.deployment_name = new_engine
-        #set engine temp
-        temp_oai_temp =  oai.temperature
-        oai.temperature = new_temp
-
         while True:
             try:
                 #Validate JSON object
@@ -259,13 +262,8 @@ class Openai_Requests:
 
                 #request engine to clean JSON obj with existing data
                 request_to_gpt = ut.concat_dict_to_string(clean_json.clean_json_instructions_dict) + json_format + ".This is the JSON object for you to validate and correct:" + self.gpt_response
-                self.gpt_response = self.send_request(sys_mssg, request_to_gpt,summary_new_request)
+                self.gpt_response = self.send_request(sys_mssg, request_to_gpt,summary_new_request, new_temp = new_temp, new_engine = new_engine)
                 
-        #re-set engine
-        oai.deployment_name = tmp_deployment_name
-        #re-set temperature
-        oai.temperature=temp_oai_temp
-
         return self.gpt_response
 
     #validate construction of unit test commands
@@ -278,7 +276,6 @@ class Openai_Requests:
 
     #get list of cli command to execute unit tests
     def create_unittest_cli_list(self, unittest_cli_c_list):
-        #print(); print("-"*40)
         #Create Unittest cli command List
         num_unittests = ut.count_values_for_keycontain(self.gpt_response,u_test.unittest_cli_command_key)
         print(); print("Gather list of unit test cli commands to run.")
@@ -299,13 +296,7 @@ class Openai_Requests:
                     #build request args
                     request_args = self.build_request_regenerate_unittest_cli_comm_args()
 
-                    #set engine and its temperature
-                    tmp_temperature = oai.temperature
-                    oai.temperature = new_temp
-                    tmp_deployment_name = oai.deployment_name
-                    oai.deployment_name = new_engine
-                    
-                    self.request_code_enhancement(*request_args)
+                    self.request_code_enhancement(*request_args, new_temp = new_temp, new_engine = new_engine)
 
                     #re-set engine and temperature
                     oai.deployment_name = tmp_deployment_name
@@ -359,14 +350,14 @@ class Openai_Requests:
                     test_counter += 1
                     print(); print("Test:",bt_c)
                 except subprocess.CalledProcessError as e:
-                    print(f"\n\033[31mException running unittest:{comm}: {e}\n\033[0m")
+                    print(f"\n\033[31mError or Exception Thrown running a unit test cli command.:{comm}: {e}\n\033[0m")
                     #TODO: if "No such file or directory" in str(e) or "returned non-zero exit status" in str(e):
                     #error: user interaction
                     print(); print("="*40)
-                    print(); print("One or more unit test cli commands are incorrect. Attempt to correct or skip:")
-                    print(f"\n\033[1;31m[WARNING]\033[0m Depending on the code provided by the engine, unit testing is irrecoverable and can loop indifinetly at the expense of tokens. ", end ="")
-                    print("If you skip all unit tests, auto-debug may solve these bugs later."); print()
-                    choice = input("=>Press \033[1m(r)\033[0m for the engine to regenerate all cli command errors.\n=>Press \033[1m(c)\033[0m to skip the current unit test and continue to the next one.\n=>Press \033[1m(any key)\033[0m to skip running unit tests.\n\nChoice: ")
+                    print(); print("Please review the code. Attempt to correct or skip:")
+                    print(f"\n\033[1;31m[INFO]\033[0m If you skip all unit tests, you can send a Custom Request of the error or auto-debug the logs, both available from the main Menu.", end ="")
+                    print()
+                    choice = input("=>Press \033[1m(r)\033[0m for the engine to (R)egenerate all cli command errors.\n=>Press \033[1m(s)\033[0m to (S)kip the current unit test and continue to the next one.\n=>Press \033[1m(any key)\033[0m to skip running unit tests.\n\nChoice: ")
                     print(); print("="*40)
 
                     #take action according to user choice
@@ -377,7 +368,7 @@ class Openai_Requests:
                         case 'r':
                             break
                         #skip this test, continue with the rest
-                        case 'c':
+                        case 's':
                             test_counter += 1
                         #skip all tests
                         case _:

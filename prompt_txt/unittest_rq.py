@@ -8,7 +8,7 @@ module_name = "module.py"
 
 sys_mssg = f'''You are going to add unit testing functionality using pythong built-in unittest package to a script written in {program_language} I give you.
 Every cli command makes a call with the exact name of a unit test or test case function and capitalized where appropiate.
-Write the unit test methods within a unittest.TestCase subclass.
+Write the unit test methods within a unittest.TestCase subclass. Design the unit tests to mark each test case as a success and avoid the test failure.
 You will not delete any of the code I give you.
 The name of the module (.py file) is {module_name}.
 Your response to this request is exclusively a JSON object using the JSON Object Template provided.
@@ -23,13 +23,16 @@ gpt_task = f'''Your Task:
 Hence a module function may have multiple corresponding unittest functions.
 (c) Create multiple unittest functions to test the program() function, where you specifically design each unittest function to test each single statement of the program function.
 (d) Write the unit test methods within a unittest.TestCase subclass.
-(e) you name each unittest function {unittest_cli_command_key} with ascending numbers for each starting at 1. Insert each unittest function 
+(e) Design the unit tests to mark each test case as a success and avoid the test failure
+(f) Properly structure each test method as a test case starting with "test_" prefix
+(g) Ensure logging captures expected messages attending to the correct logging level used for the code; use assertLogs in unit tests to validate the occurrence of specific log entries.
+(h) you name each unittest function {unittest_cli_command_key} with ascending numbers for each starting at 1. Insert each unittest function 
 name as a key in the JSON Object Template
-(f) For each of these unittest function keys add as value in the JSON Object Template the corresonding linux cli command 
+(i) For each of these unittest function keys add as value in the JSON Object Template the corresonding linux cli command 
 to trigger the execution of that {unittest_cli_command_key} function.
-(g) insert the code for the module including unittest in the JSON Object Template's value for key 'module' 
+(j) insert the code for the module including unittest in the JSON Object Template's value for key 'module' 
 without leaving no spaces from the beginning to the first character inserted.
-(h) Create in the code a function named program(arguments) with the required arguments for program to execute the main program
+(k) Create in the code a function named program(arguments) with the required arguments for program to execute the main program
 '''
 
 #It is very important every cli command makes a call with the exact name of a unit test function and capitalized where appropiate.

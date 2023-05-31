@@ -40,9 +40,9 @@ def request_menu(oai_req_instance, choice=None):
     print("4.  Add Unittest Code")
     print("5.  User custom request")
     print("6.  Run Unittest")
-    print("7.  Update 'main()' For User Interaction")
-    print("8.  Run Program and enter debug/log loop")
-    print("9.  Add Docstrings to program code.")
+    print("7.  Run Program and enter debug/log loop")
+    print("8.  Add Docstrings to program code.")
+    print("9.  User Set Menu Sequence")
     print("10. Run All")
     print("11. Exit")
 
@@ -66,18 +66,18 @@ def request_menu(oai_req_instance, choice=None):
                 fm.delete_all_dir_files(fm.modules_dir)
 
                 #request code
-                oai_req_instance.request_raw_code()
+                oai_req_instance.request_raw_code(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 #Validate and correct JSON object
-                oai_req_instance.validate_and_clean_json()
+                oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 #Save code into module file
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
                 return False
             case '2':
                 #request enhancements to code
                 request_args = oai_req_instance.build_request_input_and_argparse_args()
-                oai_req_instance.request_code_enhancement(*request_args)
+                oai_req_instance.request_code_enhancement(*request_args, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 #Validate and correct JSON object
-                oai_req_instance.validate_and_clean_json()
+                oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
                 return False
@@ -86,7 +86,7 @@ def request_menu(oai_req_instance, choice=None):
                 request_args = oai_req_instance.build_request_exception_handl_req_args()
                 oai_req_instance.request_code_enhancement(*request_args, new_temp = 0.2, new_engine = oai.codex_engine_deployment_name)
                 #Validate and correct JSON object
-                oai_req_instance.validate_and_clean_json()
+                oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
                 return False
@@ -96,7 +96,7 @@ def request_menu(oai_req_instance, choice=None):
                 while True:
                     oai_req_instance.request_code_enhancement(*request_args, new_temp = 0.2, new_engine = oai.codex_engine_deployment_name)
                     #Validate and correct JSON object
-                    oai_req_instance.validate_and_clean_json(u_test.json_required_format)
+                    oai_req_instance.validate_and_clean_json(u_test.json_required_format, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                     #Validate unittest cli prompts
                     if oai_req_instance.validate_unittest_functions() == False:
                         print("Unit test functions not created. Re-create unit test code and cli commands.")
@@ -112,37 +112,60 @@ def request_menu(oai_req_instance, choice=None):
                         break
                 return False
             case '5':
-                #TODO user custom requested enhancements to code
-                #custom_json='''''
-                #self.validate_and_clean_json(custom_json)
-                print(); print(f"\033[41mPending Implementation.\033[0m")
+                inputs = get_user_inputs_custom_request()
+                #check user updated custom json for the request
+                if isinstance(inputs, bool) and inputs == False:
+                    print(f"\n\033[1;31m[ERROR]\033[0m Cannot process request if the custom json file is not updated.\033[0m")
+                    return False
+
+                if not os.path.exists(os.path.join(fm.m_custom_json_dirname + "/" + fm.m_custom_json_filename)):
+                    print(); print(f"\033[41mCustom JSON file not available.\033[0m")
+                    break
+                print(); print("TEMP - To Remove: Custom JSON READ:"); fm.print_json_on_screen(fm.read_file_stored_to_buffer(fm.m_custom_json_filename, fm.m_custom_json_dirname)); print()
+                custom_json = fm.read_file_stored_to_buffer(fm.m_custom_json_filename, fm.m_custom_json_dirname)
+
+                #build prompt request
+                #user inputs tuple into variable for clarity
+                custom_sys_req_input = inputs[0]
+                custom_conv_req_input = inputs[1]
+
+                request_args = oai_req_instance.build_request_custom_user_args(custom_sys_req_input, custom_conv_req_input, custom_json)
+                #send request
+                oai_req_instance.request_code_enhancement(*request_args, new_temp = 0.2, new_engine = oai.codex_engine_deployment_name)
+
+                #Validate and correct JSON object
+                oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
+
+                #print(); print(f"\033[41mPending Implementation.\033[0m")
                 return False
             case '6':
                 #run unittests
                 #TODO: remove - for debugging
-                if not os.path.exists(os.path.join(fm.json_dir + "/" + fm.m_json_filename)):
-                    print(); print(f"\033[41mJSON file not available.\033[0m")
-                    break
-                print("TEMP - To Remove: JSON Object now only READS from json file I store on instance gpt_response:"); fm.print_json_on_screen(fm.read_file_stored_to_buffer(fm.m_json_filename, fm.json_dir))
-                oai_req_instance.set_gpt_response(fm.read_file_stored_to_buffer(fm.m_json_filename, fm.json_dir))
-                #end of TODO remove -- for debugging
+                #if not os.path.exists(os.path.join(fm.json_dir + "/" + fm.m_json_filename)):
+                #    print(); print(f"\033[41mJSON file not available.\033[0m")
+                #    break
+                #print("TEMP - To Remove: JSON Object now only READS from json file I store on instance gpt_response:"); fm.print_json_on_screen(fm.read_file_stored_to_buffer(fm.m_json_filename, fm.json_dir))
+                #oai_req_instance.set_gpt_response(fm.read_file_stored_to_buffer(fm.m_json_filename, fm.json_dir))
+                #end TODO remove
                 #TODO:Tests unit tests were built in the code before executing them
                 oai_req_instance.run_unittests()
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
                 return False
             case '7':
-                #TODO: update for main to execute with user inputs, not uttest
-                print(); print(f"\033[41mPending Implementation.\033[0m")
-                return False    
-            case '8':
                 #TODO: run program and enter debug log loop
                 print(); print(f"\033[41mPending Implementation.\033[0m")
                 return False
-            case '9':
+            case '8':
                 #consider sphinx to present to users for Read the Docs platform support
                 print(); print(f"\033[41mPending Implementation.\033[0m")
                 return False  
+            case '9':
+                #TODO: User Set Menu Sequence
+                print(); print(f"\033[41mPending Implementation.\033[0m")
+                return False    
             case '10':
                 #run all menu configurations
                 print(); print("-"*40);print()
@@ -156,6 +179,42 @@ def request_menu(oai_req_instance, choice=None):
             case _:
                 print(); print(f"\033[41mInvalid Option\033[0m")
                 return False
+
+def get_user_inputs_custom_request():
+    print(); print("Enter request to change the code:")
+    custom_sys_req_input = input("Part 1/3 - Enter Short System Prompt: "); print()
+    custom_conv_req_input = input("Part 2/2 - Enter Conversation Prompt: ")
+    
+    while True:
+        #update custom json response
+        custom_json_req_input = input("Part 3/3 - Did you update your JSON Response? y/n: ")
+
+        #cannot process request if custom json not updated
+        if custom_json_req_input.lower() == "n":
+            return False
+        elif custom_json_req_input.lower() == "y":
+            break
+        else:
+            continue
+
+    return (custom_sys_req_input, custom_conv_req_input)
+
+def prompt_user_cont_or_menu(mssg):
+    while True:
+        print(mssg)
+        choice = input("=>Press \033[1m(c)\033[0m to Continue.\n=>Press \033[1m(m)\033[0m back to Menu.\n\nChoice: ")
+        print(); print("="*40)
+
+        #take action according to user choice
+        exception_handling(choice)
+        
+        match choice.lower():
+            case 'c':
+                return True
+            case 'm':
+                return False
+            case _:
+                continue
 
 def main():
     #set showing request text on screen

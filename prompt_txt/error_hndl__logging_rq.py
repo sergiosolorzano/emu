@@ -19,11 +19,12 @@ without leaving no spaces from the beginning to the first character inserted.
 (3) Error handling for Input Validation: The program should validate all input and be prepared to handle invalid or unexpected input in a robust way.
 (4) add a flag in the module script to enable/disable generating logs. set log level to debug.
 **Logging**:
-(1) Create a log file with logs of all program and user actions 
-(2) name it module.log 
+(1) Add the necessary handlers to write log records to a file named module.log
+(2) Record to the log file all program and user actions 
 (3) add flag in the module script to enable/disable generating logs. set log level to debug. 
 The flag can be set to enable/disabled, set it is enable.
 (4) use the built-in logging package
+(5) Add Log message format to include the line number in the code where the log statement occurs.
 '''
 
 json_object_requirements = f'''Your response to this request is exclusively:

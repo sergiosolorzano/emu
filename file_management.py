@@ -14,6 +14,8 @@ m_prompt_dirname = "prompt_txt"
 m_project_dirname = "project"
 m_json_dirname = "response_json"
 m_json_filename = "response.json"
+m_custom_json_dirname = "custom_json"
+m_custom_json_filename = "custom_json.json"
 
 sys.path.append(m_root)
 initial_dir = os.getcwd()

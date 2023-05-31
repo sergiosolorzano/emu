@@ -90,8 +90,9 @@ def request_menu(oai_req_instance, choice=None):
                 print()
                 oai_req_instance.program_description = "Program Description: " + input("Enter Short Program Description: "); print()
 
-                #hack to step script as a gpt code response for continued conversation with gpt
+                #read script
                 user_script = fm.read_file_stored_to_buffer(os.path.basename(path_to_script), os.path.dirname(path_to_script))
+                #hack to step script as a gpt code response for continued conversation with gpt                
                 oai_req_instance.gpt_response =  fm.insert_script_in_json(user_script)
                 return False
             case '3':

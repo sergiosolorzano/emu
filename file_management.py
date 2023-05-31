@@ -147,6 +147,9 @@ def create_dir(target_dir):
         target_dir.mkdir(parents=False, exist_ok=True)
 
 def insert_script_in_json(a_script):
-    json_dict_obj = {"module":"a_script"}
+    json_dict = {"module":a_script}
     #return json obj
-    return json.loads(json_dict_obj)
+    json_str = json.dumps(json_dict)
+    a = json.loads(json_str)
+    print(type(json_dict),type(json_str),type(a))
+    return json.loads(json_str)

@@ -33,7 +33,7 @@ Repo file structure:
 ---------------------------------------------
 
 Configuring OpenAI model and temperature per request:
-For now you can set these for each request in function arguments:
+For now these can be set for each request in function arguments:
 
 Script: simple_selfgen.py
 Functions:

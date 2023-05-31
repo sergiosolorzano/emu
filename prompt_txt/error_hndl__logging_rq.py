@@ -15,12 +15,12 @@ gpt_task = f'''Your Task:
 **Exception Handling**:
 (1) add error and exception handling functionality, found in {program_language}'s built in packages, to the code found in this JSON object's value for key 'module' 
 without leaving no spaces from the beginning to the first character inserted.
-(2) Add catch and handle exceptions for every function
+(2) Add code to catch and handle exceptions for every function and no system exit occurs during the program.
 (3) Error handling for Input Validation: The program should validate all input and be prepared to handle invalid or unexpected input in a robust way.
 (4) add a flag in the module script to enable/disable generating logs. set log level to debug.
 **Logging**:
-(1) Add the necessary handlers to write log records to a file named module.log
-(2) Record to the log file all program and user actions 
+(1) Without removing any print statements from the code, add the necessary handlers to write log records to a file named module.log
+(2) Without removing any print statements from the code, record to the log file all program and user actions 
 (3) add flag in the module script to enable/disable generating logs. set log level to debug. 
 The flag can be set to enable/disabled, set it is enable.
 (4) use the built-in logging package

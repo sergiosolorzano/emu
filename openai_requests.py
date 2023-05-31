@@ -41,17 +41,22 @@ class Openai_Requests:
     def __init__(self,program_description="No description provided.", gpt_response="No response provided."):
         self.program_description = program_description
         self.gpt_response = gpt_response
+        self.gpt_response_utest = gpt_response
         #TODO: set engine and engine as instance objs
         #self.deployment_name
         #self.temperature
 
-    #getter instance method get program desc
+    #getter instance method get gpt_resp
     def get_gpt_response(self):
         return self.gpt_response
 
-    #setter instance method get program desc
+    #setter instance method set gpt_resp
     def set_gpt_response(self, gpt_response):
         self.gpt_response = gpt_response
+
+    #getter instance method get gpt u_test resp
+    def get_gpt_response_utest(self):
+        return self.gpt_response_utest
 
     #TODO: implement show request bool
     @classmethod
@@ -63,7 +68,7 @@ class Openai_Requests:
         return cls.show_request
 
     #request module code
-    def send_request(self, sys_mssg, request_to_gpt, summary_new_request, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
+    def send_request(self, sys_mssg, request_to_gpt, summary_new_request, u_test = False, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
         #set engine
         tmp_deployment_name = oai.deployment_name
         oai.deployment_name = new_engine
@@ -130,8 +135,10 @@ class Openai_Requests:
         #re-set temp
         oai.temperature = temp_oai_temp
 
-        self.gpt_response = json.loads(response['choices'][0]['message']['content'].strip("\n"))
-        return self.gpt_response
+        if u_test:
+            self.gpt_response_utest = json.loads(response['choices'][0]['message']['content'].strip("\n"))
+        else:
+            self.gpt_response = json.loads(response['choices'][0]['message']['content'].strip("\n"))
 
     #build args for exception handling request request
     def build_request_exception_handl_req_args(self):
@@ -163,7 +170,7 @@ class Openai_Requests:
         #request args
         summary_new_request = "Add Unit tests to the code."
         sys_mssg = u_test.sys_mssg
-        request_to_gpt = f'''You will make specific changes to this JSON object: {self.gpt_response}.
+        request_to_gpt = f'''You will make specific changes to this JSON object: {self.gpt_response_utest}.
         \nThis is the description of what the program does in the the code found in the value for key 'module' of the JSON object':
         \n{self.program_description}. {ut.concat_dict_to_string(u_test.unittest_instructions_dict)}
         '''
@@ -198,7 +205,7 @@ class Openai_Requests:
         #request args
         summary_new_request = "Request re-generation of cli commands for existing unittest functions in the code."
         sys_mssg = unittest_cli_comm.sys_mssg
-        request_to_gpt = f'''You will make specific changes to this JSON object: {self.gpt_response}.\n
+        request_to_gpt = f'''You will make specific changes to this JSON object: {self.gpt_response_utest}.\n
         {ut.concat_dict_to_string(unittest_cli_comm.unittest_regen_cli_comm_instructions_dict)}
         '''
 
@@ -206,12 +213,12 @@ class Openai_Requests:
         return args_tpl
 
     #build args for miscellaneous code enhancements
-    def request_code_enhancement(self, *request_args, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
+    def request_code_enhancement(self, *request_args, u_test, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
         #unpack request args
         summary_new_request,sys_mssg,request_to_gpt = request_args
         
         #send request
-        self.gpt_response = self.send_request(sys_mssg, request_to_gpt, summary_new_request, new_temp = new_temp, new_engine = new_engine)
+        self.send_request(sys_mssg, request_to_gpt, summary_new_request, u_test, new_temp = new_temp, new_engine = new_engine)
 
         return self.gpt_response
 
@@ -231,7 +238,7 @@ class Openai_Requests:
     def request_raw_code(self, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
         #Get raw code JSON object
         #TODO user input
-        #self.program_description = "Program Description: " + "the program is a calculator, collects two numbers from a user and the arithmetic operation to perform being a choice of sum, subtract, multiply or divide. Then print the result."
+        #self.program_description = "Program Description: " + "the program is a calculator, collects two numbers from a user and the arithmetic operation to perform being a choice of sum, subtract, multiply or divide. Then print the result on the terminal."
         #self.program_description = "Program Description: " + "The program will prompt the user to enter a sentence or paragraph, and it will count the number of words in the input."
         #self.program_description = "Program Description: " + "The program will generate a random number, and the user will be prompted to guess the number. The program will provide feedback on whether the guess is too high, too low, or correct."
         #self.program_description = "Program Description: " + "The program allows the user to add tasks to a todo list, view the list, and mark tasks as completed."
@@ -243,19 +250,20 @@ class Openai_Requests:
         sys_mssg = raw_code.sys_mssg
         request_to_gpt = ut.concat_dict_to_string(raw_code.raw_instructions_dict) + "\n\n" + self.program_description
         #send request
-        self.gpt_response = self.send_request(sys_mssg, request_to_gpt, summary_new_request, new_temp = new_temp, new_engine = new_engine)
-
-        return self.gpt_response
+        self.send_request(sys_mssg, request_to_gpt, summary_new_request, new_temp = new_temp, new_engine = new_engine)
 
     #request ai to validate and clean returned json
-    def validate_and_clean_json(self, custom_json=None, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
+    def validate_and_clean_json(self, u_test = False, custom_json=None, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
         print(); print("-"*40);print()
         print("Validate JSON Object format.")
         
         while True:
             try:
                 #Validate JSON object
-                code = ut.get_response_value_for_key(self.gpt_response, raw_code.module_name.split(".")[0])
+                if u_test:
+                    code = ut.get_response_value_for_key(self.gpt_response_utest, raw_code.module_name.split(".")[0])
+                else:
+                    code = ut.get_response_value_for_key(self.gpt_response, raw_code.module_name.split(".")[0])
                 print("\033[43mJSON object is valid.\033[0m")
                 break
             except Exception as e:
@@ -273,27 +281,30 @@ class Openai_Requests:
                     json_format = custom_json
 
                 #request engine to clean JSON obj with existing data
-                request_to_gpt = ut.concat_dict_to_string(clean_json.clean_json_instructions_dict) + json_format + ".This is the JSON object for you to validate and correct:" + self.gpt_response
-                self.gpt_response = self.send_request(sys_mssg, request_to_gpt,summary_new_request, new_temp = new_temp, new_engine = new_engine)
-                
-        return self.gpt_response
+                if u_test:
+                    request_to_gpt = ut.concat_dict_to_string(clean_json.clean_json_instructions_dict) + json_format + ".This is the JSON object for you to validate and correct:" + self.gpt_response_utest
+                else:
+                    request_to_gpt = ut.concat_dict_to_string(clean_json.clean_json_instructions_dict) + json_format + ".This is the JSON object for you to validate and correct:" + self.gpt_response
+
+                self.send_request(sys_mssg, request_to_gpt,summary_new_request, u_test, new_temp = new_temp, new_engine = new_engine)
+
 
     #validate construction of unit test commands
     def validate_unittest_functions(self):
         print(); print("-"*40)
         print("Validating Unittest Function CLI commands were created.")
         num_unittests = 0
-        num_unittests = ut.count_values_for_keycontain(self.gpt_response, u_test.unittest_cli_command_key)
+        num_unittests = ut.count_values_for_keycontain(self.gpt_response_utest, u_test.unittest_cli_command_key)
         return True if num_unittests > 0 else False
 
     #get list of cli command to execute unit tests
     def create_unittest_cli_list(self, unittest_cli_c_list):
         #Create Unittest cli command List
-        num_unittests = ut.count_values_for_keycontain(self.gpt_response,u_test.unittest_cli_command_key)
+        num_unittests = ut.count_values_for_keycontain(self.gpt_response_utest,u_test.unittest_cli_command_key)
         print(); print("Gather list of unit test cli commands to run.")
         for index in range(1,int(num_unittests)+1):
             #print("looking for ","".join([u_test.unittest_cli_command_key, str(index)]))
-            unittest_cli_c = ut.get_response_value_for_key(self.gpt_response,"".join([u_test.unittest_cli_command_key, str(index)]))
+            unittest_cli_c = ut.get_response_value_for_key(self.gpt_response_utest,"".join([u_test.unittest_cli_command_key, str(index)]))
             #print("cli test",unittest_cli_c)
             if len(unittest_cli_c) > 0:
                 unittest_cli_c_list.append(unittest_cli_c)
@@ -308,21 +319,18 @@ class Openai_Requests:
                     #build request args
                     request_args = self.build_request_regenerate_unittest_cli_comm_args()
 
-                    self.request_code_enhancement(*request_args, new_temp = new_temp, new_engine = new_engine)
+                    self.request_code_enhancement(*request_args, u_test = True, new_temp = new_temp, new_engine = new_engine)
 
-                    #re-set engine and temperature
-                    oai.deployment_name = tmp_deployment_name
-                    oai.temperature = tmp_temperature
                     #goes back to beg while loop
                 elif choice == "c" or choice == "C":
                     print(); print("\033[41mContinue testing and skip this unit test.\033[0m")
                 else:
                     print(); print("\033[41mSkip running all unit tests.\033[0m")
                     #restore gpt_response to originally received in this function
-                    self.gpt_response = tmp_gpt_response
+                    self.gpt_response_utest = tmp_gpt_response
 
         #store received gpt_response
-        tmp_gpt_response = self.gpt_response
+        tmp_gpt_response = self.gpt_response_utest
         #skip_all = False
         #skip_any = False
         exit_loop = False
@@ -394,5 +402,3 @@ class Openai_Requests:
         print(); print(f"\033[43mUnit Testing Complete.\033[0m") if not exit_loop else print(f"\033[43mSkipped Unit Tests. Code changes when running these unit tests ignored.\033[0m")
 
         os.chdir(fm.initial_dir)
-
-        return self.gpt_response

@@ -6,8 +6,8 @@ program_language="Python"
 unittest_cli_command_key = "unittest_cli_"
 module_name = "module.py"
 
-sys_mssg = f'''You are going to add unit testing functionality using pythong built-in unittest package to a script written in {program_language} I give you.
-Every cli command makes a call with the exact name of a unit test or test case function and capitalized where appropiate.
+sys_mssg = f'''You are going to add unit testing functionality using {program_language}'s built-in unittest package to a script written in {program_language} I give you.
+Insert the linux cli command to execute every unit test case function in the JSON Object Template provided, and for each use JSON key {unittest_cli_command_key} with ascending number.
 Write the unit test methods within a unittest.TestCase subclass. Design the unit tests to mark each test case as a success and avoid the test failure.
 You will not delete any of the code I give you.
 The name of the module (.py file) is {module_name}.
@@ -26,7 +26,7 @@ Hence a module function may have multiple corresponding unittest functions.
 (e) Design the unit tests to mark each test case as a success and avoid the test failure
 (f) Properly structure each test method as a test case starting with "test_" prefix
 (g) Ensure logging captures expected messages attending to the correct logging level used for the code; use assertLogs in unit tests to validate the occurrence of specific log entries.
-(h) you name each unittest function {unittest_cli_command_key} with ascending numbers for each starting at 1. Insert each unittest function 
+(h) you name every unittest function {unittest_cli_command_key} with ascending numbers for each starting at 1. Insert every unit test case function 
 name as a key in the JSON Object Template
 (i) For each of these unittest function keys add as value in the JSON Object Template the corresonding linux cli command 
 to trigger the execution of that {unittest_cli_command_key} function.
@@ -38,7 +38,7 @@ without leaving no spaces from the beginning to the first character inserted.
 #It is very important every cli command makes a call with the exact name of a unit test function and capitalized where appropiate.
 #(f) It is very important you **do not nest the test case function inside any other function.
 #(2) Hard code input variables to test each backtesting function and hard code an expected_output variable with the expected result
-#Compare the expected_output to the backtesting function output in an assert statement.
+7#Compare the expected_output to the backtesting function output in an assert statement.
 #(d) User interaction is disabled when a unittest function call any function in the module
 
 json_object_requirements = f'''Your response to this request is exclusively:
@@ -56,7 +56,7 @@ comments = '''Your response meets these Comment Requirements:
 json_required_format ='''JSON Object Template:
 {
 "module":"Insert here the code with the enhancements you make leaving no spaces from the beginning to the first character inserted",
-"unittest_cli_1":"Insert the command line command to trigger the execution of the corresponding unittest function"
+"unittest_cli_1":"Insert the command line command to trigger the execution of the corresponding unit test case function"
 }
 '''
 

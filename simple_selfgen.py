@@ -67,7 +67,7 @@ def request_menu(oai_req_instance, choice=None):
                 #Validate and correct JSON object
                 oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 #Save code into module file
-                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name)
                 return False
             case '2':
                 #load user script
@@ -93,40 +93,44 @@ def request_menu(oai_req_instance, choice=None):
             case '3':
                 #add argparse
                 request_args = oai_req_instance.build_request_input_and_argparse_args()
-                oai_req_instance.request_code_enhancement(*request_args, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 #Validate and correct JSON object
                 oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
-                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name)
                 return False
             case '4':
                 #add exception handling and logging
                 request_args = oai_req_instance.build_request_exception_handl_req_args()
-                oai_req_instance.request_code_enhancement(*request_args, new_temp = 0.2, new_engine = oai.codex_engine_deployment_name)
+                oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = 0.2, new_engine = oai.codex_engine_deployment_name)
                 #Validate and correct JSON object
                 oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
-                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name)
                 return False
             case '5':
+                #get cached response as starting point for unit test
+                oai_req_instance.gpt_response_utest = oai_req_instance.gpt_response
+
                 #add unit test cases
                 request_args = oai_req_instance.build_request_unittest_args()
                 while True:
-                    oai_req_instance.request_code_enhancement(*request_args, new_temp = 0.2, new_engine = oai.codex_engine_deployment_name)
+                    oai_req_instance.request_code_enhancement(*request_args, u_test=True, new_temp=0.2, new_engine=oai.codex_engine_deployment_name)
                     #Validate and correct JSON object
-                    oai_req_instance.validate_and_clean_json(u_test.json_required_format, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                    oai_req_instance.validate_and_clean_json(u_test=False, custom_json=u_test.json_required_format, new_temp=oai.temperature, new_engine=oai.gpt_engine_deployment_name)
                     #Validate unittest cli prompts
                     if oai_req_instance.validate_unittest_functions() == False:
                         print("Unit test functions not created. Re-create unit test code and cli commands.")
-                        fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
+                        fm.version_module(fm.modules_dir,raw_code.module_utest_name,fm.modules_dir)
                         continue
                     else:
                         print("\033[43mUnit test functions CLI commands succesfully created.\033[0m")
                         #version and save
-                        fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
-                        fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
-                        #TODO: remove, for debugging
-                        fm.write_to_file(fm.m_json_filename,fm.json_dir, oai_req_instance.get_gpt_response())
+                        fm.version_module(fm.modules_dir,raw_code.module_utest_name,fm.modules_dir)
+                        fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response_utest(), fm.initial_dir, raw_code.module_utest_name)
+                        #TODO: remove for debugging
+                        fm.write_to_file(fm.m_json_filename,fm.json_dir, oai_req_instance.get_gpt_response_utest())
+                        #end remove for debugging
                         break
                 return False
             case '6':
@@ -141,10 +145,11 @@ def request_menu(oai_req_instance, choice=None):
                 #TODO:Tests unit tests were built in the code before executing them
                 oai_req_instance.run_unittests()
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
-                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response_utest(), fm.initial_dir, raw_code.module_name)
                 return False
             case '7':
                 #add user custom request
+                print(); print(f"\n\033[1;31m[WARNING]\033[0m Unit tests generated by model is not by this option.\033[0m")
                 inputs = get_user_inputs_custom_request()
                 #check user updated custom json for the request
                 if isinstance(inputs, bool) and inputs == False:
@@ -164,12 +169,12 @@ def request_menu(oai_req_instance, choice=None):
 
                 request_args = oai_req_instance.build_request_custom_user_args(custom_sys_req_input, custom_conv_req_input, custom_json)
                 #send request
-                oai_req_instance.request_code_enhancement(*request_args, new_temp = 0.2, new_engine = oai.codex_engine_deployment_name)
+                oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = 0.2, new_engine = oai.codex_engine_deployment_name)
 
                 #Validate and correct JSON object
                 oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
-                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name)
 
                 #print(); print(f"\033[41mPending Implementation.\033[0m")
                 return False
@@ -182,11 +187,11 @@ def request_menu(oai_req_instance, choice=None):
                 #add docstrings
                 #TODO:consider sphinx to present to users for Read the Docs platform support
                 request_args = oai_req_instance.build_request_docstrings_args()
-                oai_req_instance.request_code_enhancement(*request_args, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 #Validate and correct JSON object
                 oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
-                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name)
                 return False  
             case '10':
                 #TODO: User Set Menu Sequence

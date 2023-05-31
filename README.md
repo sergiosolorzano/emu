@@ -12,7 +12,7 @@ Repo file structure:
 ├── file_management.py		#file management utilities
 ├── openai_params.py		
 ├── openai_requests.py		#build, receive and send requests
-├── project					#dir: resulting script saved here
+├── project					#dir: resulting scripts saved here
 ├── prompt_txt				#text prompt requests for openai model
 │			├── clean_json_rq.py
 │			├── error_hndl__logging_rq.py
@@ -30,6 +30,10 @@ Repo file structure:
 ├── sg_utils.py				#request management utilities
 └── simple_selfgen.py		#Menu block. Requires pointing scripts that import self_config.py (e.g sys.path.append) to dir where you save self_config.py
 ```
+---------------------------------------------
+
+Python required packages: See requirements.txt
+
 ---------------------------------------------
 
 Configuring OpenAI model and temperature per request:

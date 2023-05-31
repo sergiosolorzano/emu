@@ -4,7 +4,9 @@
 #TODO move to class var
 program_language="Python"
 
+#change of module_name[0] requires change in JSON key for the code
 module_name = "module.py"
+module_utest_name = "module_utest.py"
 
 sys_mssg = f'''You program in {program_language}.
 You create the code that implements the description in Program Description and that follows these specific requirements as outlined in Requirements.

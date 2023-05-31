@@ -14,8 +14,7 @@ You ensure parsing the JSON object using {program_language}'s built-in JSON modu
 gpt_task = f'''Your Task:
 (1) add user input and argparse functionality to the code found in this JSON object's value for key 'module' 
 without leaving no spaces from the beginning to the first character inserted.
-(2) The function program() executes the main program. 
-Function program() must have user input and be executed in a statement __name__ == '__main__'. Function program() 
+(2) Add the code for the function program() to have user input and be executed in a statement __name__ == '__main__'.
 (3) Add Argparse with version, set version = 1.0, and help only for program() intput arguments.
 Create the argparse input help for each individual argument in program().
 (4) Code argparse to display help with any arguments required to execute program() and a description for these arguements.

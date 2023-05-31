@@ -88,14 +88,14 @@ def write_to_file(filename,path,content):
 				json.dump(content, target)
 				print(); print(f"\033[43mResponse saved to JSON file {full_path}\033[0m");
 
-def get_dict_value_save_to_file(gpt_response, initial_dir):
+def get_dict_value_save_to_file(gpt_response, initial_dir, filename):
     print(); print("-"*40)
     code = ut.get_response_value_for_key(gpt_response,raw_code.module_name.split(".")[0])
     print("Code:"); print(); print(code)
-    destination_full_name = os.path.join(modules_dir, raw_code.module_name)
+    destination_full_name = os.path.join(modules_dir, filename)
     if not os.path.exists(destination_full_name):
-        create_empty_module(raw_code.module_name, initial_dir)
-    write_to_file(raw_code.module_name,modules_dir,code)
+        create_empty_module(filename, initial_dir)
+    write_to_file(filename,modules_dir,code)
     
 def version_module(path_original_fn, original_fn, path_dest_fn):
 	original_full_path_fn = os.path.join(path_original_fn, original_fn)

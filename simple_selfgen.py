@@ -144,8 +144,8 @@ def request_menu(oai_req_instance, choice=None):
                 #end TODO remove
                 #TODO:Tests unit tests were built in the code before executing them
                 oai_req_instance.run_unittests()
-                fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
-                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response_utest(), fm.initial_dir, raw_code.module_name)
+                fm.version_module(fm.modules_dir,raw_code.module_utest_name,fm.modules_dir)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response_utest(), fm.initial_dir, raw_code.module_utest_name)
                 return False
             case '7':
                 #add user custom request

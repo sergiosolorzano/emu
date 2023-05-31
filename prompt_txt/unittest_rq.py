@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 #add unittest
 
+import raw_code_rq
 #TODO move to class var
 program_language="Python"
 unittest_cli_command_key = "unittest_cli_"
-module_name = "module.py"
+module_name = raw_code_rq.module_utest_name
 
 sys_mssg = f'''You are going to add unit testing functionality using {program_language}'s built-in unittest package to a script written in {program_language} I give you.
 Insert the linux cli command to execute every unit test case function in the JSON Object Template provided, and for each use JSON key {unittest_cli_command_key} with ascending number.

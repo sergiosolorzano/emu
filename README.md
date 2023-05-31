@@ -33,6 +33,7 @@ Repo file structure:
 ---------------------------------------------
 
 Python required packages: See requirements.txt
+Add this package to your sys.path
 
 ---------------------------------------------
 

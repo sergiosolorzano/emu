@@ -214,13 +214,11 @@ class Openai_Requests:
 
     #build args for miscellaneous code enhancements
     def request_code_enhancement(self, *request_args, u_test, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
-        #unpack request args
+        #unpack request args for clarity
         summary_new_request,sys_mssg,request_to_gpt = request_args
         
         #send request
         self.send_request(sys_mssg, request_to_gpt, summary_new_request, u_test, new_temp = new_temp, new_engine = new_engine)
-
-        return self.gpt_response
 
     #build args for request to add docstrings
     def build_request_docstrings_args(self):

@@ -47,7 +47,7 @@ json_object_requirements = f'''Your response to this request is exclusively:
 (c) You add nothing else to your response of this request but the JSON object.
 '''
 
-comments = '''.Your response meets these Comment Requirements:
+comments = '''Your response meets these Comment Requirements:
 (1) Your response only includes the JSON object.
 (2) You make no comments in your response. 
 (3) Keep comments within the code to the bare minimum"

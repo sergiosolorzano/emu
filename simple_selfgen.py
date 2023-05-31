@@ -34,28 +34,23 @@ import file_management as fm
 #gpt user request menu
 def request_menu(oai_req_instance, choice=None):
     print(); print("-"*40);print()
-    print("1.  Raw Code: Program Description Code")
-    print("2.  Load Raw Code Script From File")
-    print("3.  User Input and Argparse")
+    #model generates the code according to user description
+    print("1.  Generate Raw Code")
+    #you can upload your script instead of the model generating the code
+    print("2.  Upload Raw Code Script From File")
+    #add argparse
+    print("3.  Add Argparse")
     print("4.  Exception Handling and Logging")
-    print("5.  Add Unittest Code")
-    print("6.  User custom request")
-    print("7.  Run Unittest")
-    print("8.  Run Program and enter debug/log loop")
-    print("9.  Add Docstrings to program code.")
-    print("10.  User Set Menu Sequence")
+    print("5.  Add Unit Test Cases")
+    print("6.  Run Unit Test Cases")
+    print("7.  User Custom Request")
+    print("8.  Run Program And Enter Debug/Logs Loop")
+    print("9.  Add Docstrings To Program Code.")
+    print("10. Set Menu Sequence")
     print("11. Run All")
     print("12. Exit")
 
     #TODO: move version_module() to class
-
-    #delete project files / create project dirs where scripts will be stored
-    fm.create_dir(Path(fm.modules_dir))
-    fm.create_dir(Path(fm.json_dir))
-
-    #del all project module files
-    #TODO option to delete
-    fm.delete_all_dir_files(fm.modules_dir)
 
     while True:
         print()
@@ -66,7 +61,6 @@ def request_menu(oai_req_instance, choice=None):
 
         match choice:
             case '1':
-                
                 #request code
                 oai_req_instance.program_description = "Program Description: " + input("Enter Program Description and Features: ")
                 oai_req_instance.request_raw_code(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
@@ -76,7 +70,7 @@ def request_menu(oai_req_instance, choice=None):
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
                 return False
             case '2':
-                #get path to json file
+                #load user script
                 while True:
                     path_to_script = input(f"Enter Path to {raw_code.program_language} Script: ");
                     #check user updated custom json for the request
@@ -92,11 +86,12 @@ def request_menu(oai_req_instance, choice=None):
 
                 #read script
                 user_script = fm.read_file_stored_to_buffer(os.path.basename(path_to_script), os.path.dirname(path_to_script))
-                #hack to step script as a gpt code response for continued conversation with gpt                
+                #hack to step script as a gpt code response for continued conversation with gpt
                 oai_req_instance.gpt_response =  fm.insert_script_in_json(user_script)
+                print(f"\033[43mScript uploaded.\033[0m")
                 return False
             case '3':
-                #request enhancements to code
+                #add argparse
                 request_args = oai_req_instance.build_request_input_and_argparse_args()
                 oai_req_instance.request_code_enhancement(*request_args, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 #Validate and correct JSON object
@@ -105,7 +100,7 @@ def request_menu(oai_req_instance, choice=None):
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
                 return False
             case '4':
-                #request enhancements to code
+                #add exception handling and logging
                 request_args = oai_req_instance.build_request_exception_handl_req_args()
                 oai_req_instance.request_code_enhancement(*request_args, new_temp = 0.2, new_engine = oai.codex_engine_deployment_name)
                 #Validate and correct JSON object
@@ -114,7 +109,7 @@ def request_menu(oai_req_instance, choice=None):
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
                 return False
             case '5':
-                #request enhancements to code
+                #add unit test cases
                 request_args = oai_req_instance.build_request_unittest_args()
                 while True:
                     oai_req_instance.request_code_enhancement(*request_args, new_temp = 0.2, new_engine = oai.codex_engine_deployment_name)
@@ -135,6 +130,21 @@ def request_menu(oai_req_instance, choice=None):
                         break
                 return False
             case '6':
+                #run unittests
+                #TODO: remove - for debugging
+                #if not os.path.exists(os.path.join(fm.json_dir + "/" + fm.m_json_filename)):
+                #    print(); print(f"\033[41mJSON file not available.\033[0m")
+                #    break
+                #print("TEMP - To Remove: JSON Object now only READS from json file I store on instance gpt_response:"); fm.print_json_on_screen(fm.read_file_stored_to_buffer(fm.m_json_filename, fm.json_dir))
+                #oai_req_instance.set_gpt_response(fm.read_file_stored_to_buffer(fm.m_json_filename, fm.json_dir))
+                #end TODO remove
+                #TODO:Tests unit tests were built in the code before executing them
+                oai_req_instance.run_unittests()
+                fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
+                return False
+            case '7':
+                #add user custom request
                 inputs = get_user_inputs_custom_request()
                 #check user updated custom json for the request
                 if isinstance(inputs, bool) and inputs == False:
@@ -163,27 +173,20 @@ def request_menu(oai_req_instance, choice=None):
 
                 #print(); print(f"\033[41mPending Implementation.\033[0m")
                 return False
-            case '7':
-                #run unittests
-                #TODO: remove - for debugging
-                #if not os.path.exists(os.path.join(fm.json_dir + "/" + fm.m_json_filename)):
-                #    print(); print(f"\033[41mJSON file not available.\033[0m")
-                #    break
-                #print("TEMP - To Remove: JSON Object now only READS from json file I store on instance gpt_response:"); fm.print_json_on_screen(fm.read_file_stored_to_buffer(fm.m_json_filename, fm.json_dir))
-                #oai_req_instance.set_gpt_response(fm.read_file_stored_to_buffer(fm.m_json_filename, fm.json_dir))
-                #end TODO remove
-                #TODO:Tests unit tests were built in the code before executing them
-                oai_req_instance.run_unittests()
-                fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
-                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
-                return False
+            
             case '8':
                 #TODO: run program and enter debug log loop
                 print(); print(f"\033[41mPending Implementation.\033[0m")
                 return False
             case '9':
-                #consider sphinx to present to users for Read the Docs platform support
-                print(); print(f"\033[41mPending Implementation.\033[0m")
+                #add docstrings
+                #TODO:consider sphinx to present to users for Read the Docs platform support
+                request_args = oai_req_instance.build_request_docstrings_args()
+                oai_req_instance.request_code_enhancement(*request_args, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                #Validate and correct JSON object
+                oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir)
                 return False  
             case '10':
                 #TODO: User Set Menu Sequence
@@ -240,6 +243,16 @@ def prompt_user_cont_or_menu(mssg):
                 continue
 
 def main():
+    #delete project files / create project dirs where scripts will be stored
+    fm.create_dir(Path(fm.modules_dir))
+    fm.create_dir(Path(fm.json_dir))
+
+    #del all project module files
+    #TODO option to delete
+    fm.delete_all_dir_files(fm.modules_dir)
+    print(); print("-"*40);print()
+    print("\033[43mSlate Clean - Project files deleted. Project directories created.\033[0m")
+
     #set showing request text on screen
     oai_requests.Openai_Requests.set_show_request(True)
     #create openai request instance

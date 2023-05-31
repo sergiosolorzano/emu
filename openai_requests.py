@@ -31,6 +31,7 @@ import error_hndl__logging_rq as error_log_hndl
 import unittest_rq as u_test
 import unittest_cli_comm_rq as unittest_cli_comm
 import custom_req as c_r
+import docstrings_rq as docs_r
 #import my utils
 import sg_utils as ut
 
@@ -213,6 +214,18 @@ class Openai_Requests:
         self.gpt_response = self.send_request(sys_mssg, request_to_gpt, summary_new_request, new_temp = new_temp, new_engine = new_engine)
 
         return self.gpt_response
+
+    #build args for request to add docstrings
+    def build_request_docstrings_args(self):
+        #request args
+        summary_new_request = "Add docstrings to the script."
+        sys_mssg = docs_r.sys_mssg
+        request_to_gpt = f'''You will make specific changes to the module key of this JSON object: {self.gpt_response}.\n
+        {ut.concat_dict_to_string(docs_r.docstrings_instructions_dict)}
+        '''
+
+        args_tpl = (summary_new_request,sys_mssg,request_to_gpt)
+        return args_tpl
 
     #build request for initial code according to program description
     def request_raw_code(self, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):

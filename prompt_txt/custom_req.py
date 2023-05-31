@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#add error handling request
+#user custom request to gpt
 
 #TODO move to class var
 program_language="Python"

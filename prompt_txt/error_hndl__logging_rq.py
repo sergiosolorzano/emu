@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 #add error handling request
 
+import raw_code_rq
+import file_management as fm
 #TODO move to class var
 program_language="Python"
 
 sys_mssg = f'''You are going to add error and exception handling and logging functionality to a script written in {program_language} I give you.
+If there is an exception the program terminates gracefully with an error message.
 You will not delete any of the code I give you.
 Your response to this request is exclusively a JSON object using the JSON Object Template provided.
 You must validate the JSON object construct for syntax and parsing the JSON object would not raise an error exception 
@@ -16,13 +19,12 @@ gpt_task = f'''Your Task:
 (1) add error and exception handling functionality, found in {program_language}'s built in packages, to the code found in this JSON object's value for key 'module' 
 without leaving no spaces from the beginning to the first character inserted.
 (2) Add code to catch and handle exceptions for every function and no system exit occurs during the program.
-(3) Error handling for Input Validation: The program should validate all input and be prepared to handle invalid or unexpected input in a robust way.
-(4) add a flag in the module script to enable/disable generating logs. set log level to debug.
+(3) If there is an exception the program terminates gracefully with an error message.
+(4) Error handling for Input Validation: The program should validate all input and be prepared to handle invalid or unexpected input in a robust way.
 **Logging**:
-(1) Without removing any print statements from the code, add the necessary handlers to write log records to a file named module.log
-(2) Without removing any print statements from the code, record to the log file all program and user actions 
-(3) add flag in the module script to enable/disable generating logs. set log level to debug. 
-The flag can be set to enable/disabled, set it is enable.
+(1) Without removing any print statements from the code, add the necessary handlers to write log records to a file named {fm.modules_dir}/{raw_code_rq.module_log_fname}
+(2) Without removing any print statements from the code, record to the log file all program errors info and exceptions and user actions. Add argument exc_info=True to every logging call.
+(3) Set log level to debug.
 (4) use the built-in logging package
 (5) Add Log message format to include the line number in the code where the log statement occurs.
 '''

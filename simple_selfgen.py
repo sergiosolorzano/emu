@@ -8,12 +8,18 @@ import shlex
 import time
 import threading
 from pathlib import Path
+import logging
+
+import shlex
+import log_list_handler as c_log
+import json
 
 #profiler
 import cProfile
 
 #self import modules
 import file_management as fm
+import sg_utils as ut
 
 #TODO: make class
 sys.path.append(fm.m_root)
@@ -37,14 +43,14 @@ def request_menu(oai_req_instance, choice=None):
     #model generates the code according to user description
     print("1.  Generate Raw Code")
     #you can upload your script instead of the model generating the code
-    print("2.  Upload Raw Code Script From File")
+    print("2.  Load Raw Code Script From File")
     #add argparse
     print("3.  Add Argparse")
     print("4.  Exception Handling and Logging")
     print("5.  Add Unit Test Cases")
     print("6.  Run Unit Test Cases")
     print("7.  User Custom Request")
-    print("8.  Run Program And Enter Debug/Logs Loop")
+    print("8.  Run Program With Enter Debug/Logs Loop")
     print("9.  Add Docstrings To Program Code.")
     print("10. Set Menu Sequence")
     print("11. Run All")
@@ -67,7 +73,7 @@ def request_menu(oai_req_instance, choice=None):
                 #Validate and correct JSON object
                 oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 #Save code into module file
-                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name, "#!/usr/bin/env python3\n\n")
                 return False
             case '2':
                 #load user script
@@ -82,13 +88,17 @@ def request_menu(oai_req_instance, choice=None):
                         break
                 
                 print()
-                oai_req_instance.program_description = "Program Description: " + input("Enter Short Program Description: "); print()
+                oai_req_instance.program_description = "Program Description: " + input("Enter Short Program Description (used in requests): "); print()
 
                 #read script
                 user_script = fm.read_file_stored_to_buffer(os.path.basename(path_to_script), os.path.dirname(path_to_script))
                 #hack to step script as a gpt code response for continued conversation with gpt
                 oai_req_instance.gpt_response =  fm.insert_script_in_json(user_script)
-                print(f"\033[43mScript uploaded.\033[0m")
+                #print loaded code
+                code = ut.get_response_value_for_key(oai_req_instance.gpt_response,raw_code.module_name.split(".")[0])
+                #print(code);print()
+                print(f"\033[43mScript loaded.\033[0m")
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name)
                 return False
             case '3':
                 #add argparse
@@ -97,7 +107,7 @@ def request_menu(oai_req_instance, choice=None):
                 #Validate and correct JSON object
                 oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
-                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name, "#!/usr/bin/env python3\n\n")
                 return False
             case '4':
                 #add exception handling and logging
@@ -106,7 +116,7 @@ def request_menu(oai_req_instance, choice=None):
                 #Validate and correct JSON object
                 oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
-                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name, "#!/usr/bin/env python3\n\n")
                 return False
             case '5':
                 #get cached response as starting point for unit test
@@ -127,9 +137,9 @@ def request_menu(oai_req_instance, choice=None):
                         print("\033[43mUnit test functions CLI commands succesfully created.\033[0m")
                         #version and save
                         fm.version_module(fm.modules_dir,raw_code.module_utest_name,fm.modules_dir)
-                        fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response_utest(), fm.initial_dir, raw_code.module_utest_name)
+                        fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response_utest(), fm.initial_dir, raw_code.module_utest_name, "#!/usr/bin/env python3\n\n")
                         #TODO: remove for debugging
-                        fm.write_to_file(fm.m_json_filename,fm.json_dir, oai_req_instance.get_gpt_response_utest())
+                        fm.write_to_file(fm.m_json_filename,fm.json_dir, oai_req_instance.get_gpt_response_utest(), "w")
                         #end remove for debugging
                         break
                 return False
@@ -145,7 +155,7 @@ def request_menu(oai_req_instance, choice=None):
                 #TODO:Tests unit tests were built in the code before executing them
                 oai_req_instance.run_unittests()
                 fm.version_module(fm.modules_dir,raw_code.module_utest_name,fm.modules_dir)
-                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response_utest(), fm.initial_dir, raw_code.module_utest_name)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response_utest(), fm.initial_dir, raw_code.module_utest_name, "#!/usr/bin/env python3\n\n")
                 return False
             case '7':
                 #add user custom request
@@ -174,14 +184,20 @@ def request_menu(oai_req_instance, choice=None):
                 #Validate and correct JSON object
                 oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
-                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name, "#!/usr/bin/env python3\n\n")
 
                 #print(); print(f"\033[41mPending Implementation.\033[0m")
                 return False
             
             case '8':
-                #TODO: run program and enter debug log loop
-                print(); print(f"\033[41mPending Implementation.\033[0m")
+                #run the program with debug/logs loop
+                user_action = input(f"\n\033[1;31m[WARNING]\033[0m This option requires logging functionality, logs will be written to {fm.initial_dir}/{fm.m_module_log_filename}.\n(C)ontinue or (R)equest logging code: \033[0m")
+                if user_action.lower() == "r":
+                    #request logging from model
+                    request_menu(oai_req_instance, '4')
+                else:
+                    execute_prog(oai_req_instance)
+
                 return False
             case '9':
                 #add docstrings
@@ -191,7 +207,7 @@ def request_menu(oai_req_instance, choice=None):
                 #Validate and correct JSON object
                 oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
-                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name)
+                fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name, "#!/usr/bin/env python3\n\n")
                 return False  
             case '10':
                 #TODO: User Set Menu Sequence
@@ -210,6 +226,51 @@ def request_menu(oai_req_instance, choice=None):
             case _:
                 print(); print(f"\033[41mInvalid Option\033[0m")
                 return False
+
+def execute_prog(oai_req_instance):
+    #module and log files
+    full_path_module=os.path.join(fm.modules_dir, raw_code.module_name)
+    full_path_log=os.path.join(fm.modules_dir, fm.m_module_log_filename)
+    #create logger instance
+    logger, c_logger = c_log.config_custom_logger()
+    
+    #truncate log file
+    fm.trunc_file(fm.m_module_log_filename,fm.modules_dir)
+    #user enter cli comm and execute
+    while True:
+        print("-"*40);print()
+        comm = input(f"\nEnter the rest of the CLI command to execute program:\npython3 {full_path_module} ")
+        comm = ['python'] + shlex.split(full_path_module) + shlex.split(comm)
+        try:
+            print(f"Running command: {comm}")
+            subprocess.run(comm, check=True, capture_output=True, text=True)
+        #except subprocess.CalledProcessError as e:
+        except Exception as e:
+            #print log to logfile and screen
+            logger.exception(e)
+            excp = c_logger.pop()
+            print(); print(f"\033[31m[Program exception thrown, log:\033[0m");print("="*40); print(excp)
+            fm.write_to_file(fm.m_module_log_filename,fm.modules_dir, str("\n\n" + excp), "a")
+            
+            #ask user to send logs (get user choice for engine and temperature) or not (get bool False)
+            user_choice = oai_req_instance.get_user_debug_request()
+            if isinstance(user_choice,tuple):
+                #TODO make the request to engine
+                print("Received tuple:",user_choice)
+            else:
+                if user_choice == False:
+                    #TODO: back to menu
+                    print("Received bool:",user_choice)
+
+            #TODO: send request to debug
+            # request_args = oai_req_instance.build_request_debug_log_req_args()
+            # oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+            # #Validate and correct JSON object
+            # oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+            # fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
+            # fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name, "#!/usr/bin/env python3\n\n")
+        
+
 
 def get_user_inputs_custom_request():
     print(); print("Enter request to change the code:")

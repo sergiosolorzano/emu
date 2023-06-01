@@ -32,6 +32,7 @@ import unittest_rq as u_test
 import unittest_cli_comm_rq as unittest_cli_comm
 import custom_req as c_r
 import docstrings_rq as docs_r
+import debug_rq as dg_r
 #import my utils
 import sg_utils as ut
 
@@ -126,9 +127,11 @@ class Openai_Requests:
 
         #print(); 
         print("-"*40);
-        #print(f"\n\033[1;92mResponse: CumTokens:{oai.cum_tokens} RespTokens:{this_conversation_tokens}\033[0m\033[92m: {response['choices'][0]['message']['content']:<10} \n\033[0m")
-        pretty_json_response = json.dumps(json.loads(response['choices'][0]['message']['content']), indent=2, separators=(',', ':'))
-        print(f"\n\033[1;92mResponse: CumTokens:{oai.cum_tokens} RespTokens:{this_conversation_tokens}\n\033[0m\033[92m{pretty_json_response}\n\033[0m")
+        try:
+            pretty_json_response = json.dumps(json.loads(response['choices'][0]['message']['content'].replace('```', '')), indent=2, separators=(',', ':'))
+            print(f"\n\033[1;92mResponse: CumTokens:{oai.cum_tokens} RespTokens:{this_conversation_tokens}\n\033[0m\033[92m{pretty_json_response}\n\033[0m")
+        except Exception as e:
+            print(f"****JSON Received Exception {e}: {response['choices'][0]['message']['content']:<10} \n")
         
         #re-set engine
         oai.deployment_name = tmp_deployment_name
@@ -136,9 +139,9 @@ class Openai_Requests:
         oai.temperature = temp_oai_temp
 
         if u_test:
-            self.gpt_response_utest = json.loads(response['choices'][0]['message']['content'].strip("\n"))
+            self.gpt_response_utest = json.loads(response['choices'][0]['message']['content'].replace('```', '').strip("\n"))
         else:
-            self.gpt_response = json.loads(response['choices'][0]['message']['content'].strip("\n"))
+            self.gpt_response = json.loads(response['choices'][0]['message']['content'].replace('```', '').strip("\n"))
 
     #build args for exception handling request request
     def build_request_exception_handl_req_args(self):
@@ -148,6 +151,18 @@ class Openai_Requests:
         request_to_gpt = f'''You will make specific changes to this JSON object: {self.gpt_response}.
         \n\nThis is the description of what the program does in the the code found in the value for key 'module' of the JSON object':\n
         {self.program_description}. {ut.concat_dict_to_string(error_log_hndl.err_hndl_instructions_dict)}'''
+
+        args_tpl = (summary_new_request,sys_mssg,request_to_gpt)
+        return args_tpl
+
+    #build args to debug log
+    def build_request_debug_log_req_args(self):
+        #request args
+        summary_new_request = "Make changes to the code to correct the error shown in the log file."
+        sys_mssg = dg_r.sys_mssg
+        request_to_gpt = f'''You will make specific changes to this JSON object: {self.gpt_response}.
+        \n\nThis is the description of what the program does in the the code found in the value for key 'module' of the JSON object':\n
+        {self.program_description}. {ut.concat_dict_to_string(dg_r.debug_instructions_dict)} {dg_r.command} {dg_r.error}'''
 
         args_tpl = (summary_new_request,sys_mssg,request_to_gpt)
         return args_tpl
@@ -400,3 +415,61 @@ class Openai_Requests:
         print(); print(f"\033[43mUnit Testing Complete.\033[0m") if not exit_loop else print(f"\033[43mSkipped Unit Tests. Code changes when running these unit tests ignored.\033[0m")
 
         os.chdir(fm.initial_dir)
+
+    def get_user_debug_request(self):
+        while True:
+            print(); choice = input("Request debug with log file? y/n: ")
+            match choice.lower():
+                case 'y':
+                    return(self.get_user_model_and_temp())
+                    break
+                case 'n':
+                    return False
+                case _:
+                    print("Invalid selection.")
+                    continue
+
+    def get_user_model_and_temp(self):
+        engine = oai.gpt_engine_deployment_name
+        temp = 0.7
+
+        while True:
+            print(); print(f"Default Model: {engine[1]} Temperature: {temp}")
+            cont = input("(A)ccept defaults or (C)hange? a/c: ")
+            if cont.lower() == "a":
+                print(f"Engine selected: {engine[1]} Temperature {temp}")
+                return (engine, temp)
+            elif cont.lower() == "c":
+                while True:
+                    print(); choice = input(f"1. Gpt-3.5 Turbo\n2. Codex\nChoose model? ")
+                    match choice:
+                        case '1':
+                            engine = oai.gpt_engine_deployment_name
+                            break
+                        #skip this test, continue with the rest
+                        case '2':
+                            engine = oai.codex_engine_deployment_name
+                            break
+                        case _:
+                            print("Invalid model selection.")
+                            continue
+            else:
+                print("Invalid selection.")
+                continue
+
+            while True:
+                print(); u_temp = input("Enter model temperature (float 0-1): ")
+                try:
+                    u_temp = float(u_temp)
+                except Exception as e:
+                    print(f"Invalid temperature {u_temp}. Value must be float or int value 0-1.")
+                    continue
+                if isinstance(u_temp,float) or isinstance(u_temp, int):
+                    if(u_temp >= 0 and u_temp <= 1.0):
+                        temp = u_temp
+                        print(f"Engine selected: {engine[1]} Temperature {temp}")
+                        return (engine,temp)
+                    else:
+                        print(f"Invalid temperature {u_temp}. Value must be float or int value 0-1.")
+                else:
+                    print(f"Invalid temperature {u_temp}. Value must be float or int value 0-1.")

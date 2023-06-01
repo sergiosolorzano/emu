@@ -5,7 +5,6 @@ import os
 import subprocess
 import json
 from pathlib import Path
-#import initial raw code request requirements
 
 #TODO: add user option for programming language and module filename
 #TODO:fn and dir module
@@ -13,9 +12,6 @@ m_root = os.getenv("HOME")
 m_prompt_dirname = "prompt_txt"
 m_project_dirname = "project"
 m_json_dirname = "response_json"
-m_json_filename = "response.json"
-m_custom_json_dirname = "custom_json"
-m_custom_json_filename = "custom_json.json"
 
 sys.path.append(m_root)
 initial_dir = os.getcwd()
@@ -24,9 +20,15 @@ sys.path.append(f'{initial_dir}/{m_prompt_dirname}')
 modules_dir=f"{initial_dir}/{m_project_dirname}"
 json_dir = f"{initial_dir}/{m_json_dirname}"
 
+#import initial raw code request requirements, requires paths above
 import raw_code_rq as raw_code
 #import my utils
 import sg_utils as ut
+
+m_json_filename = "response.json"
+m_custom_json_dirname = "custom_json"
+m_custom_json_filename = "custom_json.json"
+m_module_log_filename = raw_code.module_log_fname
 
 def create_empty_module(module_name, initial_dir):
 	#change to modules dir
@@ -59,7 +61,7 @@ def get_unlabelled_list(labelled_list, target_label):
 					unlabelled_list.append(e)
 			return unlabelled_list
 
-def write_snippet_to_file(filename,path,snippet, access_mode):
+def write_snippet_to_file(filename,path,snippet):
 	if len(snippet) > 0:
 		full_path=os.path.join(path, filename)
 		Path(full_path).write_text(snippet)
@@ -69,34 +71,52 @@ def clean_up_module(code):
 	code = code.replace("```", "")
 	return code
 
-def write_to_file(filename,path,content):
+def trunc_file(filename,path):
+	#check file exists else create
+	if not os.path.exists(os.path.join(path, filename)):
+		create_empty_module(filename, path)
+	#truncate file
+	path_to_file = Path(path,filename)
+	with path_to_file.open("w") as f:
+		f.truncate(0)
+
+def write_to_file(filename,path,content, access_mode):
 	if len(content) > 0:
 		print("-"*40)
 		path_to_file = Path(path,filename)
 		ext = path_to_file.name.split(".")[1]
-		#text = clean_up_module(text)
 		full_path=os.path.join(path, filename)
-		if ext == "py":
-			Path(full_path).write_text(f"#!/usr/bin/env python3\n\n{content}")
-			comm = ["sudo", "chmod", "+x", full_path]
-			subprocess.run(comm)
-			print(f"Executed command {comm}")
-			print("-"*40); print()
-			print(f"\033[43mCode saved to module file {full_path}\033[0m")
+		if ext == "py" or ext == "log":
+			if access_mode != "a":
+				#Path(full_path).write_text(f"#!/usr/bin/env python3\n\n{content}")
+				Path(full_path).write_text(content)
+			else:
+				with Path(full_path).open(access_mode) as f:
+					f.write(content)
+
+			if ext == "py":
+				comm = ["sudo", "chmod", "+x", full_path]
+				subprocess.run(comm)
+				print(f"Executed command {comm}")
+				print("-"*40); print()
+				print(f"\033[43mCode saved to module file {full_path}\033[0m")
 		elif ext == "json":
+			#overwrite only
 			with Path(full_path).open("w") as target: 
 				json.dump(content, target)
 				print(); print(f"\033[43mResponse saved to JSON file {full_path}\033[0m");
 
-def get_dict_value_save_to_file(gpt_response, initial_dir, filename):
+def get_dict_value_save_to_file(gpt_response, initial_dir, filename, header=""):
     print(); print("-"*40)
     code = ut.get_response_value_for_key(gpt_response,raw_code.module_name.split(".")[0])
     print("Code:"); print(); print(code)
     destination_full_name = os.path.join(modules_dir, filename)
     if not os.path.exists(destination_full_name):
         create_empty_module(filename, initial_dir)
-    write_to_file(filename,modules_dir,code)
-    
+    #add bash to script
+    code = header + code
+    write_to_file(filename,modules_dir,code, "w")
+
 def version_module(path_original_fn, original_fn, path_dest_fn):
 	original_full_path_fn = os.path.join(path_original_fn, original_fn)
 	extension = original_fn.split(".")[1]
@@ -135,6 +155,13 @@ def print_json_on_screen(json_data):
         #print(); print("JSON Data:\n");
         print(json.dumps(json_data, indent=2, separators=(',', ':')))
 
+def insert_script_in_json(a_script):
+    json_dict = {"module":a_script}
+    #return json obj
+    json_str = json.dumps(json_dict)
+    a = json.loads(json_str)
+    return json.loads(json_str)
+
 def delete_all_dir_files(target_dir):
 		#del all project module files
 		with os.scandir(target_dir) as this_dir:
@@ -146,10 +173,4 @@ def create_dir(target_dir):
         #os.makedirs(target_dir, exist_ok=True)
         target_dir.mkdir(parents=False, exist_ok=True)
 
-def insert_script_in_json(a_script):
-    json_dict = {"module":a_script}
-    #return json obj
-    json_str = json.dumps(json_dict)
-    a = json.loads(json_str)
-    print(type(json_dict),type(json_str),type(a))
-    return json.loads(json_str)
+

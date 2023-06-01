@@ -32,6 +32,7 @@ Repo file structure:
 ```
 ---------------------------------------------
 
+Python v3.10+ required
 Python required packages: See requirements.txt
 Add this package to your sys.path
 

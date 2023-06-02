@@ -147,12 +147,11 @@ def read_file_stored_to_buffer(filename,path):
 		if ext != "json":
 			return Path(full_path).read_text()
 
-		#https://gist.github.com/tomschr/86a8c6f52b81e35ac4723fef8435ec43
+		#thanks to https://gist.github.com/tomschr/86a8c6f52b81e35ac4723fef8435ec43
 		with Path(full_path).open(encoding="UTF-8") as buff:
 			return json.load(buff)
 
 def print_json_on_screen(json_data):
-        #print(); print("JSON Data:\n");
         print(json.dumps(json_data, indent=2, separators=(',', ':')))
 
 def insert_script_in_json(a_script):

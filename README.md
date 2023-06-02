@@ -17,15 +17,17 @@ Repo file structure:
 │			├── clean_json_rq.py
 │			├── error_hndl__logging_rq.py
 │			├── input_and_argparse_rq.py
-│			├── module_requirements_all.py
-│			├── module_requirements_atomic_2.py
-│			├── module_requirements_atomic.py
 │			├── raw_code_rq.py
 │			├── unittest_cli_comm_rq.py
+│			├── docstrings_rq.py
+│			├── debug_rq.py
+│			├── custom_req.py
 │			└── unittest_rq.py
+
 ├── README.md
 ├── requirements.txt
 ├── response_json			#dir: response json files
+├── log_list_handler.py		#custom log handler
 ├── sample_self_config.py	#Sample: openai/azure models keys.
 ├── sg_utils.py				#request management utilities
 └── simple_selfgen.py		#Menu block. Requires pointing scripts that import self_config.py (e.g sys.path.append) to dir where you save self_config.py

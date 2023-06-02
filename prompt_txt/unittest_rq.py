@@ -14,8 +14,10 @@ If there is an exception the program terminates gracefully with an error message
 You will not delete any of the code I give you.
 The name of the module (.py file) is {module_name}.
 Your response to this request is exclusively a JSON object using the JSON Object Template provided.
+Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+Escape every special character in the code for json.load to read the JSON object correctly.
 You must validate the JSON object construct for syntax and parsing the JSON object would not raise an error exception 
-according to {program_language}'s built-in JSON module.
+according to {program_language}'s built-in JSON module. Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
 '''
 #Unittest test cases must be defined at the top level of the module (not inside a function) so they can be discovered and run.
 #It is very important you do not nest or define the test case unittest.TestCase function inside inside any other function.
@@ -48,6 +50,7 @@ json_object_requirements = f'''Your response to this request is exclusively:
 (a) a JSON object with the template described in JSON Object Template.
 (b) You ensure parsing the JSON object using {program_language}'s built-in JSON module would not raise an error exception.
 (c) You add nothing else to your response of this request but the JSON object.
+(d) escape every special character in the code for json.load to read the JSON object correctly.
 '''
 
 comments = '''Your response meets these Comment Requirements:

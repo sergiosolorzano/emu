@@ -7,7 +7,9 @@ program_language="Python"
 sys_mssg = f'''You are going to add docstrings to a script written in {program_language} I give you.
 You will not delete any of the code I give you.
 Your response to this request is exclusively a JSON object using the JSON Object Template provided.
-You must validate the JSON object construct in your response for syntax.
+Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+Escape every special character in the code for json.load to read the JSON object correctly.
+You must validate the JSON object construct in your response for syntax. Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
 You ensure parsing the JSON object in your response using {program_language}'s built-in JSON module would not raise an error exception.
 '''
 
@@ -23,7 +25,8 @@ Remember, the goal of the docstring is to help other developers understand the p
 json_object_requirements = f'''Your response to this request is exclusively:
 (a) a JSON object with the template described in JSON Object Template.
 (b) You ensure parsing the JSON object using {program_language}'s built-in JSON module would not raise an error exception.
-(c) You add nothing else to your response of this request but the JSON object.
+(c) escape every special character in the code for json.load to read the JSON object correctly.
+(d) You add nothing else to your response of this request but the JSON object.
 '''
 
 json_required_format ='''JSON Object Template:

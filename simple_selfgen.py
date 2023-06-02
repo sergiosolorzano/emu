@@ -69,9 +69,13 @@ def request_menu(oai_req_instance, choice=None):
             case '1':
                 #request code
                 oai_req_instance.program_description = "Program Description: " + input("Enter Program Description and Features: ")
-                oai_req_instance.request_raw_code(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                resp = oai_req_instance.request_raw_code(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                if resp == False:
+                    #JSON is invalid and user chose to quit
+                    print("JSON is invalid, returning to main menu at user's request.")
+                    return False
                 #Validate and correct JSON object
-                oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                #oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 #Save code into module file
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name, "#!/usr/bin/env python3\n\n")
                 return False
@@ -81,7 +85,7 @@ def request_menu(oai_req_instance, choice=None):
                     path_to_script = input(f"Enter Path to {raw_code.program_language} Script: ");
                     #check user updated custom json for the request
                     if not os.path.isfile(path_to_script):
-                        print(f"\033[1;31m[ERROR]\033[0m Cannot Find Script File {path_to_script}.\033[0m")
+                        print(f"\033[1;31m[ERROR]\033[0m Cannot Find Script File {path_to_script}\033[0m")
                         continue
                     else: 
                         print("Script Found.")
@@ -103,18 +107,26 @@ def request_menu(oai_req_instance, choice=None):
             case '3':
                 #add argparse
                 request_args = oai_req_instance.build_request_input_and_argparse_args()
-                oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                resp = oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                if resp == False:
+                    #JSON is invalid and user chose to quit
+                    print("JSON is invalid, returning to main menu at user's request.")
+                    return False
                 #Validate and correct JSON object
-                oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                #oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name, "#!/usr/bin/env python3\n\n")
                 return False
             case '4':
                 #add exception handling and logging
                 request_args = oai_req_instance.build_request_exception_handl_req_args()
-                oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = 0.2, new_engine = oai.codex_engine_deployment_name)
+                resp = oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = 0.2, new_engine = oai.codex_engine_deployment_name)
+                if resp == False:
+                    #JSON is invalid and user chose to quit
+                    print("JSON is invalid, returning to main menu at user's request.")
+                    return False
                 #Validate and correct JSON object
-                oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                #oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name, "#!/usr/bin/env python3\n\n")
                 return False
@@ -125,9 +137,13 @@ def request_menu(oai_req_instance, choice=None):
                 #add unit test cases
                 request_args = oai_req_instance.build_request_unittest_args()
                 while True:
-                    oai_req_instance.request_code_enhancement(*request_args, u_test=True, new_temp=0.2, new_engine=oai.codex_engine_deployment_name)
+                    resp = oai_req_instance.request_code_enhancement(*request_args, u_test=True, new_temp=0.2, new_engine=oai.codex_engine_deployment_name)
+                    if resp == False:
+                        #JSON is invalid and user chose to quit
+                        print("JSON is invalid, returning to main menu at user's request.")
+                        return False
                     #Validate and correct JSON object
-                    oai_req_instance.validate_and_clean_json(u_test=False, custom_json=u_test.json_required_format, new_temp=oai.temperature, new_engine=oai.gpt_engine_deployment_name)
+                    #oai_req_instance.validate_and_clean_json(u_test=False, custom_json=u_test.json_required_format, new_temp=oai.temperature, new_engine=oai.gpt_engine_deployment_name)
                     #Validate unittest cli prompts
                     if oai_req_instance.validate_unittest_functions() == False:
                         print("Unit test functions not created. Re-create unit test code and cli commands.")
@@ -179,10 +195,13 @@ def request_menu(oai_req_instance, choice=None):
 
                 request_args = oai_req_instance.build_request_custom_user_args(custom_sys_req_input, custom_conv_req_input, custom_json)
                 #send request
-                oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = 0.2, new_engine = oai.codex_engine_deployment_name)
-
+                resp = oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = 0.2, new_engine = oai.codex_engine_deployment_name)
+                if resp == False:
+                    #JSON is invalid and user chose to quit
+                    print("JSON is invalid, returning to main menu at user's request.")
+                    return False
                 #Validate and correct JSON object
-                oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                #oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name, "#!/usr/bin/env python3\n\n")
 
@@ -191,21 +210,32 @@ def request_menu(oai_req_instance, choice=None):
             
             case '8':
                 #run the program with debug/logs loop
-                user_action = input(f"\n\033[1;31m[WARNING]\033[0m This option requires logging functionality, logs will be written to {fm.initial_dir}/{fm.m_module_log_filename}.\n(C)ontinue or (R)equest logging code: \033[0m")
+                user_action = input(f"\n\033[1;31m[WARNING]\033[0m Note on option requirements:\n\t=> Requires logging functionality, logs will be written to {fm.initial_dir}/{fm.m_module_log_filename}\n\t=> Program execution via CLI, you can add args to the code with the Argparse option.\n\t=> This option is not compatible to run unit tests.\n\n(C)ontinue (R)equest logging code (A) Add Argparse: \033[0m")
                 if user_action.lower() == "r":
                     #request logging from model
                     request_menu(oai_req_instance, '4')
+                    #request adding argparse
+                elif user_action.lower() == "a":
+                    request_menu(oai_req_instance, '3')
                 else:
-                    execute_prog(oai_req_instance)
-
+                    success = execute_prog(oai_req_instance)
+                    if success:
+                        #Validate and correct JSON object
+                        #oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                        fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
+                        fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name)
                 return False
             case '9':
                 #add docstrings
                 #TODO:consider sphinx to present to users for Read the Docs platform support
                 request_args = oai_req_instance.build_request_docstrings_args()
-                oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                resp = oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                if resp == False:
+                    #JSON is invalid and user chose to quit
+                    print("JSON is invalid, returning to main menu at user's request.")
+                    return False
                 #Validate and correct JSON object
-                oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                #oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name, "#!/usr/bin/env python3\n\n")
                 return False  
@@ -232,45 +262,99 @@ def execute_prog(oai_req_instance):
     full_path_module=os.path.join(fm.modules_dir, raw_code.module_name)
     full_path_log=os.path.join(fm.modules_dir, fm.m_module_log_filename)
     #create logger instance
-    logger, c_logger = c_log.config_custom_logger()
+    logger, log_list_handler = c_log.config_custom_logger()
     
-    #truncate log file
-    fm.trunc_file(fm.m_module_log_filename,fm.modules_dir)
     #user enter cli comm and execute
     while True:
-        print("-"*40);print()
-        comm = input(f"\nEnter the rest of the CLI command to execute program:\npython3 {full_path_module} ")
-        comm = ['python'] + shlex.split(full_path_module) + shlex.split(comm)
+        print("-"*40)
+        exception_flag = False
+        exception_str = ""
+        user_comm_tail = input(f"\n(Q)uit or Enter the rest of the CLI command to execute program:\npython3 {full_path_module} ")
+        if user_comm_tail.lower() == "q":
+            break
+        comm = ['python'] + shlex.split(full_path_module) + shlex.split(user_comm_tail)
         try:
-            print(f"Running command: {comm}")
-            subprocess.run(comm, check=True, capture_output=True, text=True)
-        #except subprocess.CalledProcessError as e:
+            #truncate log file
+            fm.trunc_file(fm.m_module_log_filename,fm.modules_dir)
+            print(); print(f"Running command: {comm}")
+            result = subprocess.run(comm, check=True, capture_output=True, text=True)
+            if result.returncode != 0:
+                raise subprocess.CalledProcessError(result.returncode, result.args, result.stdout, result.stderr)
+            print("Command executed successfully")
+            print(f"Command output: {result.stdout}")
+            print(f"Command return code: {result.returncode}")
+            print(f"Command stderr: {result.stderr}")
+        except subprocess.CalledProcessError as e:
+            print("="*40); print(f"\033[31mSubprocess Exception thrown, log:\033[0m")
+            exception_flag = True
+            print(f"Command failed with exit code {e.returncode}")
+            print(f"Command output: {e.output}")
+            print(f"Command error: {e.stderr}")
+            if e.stderr or e.returncode != 0 or "error" in e.output.lower():
+                exception_str += "subprocess.CalledProcessError command returncode:" + str(e.returncode) \
+                + f"\nsubprocess.CalledProcessError command error:" + str(e.stderr) \
+                + f"\nsubprocess.CalledProcessError command output:" + str(e.output)
+            # if user_action_send_debug_request_manager(comm, log_list_handler, logger, exception_str, oai_req_instance):
+            #     #execute program again
+            #     continue
+            # else:
+            #     break
         except Exception as e:
+            print("="*40); print(f"\033[31mProgram exception thrown, log:\033[0m")
+            exception_flag = True
+            #print("RAW Exception",e);print()
             #print log to logfile and screen
-            logger.exception(e)
-            excp = c_logger.pop()
-            print(); print(f"\033[31m[Program exception thrown, log:\033[0m");print("="*40); print(excp)
-            fm.write_to_file(fm.m_module_log_filename,fm.modules_dir, str("\n\n" + excp), "a")
-            
-            #ask user to send logs (get user choice for engine and temperature) or not (get bool False)
-            user_choice = oai_req_instance.get_user_debug_request()
-            if isinstance(user_choice,tuple):
-                #TODO make the request to engine
-                print("Received tuple:",user_choice)
-            else:
-                if user_choice == False:
-                    #TODO: back to menu
-                    print("Received bool:",user_choice)
-
-            #TODO: send request to debug
-            # request_args = oai_req_instance.build_request_debug_log_req_args()
-            # oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
-            # #Validate and correct JSON object
-            # oai_req_instance.validate_and_clean_json(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
-            # fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
-            # fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name, "#!/usr/bin/env python3\n\n")
+            exception_str += e
         
+        #user action address exception
+        if exception_flag: 
+            if user_action_send_debug_request_manager(comm, log_list_handler, logger, exception_str, oai_req_instance):
+                    #execute program again
+                    continue
+            else:
+                break
 
+def user_action_send_debug_request_manager(command, log_list_handler, logger, exception_str, oai_req_instance):
+    #add exception message to log_list_handler
+    logger.exception(exception_str)
+    #pop log exception
+    excp = log_list_handler.pop()
+    #print exception on terminal
+    #log_list_handler.print_logs()
+    
+    #write exception to log file.
+    #We append because program writes logs to same log file. Next loop log file is truncated.
+    fm.write_to_file(fm.m_module_log_filename,fm.modules_dir, str("\n\n" + excp), "a")
+    print("="*40)
+
+    #user action send request to debug
+    if user_action_request_debug(oai_req_instance, excp, command) == False:
+        #user choose another command or back to menu
+        mssg= "Run another (C)ommand or (M)enu: "
+        if prompt_user_cont_or_menu(mssg):
+            #execute program again
+            return True
+        else:
+            return False
+
+def user_action_request_debug(oai_req_instance, excp, comm):
+    #ask user to send logs (get user choice for engine and temperature) or not (get bool False)
+    user_choice = oai_req_instance.get_user_debug_request()
+    if isinstance(user_choice,tuple):
+        #send request to debug
+        request_args = oai_req_instance.build_request_debug_log_req_args(excp, comm)
+        resp = oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = user_choice[1], new_engine = user_choice[0])
+        fm.version_module(fm.modules_dir,raw_code.module_name,fm.modules_dir)
+        fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name)
+        if resp == False:
+            #JSON is invalid and user chose to quit
+            print("JSON is invalid, returning to main menu at user's request.")
+            return False
+        return True
+    else:
+        if user_choice == False:
+            #user declines sending a debug request
+            return False
 
 def get_user_inputs_custom_request():
     print(); print("Enter request to change the code:")
@@ -293,13 +377,8 @@ def get_user_inputs_custom_request():
 
 def prompt_user_cont_or_menu(mssg):
     while True:
-        print(mssg)
-        choice = input("=>Press \033[1m(c)\033[0m to Continue.\n=>Press \033[1m(m)\033[0m back to Menu.\n\nChoice: ")
-        print(); print("="*40)
-
-        #take action according to user choice
-        exception_handling(choice)
-        
+        choice = input(mssg)
+        #print(); print("="*40)
         match choice.lower():
             case 'c':
                 return True

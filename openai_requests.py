@@ -114,6 +114,8 @@ class Openai_Requests:
             max_tokens=oai.max_response_tokens,
         )
 
+        clean_response = response['choices'][0]['message']['content'].replace("'''","'").replace('"""','"').replace('```', '`')
+
         #stop timer
         stop_event.set()
         thread.join()
@@ -125,23 +127,28 @@ class Openai_Requests:
 
         ut.token_limit(this_conversation_tokens)
 
-        #print(); 
-        print("-"*40);
-        try:
-            pretty_json_response = json.dumps(json.loads(response['choices'][0]['message']['content'].replace('```', '')), indent=2, separators=(',', ':'))
-            print(f"\n\033[1;92mResponse: CumTokens:{oai.cum_tokens} RespTokens:{this_conversation_tokens}\n\033[0m\033[92m{pretty_json_response}\n\033[0m")
-        except Exception as e:
-            print(f"****JSON Received Exception {e}: {response['choices'][0]['message']['content']:<10} \n")
-        
         #re-set engine
         oai.deployment_name = tmp_deployment_name
         #re-set temp
         oai.temperature = temp_oai_temp
 
+        print("-"*40);
+        try:
+            pretty_json_response = json.dumps(json.loads(clean_response), indent=2, separators=(',', ':')) #.replace('```', '')
+            print(f"\n\033[1;92mResponse: CumTokens:{oai.cum_tokens} RespTokens:{this_conversation_tokens}\n\033[0m\033[92m{pretty_json_response}\n\033[0m")
+        except Exception as e:
+            print(f"Exception on JSON Received: {e}: {clean_response:<10} \n")
+            print(); print("RAW print:",clean_response)
+            print("-"*40);
+            #JSON invalid, re-request or quit
+            return False
+
         if u_test:
-            self.gpt_response_utest = json.loads(response['choices'][0]['message']['content'].replace('```', '').strip("\n"))
+            self.gpt_response_utest = json.loads(clean_response) #.strip("\n") #.replace('```', '')
         else:
-            self.gpt_response = json.loads(response['choices'][0]['message']['content'].replace('```', '').strip("\n"))
+            self.gpt_response = json.loads(clean_response) #.strip("\n")  #.replace('```', '')
+
+        return True
 
     #build args for exception handling request request
     def build_request_exception_handl_req_args(self):
@@ -149,20 +156,20 @@ class Openai_Requests:
         summary_new_request = "Add Error and Exception Handling to the code."
         sys_mssg = error_log_hndl.sys_mssg
         request_to_gpt = f'''You will make specific changes to this JSON object: {self.gpt_response}.
-        \n\nThis is the description of what the program does in the the code found in the value for key 'module' of the JSON object':\n
-        {self.program_description}. {ut.concat_dict_to_string(error_log_hndl.err_hndl_instructions_dict)}'''
+        \nThis is the description of what the program does in the the code found in the value for key 'module' of the JSON object:\n
+        {self.program_description}\n\n{ut.concat_dict_to_string(error_log_hndl.err_hndl_instructions_dict)}'''
 
         args_tpl = (summary_new_request,sys_mssg,request_to_gpt)
         return args_tpl
 
     #build args to debug log
-    def build_request_debug_log_req_args(self):
+    def build_request_debug_log_req_args(self,error, command):
         #request args
-        summary_new_request = "Make changes to the code to correct the error shown in the log file."
+        summary_new_request = "Change the code to correct errors shown in the log file."
         sys_mssg = dg_r.sys_mssg
         request_to_gpt = f'''You will make specific changes to this JSON object: {self.gpt_response}.
-        \n\nThis is the description of what the program does in the the code found in the value for key 'module' of the JSON object':\n
-        {self.program_description}. {ut.concat_dict_to_string(dg_r.debug_instructions_dict)} {dg_r.command} {dg_r.error}'''
+        \nThis is the description of what the program does in the the code found in the value for key 'module' of the JSON object:\n{self.program_description}.
+        \n{ut.concat_dict_to_string(dg_r.debug_instructions_dict)}\n\n{dg_r.command}{command}\n\n{dg_r.error}{error}'''
 
         args_tpl = (summary_new_request,sys_mssg,request_to_gpt)
         return args_tpl
@@ -227,14 +234,6 @@ class Openai_Requests:
         args_tpl = (summary_new_request,sys_mssg,request_to_gpt)
         return args_tpl
 
-    #build args for miscellaneous code enhancements
-    def request_code_enhancement(self, *request_args, u_test, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
-        #unpack request args for clarity
-        summary_new_request,sys_mssg,request_to_gpt = request_args
-        
-        #send request
-        self.send_request(sys_mssg, request_to_gpt, summary_new_request, u_test, new_temp = new_temp, new_engine = new_engine)
-
     #build args for request to add docstrings
     def build_request_docstrings_args(self):
         #request args
@@ -247,59 +246,90 @@ class Openai_Requests:
         args_tpl = (summary_new_request,sys_mssg,request_to_gpt)
         return args_tpl
 
-    #build request for initial code according to program description
+    #request for initial code according to program description
     def request_raw_code(self, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
-        #Get raw code JSON object
-        #TODO user input
-        #self.program_description = "Program Description: " + "the program is a calculator, collects two numbers from a user and the arithmetic operation to perform being a choice of sum, subtract, multiply or divide. Then print the result on the terminal."
-        #self.program_description = "Program Description: " + "The program will prompt the user to enter a sentence or paragraph, and it will count the number of words in the input."
-        #self.program_description = "Program Description: " + "The program will generate a random number, and the user will be prompted to guess the number. The program will provide feedback on whether the guess is too high, too low, or correct."
-        #self.program_description = "Program Description: " + "The program allows the user to add tasks to a todo list, view the list, and mark tasks as completed."
-        #self.program_description = "Program Description: " + "The program allows the user to add tasks to a todo list, view the list, and mark tasks as completed. The code writes, updates and read the resulting list to a file."
-        #self.program_description = "Program Description: " + input("")
-        
         #request args
         summary_new_request = "Request raw program code."
         sys_mssg = raw_code.sys_mssg
         request_to_gpt = ut.concat_dict_to_string(raw_code.raw_instructions_dict) + "\n\n" + self.program_description
         #send request
-        self.send_request(sys_mssg, request_to_gpt, summary_new_request, new_temp = new_temp, new_engine = new_engine)
+        while True:
+            #send request, response JSON may be broken in which case possible re-request
+            resp = self.send_request(sys_mssg, request_to_gpt, summary_new_request, new_temp = new_temp, new_engine = new_engine)
+            if resp == False: 
+                #broken JSON
+                if self.broken_json_user_action() == False:
+                    return False
+                else:
+                    return True
+            #valid JSON response received
+            return True
+
+    #build args for miscellaneous code enhancements
+    def request_code_enhancement(self, *request_args, u_test, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
+        #unpack request args for clarity
+        summary_new_request,sys_mssg,request_to_gpt = request_args
+        while True:
+            #send request, response JSON may be broken in which case possible re-request
+            resp = self.send_request(sys_mssg, request_to_gpt, summary_new_request, u_test, new_temp = new_temp, new_engine = new_engine)
+            if resp == False: 
+                #broken JSON
+                if self.broken_json_user_action() == True:
+                    continue
+                else:
+                    return False
+            #valid JSON response received
+            return True
+
+    def broken_json_user_action(self):
+        while True:
+            user_choice = input("The model's JSON response is broken, re-request? y/n: ")
+            match user_choice.lower():
+                case 'y':
+                    return True
+                case 'n':
+                    return False
+                case _:
+                    print("Invalid selection.")
+                    continue
+
+    
 
     #request ai to validate and clean returned json
-    def validate_and_clean_json(self, u_test = False, custom_json=None, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
-        print(); print("-"*40);print()
-        print("Validate JSON Object format.")
+    # def validate_and_clean_json(self, u_test = False, custom_json=None, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
+    #     print(); print("-"*40);print()
+    #     print("Validate JSON Object format.")
         
-        while True:
-            try:
-                #Validate JSON object
-                if u_test:
-                    code = ut.get_response_value_for_key(self.gpt_response_utest, raw_code.module_name.split(".")[0])
-                else:
-                    code = ut.get_response_value_for_key(self.gpt_response, raw_code.module_name.split(".")[0])
-                print("\033[43mJSON object is valid.\033[0m")
-                break
-            except Exception as e:
-                #Validation failed - args for JSON clean request
-                summary_new_request = "JSON Validation failed: Request clean format with existing data."
-                sys_mssg = clean_json.sys_mssg
-                json_format = None
-                if custom_json is not None:
-                    json_format ='''.JSON Object Template:
-                    {
-                    "module":""
-                    }
-                    '''
-                else:
-                    json_format = custom_json
+    #     while True:
+    #         try:
+    #             #Validate JSON object
+    #             if u_test:
+    #                 code = ut.get_response_value_for_key(self.gpt_response_utest, raw_code.module_name.split(".")[0])
+    #             else:
+    #                 code = ut.get_response_value_for_key(self.gpt_response, raw_code.module_name.split(".")[0])
+    #             print("\033[43mJSON object is valid.\033[0m")
+    #             break
+    #         except Exception as e:
+    #             #Validation failed - args for JSON clean request
+    #             summary_new_request = "JSON Validation failed: Request clean format with existing data."
+    #             sys_mssg = clean_json.sys_mssg
+    #             json_format = None
+    #             if custom_json is not None:
+    #                 json_format ='''.JSON Object Template:
+    #                 {
+    #                 "module":""
+    #                 }
+    #                 '''
+    #             else:
+    #                 json_format = custom_json
 
-                #request engine to clean JSON obj with existing data
-                if u_test:
-                    request_to_gpt = ut.concat_dict_to_string(clean_json.clean_json_instructions_dict) + json_format + ".This is the JSON object for you to validate and correct:" + self.gpt_response_utest
-                else:
-                    request_to_gpt = ut.concat_dict_to_string(clean_json.clean_json_instructions_dict) + json_format + ".This is the JSON object for you to validate and correct:" + self.gpt_response
+    #             #request engine to clean JSON obj with existing data
+    #             if u_test:
+    #                 request_to_gpt = ut.concat_dict_to_string(clean_json.clean_json_instructions_dict) + json_format + ".This is the JSON object for you to validate and correct:" + self.gpt_response_utest
+    #             else:
+    #                 request_to_gpt = ut.concat_dict_to_string(clean_json.clean_json_instructions_dict) + json_format + ".This is the JSON object for you to validate and correct:" + self.gpt_response
 
-                self.send_request(sys_mssg, request_to_gpt,summary_new_request, u_test, new_temp = new_temp, new_engine = new_engine)
+    #             self.send_request(sys_mssg, request_to_gpt,summary_new_request, u_test, new_temp = new_temp, new_engine = new_engine)
 
 
     #validate construction of unit test commands
@@ -375,6 +405,7 @@ class Openai_Requests:
             for bt in unittest_cli_c_list:
                 try:
                     bt_c = bt.replace("python ","")
+                    bt_c = bt_c.replace("python3","")
                     comm_list = shlex.split(bt_c)
                     comm = ['python'] + comm_list
                     #TODO: user choose request re-code failure with log: print(); print(f"Running command: {comm}"). Get array cli errors
@@ -421,7 +452,11 @@ class Openai_Requests:
             print(); choice = input("Request debug with log file? y/n: ")
             match choice.lower():
                 case 'y':
-                    return(self.get_user_model_and_temp())
+                    #set engine defaults
+                    def_temp = 0.2
+                    def_engine = oai.codex_engine_deployment_name
+                    #user set engine/temperature
+                    return(self.get_user_model_and_temp(def_engine,def_temp))
                     break
                 case 'n':
                     return False
@@ -429,16 +464,13 @@ class Openai_Requests:
                     print("Invalid selection.")
                     continue
 
-    def get_user_model_and_temp(self):
-        engine = oai.gpt_engine_deployment_name
-        temp = 0.7
-
+    def get_user_model_and_temp(self, def_engine,def_temp):
         while True:
-            print(); print(f"Default Model: {engine[1]} Temperature: {temp}")
+            print(); print(f"Default Model: {def_engine[1]} Temperature: {def_temp}")
             cont = input("(A)ccept defaults or (C)hange? a/c: ")
             if cont.lower() == "a":
-                print(f"Engine selected: {engine[1]} Temperature {temp}")
-                return (engine, temp)
+                print(f"Engine selected: {def_engine[1]} Temperature {def_temp}")
+                return (def_engine, def_temp)
             elif cont.lower() == "c":
                 while True:
                     print(); choice = input(f"1. Gpt-3.5 Turbo\n2. Codex\nChoose model? ")
@@ -473,3 +505,17 @@ class Openai_Requests:
                         print(f"Invalid temperature {u_temp}. Value must be float or int value 0-1.")
                 else:
                     print(f"Invalid temperature {u_temp}. Value must be float or int value 0-1.")
+
+
+
+
+
+#Get raw code JSON object
+        #TODO user input
+        #self.program_description = "Program Description: " + "the program is a calculator, collects two numbers from a user and the arithmetic operation to perform being a choice of sum, subtract, multiply or divide. Then print the result on the terminal."
+        #self.program_description = "Program Description: " + "The program will prompt the user to enter a sentence or paragraph, and it will count the number of words in the input."
+        #self.program_description = "Program Description: " + "The program will generate a random number, and the user will be prompted to guess the number. The program will provide feedback on whether the guess is too high, too low, or correct."
+        #self.program_description = "Program Description: " + "The program allows the user to add tasks to a todo list, view the list, and mark tasks as completed."
+        #self.program_description = "Program Description: " + "The program allows the user to add tasks to a todo list, view the list, and mark tasks as completed. The code writes, updates and read the resulting list to a file."
+        #self.program_description = "Program Description: " + input("")
+        

@@ -11,8 +11,9 @@ module_log_fname = "module.log"
 
 sys_mssg = f'''You program in {program_language}.
 You create the code that implements the description in Program Description and that follows these specific requirements as outlined in Requirements.
-Add the code for the function program() to have user input entered exclusively via command line interface (CLI) be executed in a statement __name__ == '__main__'.
-You insert the code in a JSON object.
+Add statement __name__ == '__main__' to the code module .
+You insert the code in a JSON object. Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+(d) escape every special character in the code for json.load to read the JSON object correctly.
 Your response to this request is exclusively a JSON object using the JSON Object Template provided.
 You must validate the JSON object construct for syntax.
 You ensure parsing the JSON object using {program_language}'s built-in JSON module would not raise an error exception.
@@ -29,6 +30,7 @@ json_object_requirements = f'''Your response to this request is exclusively:
 (a) a JSON object with the template described in JSON Required Format Template.
 (b) You ensure parsing the JSON object using {program_language}'s built-in JSON module would not raise an error exception.
 (c) You add nothing else to your response of this request but the JSON object.
+(d) escape every special character in the code for json.load to read the JSON object correctly.
 '''
 
 task_requirements = '''Your response to this request meets every requirement. Requirements:
@@ -51,15 +53,11 @@ module_requirements = '''Code Requirements:
 (1) each method in the module is atomic, for example a calculator has different methods to sum, divide, multiply or subtract
 (2) create in the code a function named program(arguments) with the required arguments for program to execute the main program
 (3) create the code to print on screen program results
-(4) Important: Add the code for the function program() to have user input entered exclusively via command line interface (CLI) be executed in a statement __name__ == '__main__'.
-It is important the code will not have any user input() method.
+(4) Add statement __name__ == '__main__' to the code module.
 (5) the code meets the requirements described in:'Comment Requirements'
 (6) place every module you import are at the top of the code and not inside any function you create
-(7) Do not enclose anything in the JSON Object with three double or single quotes
+(7) Do not enclose anything either at the beginning or the end in the JSON Object with three double or single quotes
 '''
-# Add a check whether any arguments were provided when running the script on CLI. If no arguments were provided, the code reverts to the input() method.
-#(3) program() has the arguments it receives from user input
-
 json_required_format ='''JSON Required Format Template:
 {
 "module":"Insert here the code you produced as described in Program Description leaving no spaces from the beginning to the first character inserted"

@@ -3,27 +3,35 @@
 
 #TODO move to class var
 program_language="Python"
+language_version = "3.10"
 
-sys_mssg = f'''You are going to add user input and argparse functionality to a script written in {program_language} I give you.
+sys_mssg = f'''You are going to add argparse arguments functionality to a script written in {program_language} version above {language_version} I give you.
+Important: Do not include required=True in argparse's add_argument(), e.g. parser.add_argument('num1', type=float, help='First number').
 You will not delete any of the code I give you.
+Do not add arguments of the form parser.add_argument -foo and --foo.
 Your response to this request is exclusively a JSON object using the JSON Object Template provided.
 You must validate the JSON object construct for syntax.
 You ensure parsing the JSON object using {program_language}'s built-in JSON module would not raise an error exception.
+Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+Escape every special character in the code for json.load to read the JSON object correctly.
 '''
 
 gpt_task = f'''Your Task:
-(1) add user input and argparse functionality to the code found in this JSON object's value for key 'module' 
+(1) add argparse arguments functionality for the program to run to the code found in this JSON object's value for key 'module' 
 without leaving no spaces from the beginning to the first character inserted.
-(2) Add the code for the function program() to have user input and be executed in a statement __name__ == '__main__'.
-(3) Add Argparse with version, set version = 1.0, and help only for program() intput arguments.
+(2) Important: Do not include required=True in argparse's add_argument(), e.g. parser.add_argument('num1', type=float, help='First number').
+(3) Do not add arguments of the form parser.add_argument -foo and --foo.
+(4) Add the code for the function program() to have user input and be executed in a statement __name__ == '__main__'.
+(5) Add Argparse arguments for version (version = 1.0) and help only for program() arguments.
 Create the argparse input help for each individual argument in program().
-(4) Code argparse to display help with any arguments required to execute program() and a description for these arguements.
+(6) Code argparse to display help with the arguments to execute program() and a description for these arguements.
 '''
 
 json_object_requirements = f'''Your response to this request is exclusively:
-(a) a JSON object with the template described in JSON Required Format Template.
+(a) a JSON object with the template described in JSON Object Template.
 (b) You ensure parsing the JSON object using {program_language}'s built-in JSON module would not raise an error exception.
 (c) You add nothing else to your response of this request but the JSON object.
+(d) escape every special character in the code for json.load to read the JSON object correctly.
 '''
 
 comments = '''Your response meets these Comment Requirements:

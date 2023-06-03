@@ -23,7 +23,7 @@ json_dir = f"{initial_dir}/{m_json_dirname}"
 #import initial raw code request requirements, requires paths above
 import raw_code_rq as raw_code
 #import my utils
-import sg_utils as ut
+import request_utils as ut
 
 m_json_filename = "response.json"
 m_custom_json_dirname = "custom_json"

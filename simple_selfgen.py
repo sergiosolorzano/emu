@@ -19,7 +19,7 @@ import cProfile
 
 #self import modules
 import file_management as fm
-import sg_utils as ut
+import request_utils as ut
 
 #TODO: make class
 sys.path.append(fm.m_root)
@@ -42,9 +42,8 @@ def request_menu(oai_req_instance, choice=None):
     print(); print("-"*40);print()
     #model generates the code according to user description
     print("1.  Generate Raw Code")
-    #you can upload your script instead of the model generating the code
+    #upload script instead of the model generating the code
     print("2.  Load Raw Code Script From File")
-    #add argparse
     print("3.  Add Argparse")
     print("4.  Exception Handling and Logging")
     print("5.  Add Unit Test Cases")
@@ -69,7 +68,8 @@ def request_menu(oai_req_instance, choice=None):
             case '1':
                 #request code
                 oai_req_instance.program_description = "Program Description: " + input("Enter Program Description and Features: ")
-                resp = oai_req_instance.request_raw_code(new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
+                request_args = oai_req_instance.build_request_raw_code_req_args()
+                resp = oai_req_instance.request_code_enhancement(*request_args, u_test = False, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name)
                 if resp == False:
                     #JSON is invalid and user chose to quit
                     print("JSON is invalid, returning to main menu at user's request.")
@@ -407,7 +407,6 @@ def main():
 
     #launch menu
     while exit_user_request == False:
-        #print(); print("-"*40);print()
         exit_user_request = request_menu(oai_req_instance)
 
     #profiler
@@ -419,35 +418,8 @@ def main():
     p.sort_stats("cumulative").print_stats(5)
 
     print(); print(f"\033[43mThe program has exited at the user's request.\033[0m");print()
-    #exit(0)
-
-    #Run the program
-    # print(); print("-"*40)
-    # print(f"Show help to execute program {os.path.join(fm.modules_dir, mr_atomic.module_name)}")
-    # os.chdir(fm.modules_dir)
-    # this_program=mr_atomic.module_name
-    # comm_list = shlex.split(this_program)
-    # comm = ['python'] + comm_list
-    # print()
-        
-    # try:    
-    #     print(f"Running command: {comm}")
-    #     subprocess.run(comm)
-    # except Exception as e:
-    #     print(f"Exception running {mr_atomic.module_name} script: {e}")
-
-    # os.chdir(fm.initial_dir)
-
 
     print(); print("-"*40); print("End of Script"); print()
 
 if __name__ == "__main__":
-    #true if your code is invoked directly(stand-alone), e.g. python3 source_file.py
-    #main()
-
     cProfile.run("main()","profiler_data.out")
-
-
-
-
-    

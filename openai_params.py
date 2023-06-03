@@ -25,5 +25,5 @@ token_limit= 4096
 #arch_conversation=[]
 #module_conversation=[]
 
-#openai request params
+#openai request params#TODO delete temp, now set at request_feature
 temperature = 0.7

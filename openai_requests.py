@@ -34,7 +34,7 @@ import custom_req as c_r
 import docstrings_rq as docs_r
 import debug_rq as dg_r
 #import my utils
-import sg_utils as ut
+import request_utils as ut
 
 class Openai_Requests:
     show_request = True
@@ -58,11 +58,6 @@ class Openai_Requests:
     #getter instance method get gpt u_test resp
     def get_gpt_response_utest(self):
         return self.gpt_response_utest
-
-    #TODO: implement show request bool
-    @classmethod
-    def set_show_request(cls, show_request):
-        show_request = cls.show_request
 
     @classmethod
     def get_show_request(cls):
@@ -246,24 +241,15 @@ class Openai_Requests:
         args_tpl = (summary_new_request,sys_mssg,request_to_gpt)
         return args_tpl
 
-    #request for initial code according to program description
-    def request_raw_code(self, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
+    #build args to request raw code
+    def build_request_raw_code_req_args(self):
         #request args
         summary_new_request = "Request raw program code."
         sys_mssg = raw_code.sys_mssg
         request_to_gpt = ut.concat_dict_to_string(raw_code.raw_instructions_dict) + "\n\n" + self.program_description
-        #send request
-        while True:
-            #send request, response JSON may be broken in which case possible re-request
-            resp = self.send_request(sys_mssg, request_to_gpt, summary_new_request, new_temp = new_temp, new_engine = new_engine)
-            if resp == False: 
-                #broken JSON
-                if self.broken_json_user_action() == False:
-                    return False
-                else:
-                    return True
-            #valid JSON response received
-            return True
+
+        args_tpl = (summary_new_request,sys_mssg,request_to_gpt)
+        return args_tpl
 
     #build args for miscellaneous code enhancements
     def request_code_enhancement(self, *request_args, u_test, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
@@ -295,42 +281,7 @@ class Openai_Requests:
 
     
 
-    #request ai to validate and clean returned json
-    # def validate_and_clean_json(self, u_test = False, custom_json=None, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
-    #     print(); print("-"*40);print()
-    #     print("Validate JSON Object format.")
-        
-    #     while True:
-    #         try:
-    #             #Validate JSON object
-    #             if u_test:
-    #                 code = ut.get_response_value_for_key(self.gpt_response_utest, raw_code.module_name.split(".")[0])
-    #             else:
-    #                 code = ut.get_response_value_for_key(self.gpt_response, raw_code.module_name.split(".")[0])
-    #             print("\033[43mJSON object is valid.\033[0m")
-    #             break
-    #         except Exception as e:
-    #             #Validation failed - args for JSON clean request
-    #             summary_new_request = "JSON Validation failed: Request clean format with existing data."
-    #             sys_mssg = clean_json.sys_mssg
-    #             json_format = None
-    #             if custom_json is not None:
-    #                 json_format ='''.JSON Object Template:
-    #                 {
-    #                 "module":""
-    #                 }
-    #                 '''
-    #             else:
-    #                 json_format = custom_json
-
-    #             #request engine to clean JSON obj with existing data
-    #             if u_test:
-    #                 request_to_gpt = ut.concat_dict_to_string(clean_json.clean_json_instructions_dict) + json_format + ".This is the JSON object for you to validate and correct:" + self.gpt_response_utest
-    #             else:
-    #                 request_to_gpt = ut.concat_dict_to_string(clean_json.clean_json_instructions_dict) + json_format + ".This is the JSON object for you to validate and correct:" + self.gpt_response
-
-    #             self.send_request(sys_mssg, request_to_gpt,summary_new_request, u_test, new_temp = new_temp, new_engine = new_engine)
-
+    
 
     #validate construction of unit test commands
     def validate_unittest_functions(self):
@@ -511,7 +462,6 @@ class Openai_Requests:
 
 
 #Get raw code JSON object
-        #TODO user input
         #self.program_description = "Program Description: " + "the program is a calculator, collects two numbers from a user and the arithmetic operation to perform being a choice of sum, subtract, multiply or divide. Then print the result on the terminal."
         #self.program_description = "Program Description: " + "The program will prompt the user to enter a sentence or paragraph, and it will count the number of words in the input."
         #self.program_description = "Program Description: " + "The program will generate a random number, and the user will be prompted to guess the number. The program will provide feedback on whether the guess is too high, too low, or correct."
@@ -519,3 +469,40 @@ class Openai_Requests:
         #self.program_description = "Program Description: " + "The program allows the user to add tasks to a todo list, view the list, and mark tasks as completed. The code writes, updates and read the resulting list to a file."
         #self.program_description = "Program Description: " + input("")
         
+
+
+#request ai to validate and clean returned json
+    # def validate_and_clean_json(self, u_test = False, custom_json=None, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
+    #     print(); print("-"*40);print()
+    #     print("Validate JSON Object format.")
+        
+    #     while True:
+    #         try:
+    #             #Validate JSON object
+    #             if u_test:
+    #                 code = ut.get_response_value_for_key(self.gpt_response_utest, raw_code.module_name.split(".")[0])
+    #             else:
+    #                 code = ut.get_response_value_for_key(self.gpt_response, raw_code.module_name.split(".")[0])
+    #             print("\033[43mJSON object is valid.\033[0m")
+    #             break
+    #         except Exception as e:
+    #             #Validation failed - args for JSON clean request
+    #             summary_new_request = "JSON Validation failed: Request clean format with existing data."
+    #             sys_mssg = clean_json.sys_mssg
+    #             json_format = None
+    #             if custom_json is not None:
+    #                 json_format ='''.JSON Object Template:
+    #                 {
+    #                 "module":""
+    #                 }
+    #                 '''
+    #             else:
+    #                 json_format = custom_json
+
+    #             #request engine to clean JSON obj with existing data
+    #             if u_test:
+    #                 request_to_gpt = ut.concat_dict_to_string(clean_json.clean_json_instructions_dict) + json_format + ".This is the JSON object for you to validate and correct:" + self.gpt_response_utest
+    #             else:
+    #                 request_to_gpt = ut.concat_dict_to_string(clean_json.clean_json_instructions_dict) + json_format + ".This is the JSON object for you to validate and correct:" + self.gpt_response
+
+    #             self.send_request(sys_mssg, request_to_gpt,summary_new_request, u_test, new_temp = new_temp, new_engine = new_engine)

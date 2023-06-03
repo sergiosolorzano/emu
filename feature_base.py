@@ -37,7 +37,7 @@ import debug_rq as dg_r
 import request_utils as ut
 
 
-class Request_Feature:
+class Feature_Base:
     #show request text on screen
     show_request = True
 
@@ -74,14 +74,7 @@ class Request_Feature:
         self.gpt_response_utest = gpt_response
 
     #request module code
-    def send_request(self, sys_mssg, request_to_gpt, summary_new_request, u_test = False, new_temp = oai.temperature, new_engine = oai.gpt_engine_deployment_name):
-        #set engine
-        tmp_deployment_name = oai.deployment_name
-        oai.deployment_name = new_engine
-        #set engine temp
-        temp_oai_temp =  oai.temperature
-        oai.temperature = new_temp
-
+    def send_request(self, sys_mssg, request_to_gpt, summary_new_request, u_test = False):
         this_conversation =[]
 
         system_message = {"role": "system", "content": sys_mssg}
@@ -95,17 +88,17 @@ class Request_Feature:
 
         ut.token_limit(request_tokens)
 
-        oai.cum_tokens += this_conversation_tokens
+        self.cum_tokens += this_conversation_tokens
         
         #if show_request: #TODO: show on screen the request or not
         print(); print("-"*40)
         print();print(f"\033[44;97mJob Request: {summary_new_request}\033[0m")
-        if self.get_show_request():
-            print(f"\n\033[1;97mRequest: CumTokens:{oai.cum_tokens} Req_Tokens:{request_tokens}\033[0m: {request_to_gpt}")
+        if self.show_request:
+            print(f"\n\033[1;97mRequest: CumTokens:{self.cum_tokens} Req_Tokens:{request_tokens}\033[0m: {request_to_gpt}")
         else:
-            print(f"\n\033[1;97mRequest Sent: CumTokens:{oai.cum_tokens} Req_Tokens:{request_tokens}\033[0m")
+            print(f"\n\033[1;97mRequest Sent: CumTokens:{self.cum_tokens} Req_Tokens:{request_tokens}\033[0m")
         
-        print(); print(f"\033[1;97mModel Settings:\033[0m Engine: {oai.deployment_name[1]}, Temperature: {oai.temperature}")
+        print(); print(f"\033[1;97mModel Settings:\033[0m Engine: {self.model[1]}, Temperature: {self.model_temp}")
 
         #start timer
         stop_event = threading.Event()
@@ -113,10 +106,10 @@ class Request_Feature:
         thread.start()
 
         response = oai.openai.ChatCompletion.create(
-            engine=oai.deployment_name[0], # The deployment name you chose when you deployed the model.
+            model=self.model[0], # The deployment name you chose when you deployed the model.
             messages = this_conversation,
-            temperature=oai.temperature,
-            max_tokens=oai.max_response_tokens,
+            temperature=self.model_temp,
+            max_tokens=self.max_response_tokens,
         )
 
         clean_response = response['choices'][0]['message']['content'].replace("'''","'").replace('"""','"').replace('```', '`')
@@ -128,24 +121,19 @@ class Request_Feature:
 
         this_conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
         this_conversation_tokens = ut.num_tokens_from_messages(this_conversation)
-        oai.cum_tokens += this_conversation_tokens
+        self.cum_tokens += this_conversation_tokens
 
         ut.token_limit(this_conversation_tokens)
-
-        #re-set engine
-        oai.deployment_name = tmp_deployment_name
-        #re-set temp
-        oai.temperature = temp_oai_temp
 
         print("-"*40);
         try:
             pretty_json_response = json.dumps(json.loads(clean_response), indent=2, separators=(',', ':')) #.replace('```', '')
-            print(f"\n\033[1;92mResponse: CumTokens:{oai.cum_tokens} RespTokens:{this_conversation_tokens}\n\033[0m\033[92m{pretty_json_response}\n\033[0m")
+            print(f"\n\033[1;92mResponse: CumTokens:{self.cum_tokens} RespTokens:{this_conversation_tokens}\n\033[0m\033[92m{pretty_json_response}\n\033[0m")
         except Exception as e:
             print(f"Exception on JSON Received: {e}: {clean_response:<10} \n")
             print(); print("RAW print:",clean_response)
             print("-"*40);
-            #JSON invalid, re-request or quit
+            #JSON response invalid, re-request or quit
             return False
 
         if u_test:
@@ -153,4 +141,19 @@ class Request_Feature:
         else:
             self.gpt_response = json.loads(clean_response) #.strip("\n")  #.replace('```', '')
 
+        #JSON response valid
         return True
+
+    def build_request_args(self):
+        self.summary_new_request = self.sys_mssg = self. request_to_gpt = None
+        args_tpl = (summary_new_request,sys_mssg,request_to_gpt)
+        return args_tpl
+
+    #manage request
+    def request_code_enhancement(self, *request_args, u_test, new_temp = oai.temperature, new_model = oai.gpt_engine_deployment_name):
+        #unpack request args for clarity
+        summary_new_request,sys_mssg,request_to_gpt = request_args
+        #send request to model
+        return self.send_request(sys_mssg, request_to_gpt, summary_new_request, u_test, new_temp = new_temp, new_model = new_model)
+
+

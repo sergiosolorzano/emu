@@ -102,6 +102,7 @@ def request_menu(oai_req_instance, choice=None):
                 code = ut.get_response_value_for_key(oai_req_instance.gpt_response,raw_code.module_name.split(".")[0])
                 #print(code);print()
                 print(f"\033[43mScript loaded.\033[0m")
+                
                 fm.get_dict_value_save_to_file(oai_req_instance.get_gpt_response(), fm.initial_dir, raw_code.module_name)
                 return False
             case '3':

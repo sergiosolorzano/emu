@@ -38,12 +38,13 @@ import file_management as fm
 
 #NEW: import request functionality classes (base's children)
 import feature_request_utest as ft_req_utest
-#import tools
+#import classes
 import user_interaction as uinteraction
 import feature_manager as ft_mgr
+#import tools
 import file_management as fm
 import request_utils as req_utils #TODO:need this?
-import log_list_requests as custom_log_hdl # TODO:need this?
+import log_list_requests as custom_log_hdl
 
 #manage program workflow with all classes
 class Selfgen_Manager():
@@ -51,10 +52,7 @@ class Selfgen_Manager():
     def __init__(self):
         self.user_interaction = uinteraction.User_Interaction()
         self.feature_manager = ft_mgr.Feature_Manager()
-        #self.file_manager = fm.File_Manager()
-        #self.request_utils = req_utils.Request_Utils()#TODO:need this?
         self.log_list_handler = custom_log_hdl.LogListHandler() #TODO:need this?
-
 
     def handle_workflow(self):
     #request menu choice from user
@@ -62,13 +60,24 @@ class Selfgen_Manager():
         menu_choice = uinteraction.request_menu()
         while True:
             if self.feature_manager.handle_menu_choice(menu_choice) == False
-            #broken JSON response, ask for user action
+                #broken JSON response, ask for user action
                 if uinteraction.broken_json_user_action() == True:
+                    #user choice to request code from model again
                     continue
                 else:
-                    return False
+                    print("JSON is invalid, returning to main menu at user's request.")
+                    break
             #valid JSON response received
-            return True
+            else:
+                if self.feature_manager.process_valid_response() == False
+                    #something went wrong, request again from model
+                    continue
+                else:
+                    #done
+                    break
+        
+
+            
 
 
 

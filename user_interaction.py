@@ -43,7 +43,7 @@ import request_utest as cls_req_utest
 class User_Interaction():
 
     #user request choice
-    def request_menu(oai_req_instance, choice=None):
+    def request_menu(self, choice=None):
         print(); print("-"*40);print()
         #model generates the code according to user description
         print("1.  Generate Raw Code")
@@ -70,10 +70,11 @@ class User_Interaction():
                 print("Choose your request: ",choice)
 
             match choice:
-                case '1':
-                    return choice
                 case _:
-                    print(); print(f"\033[41mInvalid Option\033[0m")
+                    if choice.isdigit()and if 1 <= int(choice) <= 12:
+                        return choice
+                    else:
+                        print(); print(f"\033[41mInvalid Option\033[0m")
 
     def broken_json_user_action(self):
         while True:
@@ -86,6 +87,11 @@ class User_Interaction():
                 case _:
                     print("Invalid selection.")
                     continue
+
+    def request_input_from_user(self, mssg):
+        return input(mssg)
+        
+            
 
 
 

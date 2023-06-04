@@ -235,8 +235,7 @@ class Openai_Requests:
         summary_new_request = "Add docstrings to the script."
         sys_mssg = docs_r.sys_mssg
         request_to_gpt = f'''You will make specific changes to the module key of this JSON object: {self.gpt_response}.\n
-        {ut.concat_dict_to_string(docs_r.docstrings_instructions_dict)}
-        '''
+        {ut.concat_dict_to_string(docs_r.docstrings_instructions_dict)}'''
 
         args_tpl = (summary_new_request,sys_mssg,request_to_gpt)
         return args_tpl

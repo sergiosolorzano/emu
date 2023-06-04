@@ -117,7 +117,7 @@ def get_dict_value_save_to_file(gpt_response, initial_dir, filename, header=""):
     code = header + code
     write_to_file(filename,modules_dir,code, "w")
 
-def version_module(path_original_fn, original_fn, path_dest_fn):
+def version_file(path_original_fn, original_fn, path_dest_fn):
 	original_full_path_fn = os.path.join(path_original_fn, original_fn)
 	extension = original_fn.split(".")[1]
 	fn = original_fn.split(".")[0]
@@ -171,5 +171,13 @@ def delete_all_dir_files(target_dir):
 def create_dir(target_dir):
         #os.makedirs(target_dir, exist_ok=True)
         target_dir.mkdir(parents=False, exist_ok=True)
+
+def validate_filepath(full_path_to_script):
+	if not os.path.isfile(full_path_to_script):
+	    print(f"\033[1;31m[ERROR]\033[0m Cannot Find File {full_path_to_script}\033[0m")
+	    return False
+	else: 
+	    print("File Found.")
+	    return True
 
 

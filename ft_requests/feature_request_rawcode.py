@@ -10,7 +10,7 @@ import openai_params as oai
 import raw_code_rq as raw_code
 
 #request model raw code from description
-class Feature_Request_Rawcode():
+class Feature_Request_Rawcode:
     def __init__(self, common_instance):
         self.common_instance = common_instance
 

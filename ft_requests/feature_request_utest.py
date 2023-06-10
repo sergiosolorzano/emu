@@ -10,7 +10,7 @@ import openai_params as oai
 import prompt_txt.unittest_rq as u_test
 
 #request add unit test to code
-class Feature_Request_Utest():
+class Feature_Request_Utest:
 
 	def __init__(self, common_instance):
 		self.common_instance = common_instance
@@ -42,7 +42,7 @@ class Feature_Request_Utest():
 
 	def process_successful_response(self):
 		#check unittest commands are valid
-		if not self.common_instance.validate_unittest_commands():
+		if not self.validate_unittest_commands():
 			print("Unit test functions not created. Re-create unit test code and cli commands.")
 			fm.version_file(self.common_instance.full_project_dirname, self.common_instance.module_utest_name, self.common_instance.full_project_dirname)
 			return False

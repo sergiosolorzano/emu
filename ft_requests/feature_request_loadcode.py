@@ -7,7 +7,7 @@ import tools.file_management as fm
 import tools.request_utils as ut
 
 #user upload code from file
-class Feature_Request_Loadcode():
+class Feature_Request_Loadcode:
 
     def __init__(self, common_instance):
         self.common_instance = common_instance

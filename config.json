@@ -1,0 +1,18 @@
+{
+    "folder_locations": {
+        "prompt_dirname": "prompt_txt",
+        "project_dirname": "project",
+        "json_dirname": "response_json",
+        "custom_json_format_dirname": "custom_json_format"
+    },
+    "file_names": {
+        "module_script_fname": "data.txt",
+        "log_fname": "module.log",
+        "module_utest_name": "module_utest.py",
+        "json_fname": "response.json",
+        "custom_json_format_fname": "custom_json_format.json"
+    },
+    {
+        "full_path_prompt_dir":"${workspaceFolder}/prompt_txt"
+    }
+}

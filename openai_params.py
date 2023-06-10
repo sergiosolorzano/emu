@@ -1,7 +1,6 @@
 
-
 #openai key/base, models
-from self_config import self_config
+from creds.self_config import self_config
 import tiktoken
 import openai
 

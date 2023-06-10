@@ -92,7 +92,7 @@ def request_menu(oai_req_instance, choice=None):
                         break
                 
                 print()
-                oai_req_instance.program_description = "Program Description: " + input("Enter Short Program Description (used in requests): "); print()
+                oai_req_instance.program_description = "Program Description: " + input("Enter Short Program Description (used in ft_requests): "); print()
 
                 #read script
                 user_script = fm.read_file_stored_to_buffer(os.path.basename(path_to_script), os.path.dirname(path_to_script))

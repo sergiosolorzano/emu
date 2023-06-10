@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 #user custom request to gpt
 
+
 #TODO move to class var
 program_language="Python"
 

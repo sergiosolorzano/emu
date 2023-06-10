@@ -1,3 +1,5 @@
 **/__pycache__/
 **/self_config.py
 **/project/
+**/creds/
+**/profiler_data.out

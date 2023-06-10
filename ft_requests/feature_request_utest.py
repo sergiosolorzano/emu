@@ -57,7 +57,8 @@ class Feature_Request_Utest:
 		print("Validating Unittest Function CLI commands were created.")
 		num_unittests = 0
 		num_unittests = ut.count_values_for_keycontain(self.common_instance.gpt_response_utest, u_test.unittest_cli_command_key)
-		if num_unittests > 0: return True
+		if num_unittests > 0:
+			return True
 		else:
 			print("Unit test functions not created. Re-create unit test code and cli commands.")
 			fm.version_file(self.common_instance.full_project_dirname, self.common_instance.module_utest_name, self.common_instance.full_project_dirname)

@@ -2,7 +2,7 @@
 #clean json request
 
 #TODO move to class var
-program_language="Python"
+program_language ="Python"
 
 sys_mssg = f'''You understand the keys and values of a JSON object used by {program_language} json package.
 You must validate the syntax of a JSON object construct and correct it if incorrect, taking care not to change the spacing of keys and values.

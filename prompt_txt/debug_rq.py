@@ -2,7 +2,6 @@
 #send logs to debug program
 
 import raw_code_rq
-import file_management as fm
 #TODO move to class var
 program_language="Python"
 

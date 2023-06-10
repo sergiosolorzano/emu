@@ -18,13 +18,14 @@ class Feature_Request_Loadcode:
         full_path_to_script = self.common_instance.get_file_path_from_user(mssg)
 
         print()
-        mssg = f"Enter Short Program Description (used in requests): "
+        mssg = f"Enter Short Program Description (used for requests): "
         self.common_instance.program_description = self.common_instance.user_interaction_instance.request_input_from_user(mssg)
 
         # call base
         user_script = self.common_instance.read_code_from_file(full_path_to_script)
         # hack to step script as a gpt code response for continued conversation with gpt
         self.common_instance.gpt_response = fm.insert_script_in_json(user_script)
+        print("#------###----###",self.common_instance.gpt_response)
         # print loaded code
         code = ut.get_response_value_for_key(self.common_instance.gpt_response, self.common_instance.module_script_fname.split(".")[0])
         print(code); print()

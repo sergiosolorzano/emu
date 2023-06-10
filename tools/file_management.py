@@ -23,9 +23,9 @@ modules_dir=f"{initial_dir}/{m_project_dirname}"
 json_dir = f"{initial_dir}/{m_json_dirname}"
 
 #import initial raw code request requirements, requires paths above
-import raw_code_rq as raw_code
+import prompt_txt.raw_code_rq as raw_code
 #import my utils
-import request_utils as ut
+import tools.request_utils as ut
 
 m_json_filename = "response.json"
 m_custom_json_dirname = "custom_json"
@@ -65,7 +65,7 @@ def get_unlabelled_list(labelled_list, target_label):
 
 def write_snippet_to_file(filename,path,snippet):
 	if len(snippet) > 0:
-		full_path=os.path.join(path, filename)
+		full_path = os.path.join(path, filename)
 		Path(full_path).write_text(snippet)
 		print(Path(full_path).read_text())
 
@@ -106,7 +106,7 @@ def write_to_file(filename,path,content, access_mode):
 			#overwrite only
 			with Path(full_path).open("w") as target: 
 				json.dump(content, target)
-				print(); print(f"\033[43mResponse saved to JSON file {full_path}\033[0m");
+				print(); print(f"\033[43mResponse saved to JSON file {full_path}\033[0m")
 
 def get_dict_value_save_to_file(gpt_response, ini_dir, filename, header=""):
 	print(); print("-"*40)
@@ -141,9 +141,10 @@ def version_file(path_original_fn, original_fn, path_dest_fn):
 		shutil.copy(original_full_path_fn, destination_full_name)
 		print(f"\033[43mVersion saved: {destination_full_name}\033[0m")
 	except FileNotFoundError as e:
-		print(f"\033[43mFile {original_full_path_fn} not available to version it {e}\033[0m")
-	except Exception as e:
-		print(f"\033[43mException versioning (copy) {original_full_path_fn} to {destination_full_name}: {e}\033[0m")
+		pass
+	# 	print(f"\033[43mFile {original_full_path_fn} not available to version it {e}\033[0m")
+	# except Exception as e:
+	# 	print(f"\033[43mException versioning (copy) {original_full_path_fn} to {destination_full_name}: {e}\033[0m")
 
 def read_file_stored_to_buffer(filename, path):
 	full_path = os.path.join(path, filename)
@@ -163,11 +164,9 @@ def print_json_on_screen(json_data):
 	print(json.dumps(json_data, indent=2, separators=(',', ':')))
 
 def insert_script_in_json(a_script):
-	json_dict = {"module": a_script}
-	#return json obj
-	json_str = json.dumps(json_dict)
-	a = json.loads(json_str)
-	return json.loads(json_str)
+	dict = {"module": a_script}
+	return dict
+
 
 def delete_all_dir_files(target_dir):
 	#del all project module files

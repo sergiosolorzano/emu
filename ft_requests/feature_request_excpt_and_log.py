@@ -31,7 +31,7 @@ class Feature_Request_ExceptionHndl_and_Logging:
     #send request to model
     def request_code(self, *request_args):
         #override base instance vars
-        self.common_instance.u_test= False
+        self.common_instance.u_test_bool = False
         self.common_instance.model = oai.codex_engine_deployment_name
         self.common_instance.model_temp = 0.2
         #call base

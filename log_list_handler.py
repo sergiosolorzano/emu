@@ -3,6 +3,7 @@
 import logging
 
 class LogListHandler(logging.Handler):
+
 	def __init__(self, *args, **kwargs):
 		super(LogListHandler, self).__init__(*args, **kwargs)
 		self.log_records = []
@@ -18,20 +19,18 @@ class LogListHandler(logging.Handler):
 		for c, l in enumerate(self.log_records):
 			print(f"Log {c}: {l}")
 
-
 #create custom logger
 def config_custom_logger():
-    # Create an instance of LogListHandler
-    log_list_handler = LogListHandler()
+	# Create an instance of LogListHandler
+	log_list_handler = LogListHandler()
 
-    log_list_handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    log_list_handler.setFormatter(formatter)
+	log_list_handler.setLevel(logging.DEBUG)
+	formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+	log_list_handler.setFormatter(formatter)
 
-    #add logger
-    logger = logging.getLogger(__name__)
-    logger.addHandler(log_list_handler)
-    logger.setLevel(logging.DEBUG)
+	#add logger
+	logger = logging.getLogger(__name__)
+	logger.addHandler(log_list_handler)
+	logger.setLevel(logging.DEBUG)
 
-    return logger, log_list_handler
-    
+	return logger, log_list_handler

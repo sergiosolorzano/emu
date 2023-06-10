@@ -81,7 +81,7 @@ class Feature_Common:
             self.program_description = program_description
         #init responses
         self.gpt_response = None
-        self.gpt_response_utest = self.gpt_response
+        self.gpt_response_utest = None
 
     def set_user_interaction_instance(self, user_interaction_instance):
         self.user_interaction_instance = user_interaction_instance

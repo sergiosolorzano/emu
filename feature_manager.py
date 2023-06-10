@@ -8,10 +8,11 @@ from pathlib import Path
 
 #import class
 import feature_base as ft_base
-import feature_request_rawcode as ft_req_raw
 #import feature request classes
 import ft_requests.feature_request_utest as ft_req_utest
 import ft_requests.feature_request_loadcode as ft_req_loadcode
+import ft_requests.feature_request_rawcode as ft_req_raw
+
 
 #manage feature children classes
 class Feature_Manager():

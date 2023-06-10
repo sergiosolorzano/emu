@@ -3,3 +3,7 @@
 **/project/
 **/creds/
 **/profiler_data.out
+**/.idea/
+**/.venv
+**/venv/
+**/.vscode/

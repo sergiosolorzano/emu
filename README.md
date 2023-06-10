@@ -1,12 +1,12 @@
 Generates the code for a program description requested by the user using OpenAI API gpt-3.5-turbo and code-davinci-002 models.
 
-Code additions are added on a per-menu-request basis.
+Code changes/additions are added on a per-menu-request basis.
 
-Selected log entries from running unit-tests and the resulting program are sent to GPT for debug.
+Selected log entries from running unit-tests and running the resulting program are sent to GPT for debug.
 
 Project is work in progress.
 
-Repo file structure:
+Repo file structure (outdated):
 ```
 .
 ├── file_management.py		#file management utilities

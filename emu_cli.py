@@ -73,6 +73,7 @@ def main():
     #create emu_manager instance
     emu = Emu_cli()
     emu.handle_workflow()
+    print("*******End of Script"); print()
 
     # profiler
     # print(); print("=" * 10, end="")

@@ -21,7 +21,7 @@ import openai_params as oai
 #import ft_requests
 import prompt_txt.raw_code_rq as raw_code
 
-class Feature_Base:
+class Feature_Common:
     #region Class Variables Region
     # show request text on screen
     show_request = True
@@ -157,8 +157,10 @@ class Feature_Base:
             return False
 
         if self.u_test_bool:
+            print(f"*****u_test_bool {self.u_test_bool}")
             self.gpt_response_utest = json.loads(clean_response)  # .strip("\n") #.replace('```', '')
         else:
+            print(f"*****u_test_bool {self.u_test_bool}")
             self.gpt_response = json.loads(clean_response)  # .strip("\n")  #.replace('```', '')
 
         # JSON response valid
@@ -178,7 +180,7 @@ class Feature_Base:
         return self.send_request(sys_mssg, request_to_gpt, summary_new_request)
 
     def valid_response_file_management(self, filename, full_path_dir, gpt_response, success_mssg=None):
-        if not success_mssg is None:
+        if success_mssg is not None:
             print(f"\033[43m{success_mssg}\033[0m")
         # version and save
         fm.version_file(full_path_dir, filename, full_path_dir)

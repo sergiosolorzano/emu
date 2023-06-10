@@ -38,6 +38,7 @@ class User_Interaction:
                         return choice
                     else:
                         print(); print(f"\033[41mInvalid Option\033[0m")
+                        choice = None
 
     def broken_json_user_action(self):
         while True:

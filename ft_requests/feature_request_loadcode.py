@@ -1,36 +1,37 @@
 #!/usr/bin/env python3
 import os
 #import base
-import feature_base as base
+import feature_common as base
 #import utils
 import tools.file_management as fm
 import tools.request_utils as ut
 
 #user upload code from file
-class Feature_Request_Loadcode(base.Feature_Base):
+class Feature_Request_Loadcode():
 
-    def __init__(self):
-        super().__init__()  # Call parent class's __init__ method
+    def __init__(self, common_instance):
+        self.common_instance = common_instance
 
     def prerequest_args_process(self):
-        mssg = f"Enter Path to {self.program_language} Script: "
+        mssg = f"Enter Path to {self.common_instance.program_language} Script: "
         # call base
-        full_path_to_script = self.get_file_path_from_user(mssg)
+        full_path_to_script = self.common_instance.get_file_path_from_user(mssg)
 
         print()
-        mssg = f"Program Description: Enter Short Program Description (used in requests): "
-        self.program_description = self.user_interaction_instance.request_input_from_user(mssg)
+        mssg = f"Enter Short Program Description (used in requests): "
+        self.common_instance.program_description = self.common_instance.user_interaction_instance.request_input_from_user(mssg)
 
         # call base
-        user_script = self.read_code_from_file(full_path_to_script)
+        user_script = self.common_instance.read_code_from_file(full_path_to_script)
         # hack to step script as a gpt code response for continued conversation with gpt
-        self.gpt_response = fm.insert_script_in_json(user_script)
+        self.common_instance.gpt_response = fm.insert_script_in_json(user_script)
         # print loaded code
-        #code = ut.get_response_value_for_key(self.gpt_response, self.module_script_fname.split(".")[0])
-        # print(code);print()
+        code = ut.get_response_value_for_key(self.common_instance.gpt_response, self.common_instance.module_script_fname.split(".")[0])
+        print(code); print()
         print(f"\033[43mScript loaded.\033[0m")
 
-        return False
+        #don't send additional requests, not back to menu
+        return False, False
 
     def prepare_request_args(self):
         #no args to build because there is no request
@@ -53,5 +54,5 @@ class Feature_Request_Loadcode(base.Feature_Base):
 
     def process_successful_response(self):
         #call base: process successful code upload
-        self.valid_response_file_management(self.module_script_fname, self.full_project_dirname, self.gpt_response)
+        self.common_instance.valid_response_file_management(self.common_instance.module_script_fname, self.common_instance.full_project_dirname, self.common_instance.gpt_response)
         return True

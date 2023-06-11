@@ -25,3 +25,9 @@ comments = '''.Your response meets these Comment Requirements:
 (2) You make no comments in your response. 
 (3) Keep comments within the code to the bare minimum"
 '''
+
+json_required_format ='''
+{
+"module":"Insert here the code you produced as described in Program Description leaving no spaces from the beginning to the first character inserted"
+}
+'''

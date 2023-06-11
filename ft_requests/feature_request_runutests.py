@@ -5,7 +5,6 @@ import sys
 import os
 import subprocess
 import shlex
-
 #import class
 #import utils
 import tools.file_management as fm

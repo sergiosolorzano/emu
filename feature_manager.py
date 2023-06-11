@@ -15,10 +15,12 @@ import ft_requests.feature_request_rawcode as ft_req_raw
 import ft_requests.feature_request_argparse as ft_req_argparse
 import ft_requests.feature_request_excpt_and_log as ft_req_excpt_and_log
 import ft_requests.feature_request_runutests as ft_req_run_utests
+import ft_requests.feature_request_custom_req as ft_req_custom_req
+import ft_requests.feature_request_debuglogs as ft_req_deblogs
 
 
 #manage feature children classes
-class Feature_Manager():
+class Feature_Manager:
 
 	#init feature children
 	def __init__(self):
@@ -36,9 +38,9 @@ class Feature_Manager():
 		'3': ft_req_argparse.Feature_Request_Argparse(self.feature_common_instance),
 		'4': ft_req_excpt_and_log.Feature_Request_ExceptionHndl_and_Logging(self.feature_common_instance),
 		'5': ft_req_utest.Feature_Request_Utest(self.feature_common_instance),
-		'6': ft_req_run_utests.Feature_Request_Run_Unit_Test_Cases(self.feature_common_instance)
-		#'7': ft_req_utest.Feature_Request_CustomRequest(self.feature_common_instance),
-		#'8': ft_req_utest.Feature_Request_DebugLogs(self.feature_common_instance),
+		'6': ft_req_run_utests.Feature_Request_Run_Unit_Test_Cases(self.feature_common_instance),
+		'7': ft_req_custom_req.Feature_Request_CustomRequest(self.feature_common_instance),
+		'8': ft_req_deblogs.Feature_Request_DebugLogs(self.feature_common_instance)
 		#'9': ft_req_utest.Feature_Request_Docstrings(self.feature_common_instance)
 		}
 

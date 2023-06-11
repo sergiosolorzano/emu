@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 
 class User_Interaction:
 
@@ -55,23 +56,22 @@ class User_Interaction:
     def request_input_from_user(self, mssg):
         return input(mssg)
 
-    def user_choice_two_options(self, mssg, option1="y", option2="n", mssg_option1=None, mssg_option2=None, mssg_option3=None):
+    def user_choice_two_options(self, mssg, mssg_option1=None, mssg_option2=None, mssg_option3=None, option1="y", option2="n"):
         while True:
             choice = input(mssg)
-            match choice.lower():
-                case option1 if 1 == 1:
-                    if mssg_option1 is not None:
-                        print(mssg_option1)
-                        break
-                case option2 if 1 == 1:
-                    if mssg_option2 is not None:
-                        print(mssg_option2)
-                        break
-                case _:
-                    if mssg_option3 is not None:
-                        print(mssg_option3)
-                        continue
-            return choice.lower()
+            if choice.lower() == option1:
+                if mssg_option1 is not None:
+                    print(mssg_option1)
+                break
+            elif choice.lower() == option2:
+                if mssg_option2 is not None:
+                    print(mssg_option2)
+                break
+            else:
+                if mssg_option3 is not None:
+                    print(mssg_option3)
+                continue
+        return choice.lower()
 
 
 def broken_json_user_action():

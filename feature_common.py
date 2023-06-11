@@ -54,12 +54,16 @@ class Feature_Common:
     module_utest_name = "module_utest.py"
     json_fname = "response.json"
     custom_json_format_fname = "custom_json_format.json"
+    code_key_in_json = module_script_fname.split(".")[0]
+
+    full_custom_json_format_fn = f"{initial_dir}/{custom_json_format_dirname}/{custom_json_format_fname}"
+    full_path_module = f"{full_project_dirname}/{module_script_fname}"
 
     # program language
     program_language = "Python"
 
     # program description
-    program_description = "No description provided"
+    program_description = None
 
     # unittest json command key
     unittest_cli_command_key = "unittest_cli_"
@@ -71,9 +75,11 @@ class Feature_Common:
     def __init__(self, program_description=None):
         # set base common instances
         self.user_interaction_instance = None
-        self.log_list_handler_instance = None
         self.set_user_interaction_instance(uinteraction.User_Interaction())
-        self.set_log_list_handler_instance(log_list_handler.LogListHandler())
+        #self.log_list_handler_instance = None
+        self.logger_instance = None
+        self.log_list_handler_instance = None
+        self.set_log_list_handler_instance(log_list_handler.config_custom_logger())
         #utest flag
         self.u_test_bool = False
         #set prog desc
@@ -85,10 +91,9 @@ class Feature_Common:
 
     def set_user_interaction_instance(self, user_interaction_instance):
         self.user_interaction_instance = user_interaction_instance
-        #print("******base holds ",self.user_interaction_instance)
 
     def set_log_list_handler_instance(self, log_list_handler_instance):
-        self.log_list_handler_instance = log_list_handler_instance
+        self.logger_instance, self.log_list_handler_instance = log_list_handler_instance
 
     # request module code
     def send_request(self, sys_mssg, request_to_gpt, summary_new_request):
@@ -185,6 +190,7 @@ class Feature_Common:
         # version and save
         fm.version_file(full_path_dir, filename, full_path_dir)
         fm.get_dict_value_save_to_file(gpt_response, self.initial_dir, filename, "#!/usr/bin/env python3\n\n")
+        print(f"Code:\n", fm.get_code_from_dict(gpt_response, self.code_key_in_json))
 
     # TODO: remove for debugging
     # fm.write_to_file(self.json_fname, self.json_dirname, gpt_response, "w")

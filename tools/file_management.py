@@ -73,7 +73,7 @@ def clean_up_module(code):
 	code = code.replace("```", "")
 	return code
 
-def trunc_file(filename,path):
+def trunc_file(filename, path):
 	#check file exists else create
 	if not os.path.exists(os.path.join(path, filename)):
 		create_empty_module(filename, path)
@@ -110,14 +110,18 @@ def write_to_file(filename,path,content, access_mode):
 
 def get_dict_value_save_to_file(gpt_response, ini_dir, filename, header=""):
 	print(); print("-"*40)
-	code = ut.get_response_value_for_key(gpt_response, raw_code.module_name.split(".")[0])
-	print("Code:"); print(); print(code)
+	#code = ut.get_response_value_for_key(gpt_response, raw_code.module_name.split(".")[0])
+	code = get_code_from_dict(gpt_response, raw_code.module_name.split(".")[0])
+	#print("Code:"); print(); print(code)
 	destination_full_name = os.path.join(modules_dir, filename)
 	if not os.path.exists(destination_full_name):
 		create_empty_module(filename, ini_dir)
 	#add bash to script
 	code = header + code
 	write_to_file(filename, modules_dir, code, "w")
+
+def get_code_from_dict(gpt_response, dict_key):
+	return ut.get_response_value_for_key(gpt_response, dict_key)
 
 def version_file(path_original_fn, original_fn, path_dest_fn):
 	original_full_path_fn = os.path.join(path_original_fn, original_fn)
@@ -131,7 +135,6 @@ def version_file(path_original_fn, original_fn, path_dest_fn):
 		if not os.path.exists(original_full_path_fn):
 			break
 		elif os.path.exists(destination_full_name):
-			print("***FOUND VERSION 0")
 			counter += 1
 		else:
 			break
@@ -141,7 +144,9 @@ def version_file(path_original_fn, original_fn, path_dest_fn):
 		shutil.copy(original_full_path_fn, destination_full_name)
 		print(f"\033[43mVersion saved: {destination_full_name}\033[0m")
 	except FileNotFoundError as e:
+		print(f"\033[43mNo versioning at this point.\033[0m")
 		pass
+
 	# 	print(f"\033[43mFile {original_full_path_fn} not available to version it {e}\033[0m")
 	# except Exception as e:
 	# 	print(f"\033[43mException versioning (copy) {original_full_path_fn} to {destination_full_name}: {e}\033[0m")

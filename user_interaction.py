@@ -13,18 +13,18 @@ class User_Interaction:
         print("2.  Load Raw Code Script From File")
         print("3.  Add Argparse")
         print("4.  Exception Handling and Logging")
-        print("5.  Add Unit Test Cases")
-        print("6.  Run Unit Test Cases")
-        print("7.  User Custom Request")
-        print(f"\tYour custom request to the model. Requirement: code to be already loaded. A JSON file to request "
+        #print("5.  Add Unit Test Cases")
+        #print("6.  Run Unit Test Cases")
+        print("5.  User Custom Request")
+        print(f"\tRequirement: code to be already loaded. A JSON file to request "
               f"the format of the response.")
-        print("8.  Run Program With Enter Debug/Logs Loop")
+        print("6.  Run Program With Enter Debug/Logs Loop")
         print(f"\tRun the program and upon errors send the log error captured for the model to amend the code "
               f"accordingly.")
-        print("9.  Add Docstrings To Program Code.")
-        print("10. Set Menu Sequence")
-        print("11. Run All")
-        print("12. Exit")
+        print("7.  Add Docstrings To Program Code.")
+        print("8. Set Menu Sequence")
+        print("9. Run All")
+        print("10. Exit")
 
         while True:
             print()

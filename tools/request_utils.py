@@ -3,10 +3,8 @@
 import tiktoken
 import openai_params as oai
 import time
-#import tools
-import tools.request_utils as ut
-#import prompt
-import prompt_txt.unittest_rq as u_test
+#import config
+import config as config
 
 #calculate tokens in messages list
 def num_tokens_from_messages(messages, model=oai.deployment_name[1]):
@@ -38,7 +36,7 @@ def concat_dict_to_string(mydict):
     return all_concat_values
 
 def token_limit(tokens_used_snapshot):
-    if tokens_used_snapshot >= oai.token_limit:
+    if tokens_used_snapshot >= config.token_limit:
         print("Reached max tokens. Continue (c) or any key to exit.")
         cont = input("")
         if cont.lower() != "c" or cont.lower() != "C":
@@ -56,11 +54,10 @@ def spinning_timer(message, stop_evt):
 #get list of cli command to execute unit tests
 def create_unittest_cli_list(unittest_cli_c_list, gpt_response_utest, unittest_cli_command_key):
     #Create Unittest cli command List
-    num_unittests = ut.count_values_for_keycontain(gpt_response_utest,unittest_cli_command_key)
+    num_unittests = count_values_for_keycontain(gpt_response_utest,unittest_cli_command_key)
     print(); print("Gather list of unit test cli commands to run.")
     for index in range(1, int(num_unittests)+1):
-        #print("looking for ","".join([unittest_cli_command_key, str(index)]))
-        unittest_cli_c = ut.get_response_value_for_key(gpt_response_utest,"".join([unittest_cli_command_key, str(index)]))
+        unittest_cli_c = get_response_value_for_key(gpt_response_utest,"".join([unittest_cli_command_key, str(index)]))
         #print("cli test",unittest_cli_c)
         if len(unittest_cli_c) > 0:
             unittest_cli_c_list.append(unittest_cli_c)

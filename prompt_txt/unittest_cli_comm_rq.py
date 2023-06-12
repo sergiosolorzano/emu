@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-#add unittest
-program_language="Python"
-#TODO move to class var
-unittest_cli_command_key = "unittest_cli_"
+#import config
+import config as config
 
+#add unittest
 sys_mssg = f'''You are going to generate the cli commands to execute in linux for existing unittest functions in code I give you.
 Every cli command makes a call with the exact name of a unit test or test case function and capitalized where appropiate.
 Write the unit test methods within a unittest.TestCase subclass.
@@ -12,7 +11,7 @@ Your response to this request is exclusively a JSON object using the JSON Object
 Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
 Escape every special character in the code for json.load to read the JSON object correctly.
 You must validate the JSON object construct for syntax and parsing the JSON object would not raise an error exception 
-according to {program_language}'s built-in JSON module.
+according to {config.program_language}'s built-in JSON module.
 '''
 
 #It is very important you do not nest or define the test case unittest.TestCase function inside any other function.
@@ -20,7 +19,7 @@ according to {program_language}'s built-in JSON module.
 gpt_task = f'''You should know the code for a program is the value in the JSON Object's key 'module.
 Your Task:
 (a) Each unittest function you find in the code has a name that is a key in the JSON Object Template with name 'unittest_cli_' with ascending numbers for each starting at 1.
-You will replace the value of the unittest_cli_ keys in the JSON object with its corresonding linux cli command to execute the unittest function.
+You will replace the value of the unittest_cli_ keys in the JSON object with its corresponding linux cli command to execute the unittest function.
 (b) Write the unit test methods within a unittest.TestCase subclass.
 (c) re-insert the code you have received in this request which is the value for key 'module' and make no changes to it in the JSON Object Template's value for key 'module' 
 without leaving no spaces from the beginning to the first character inserted.
@@ -31,7 +30,7 @@ without leaving no spaces from the beginning to the first character inserted.
 
 json_object_requirements = f'''Your response to this request is exclusively:
 (a) a JSON object with the template described in JSON Object Template.
-(b) You ensure parsing the JSON object using {program_language}'s built-in JSON module would not raise an error exception.
+(b) You ensure parsing the JSON object using {config.program_language}'s built-in JSON module would not raise an error exception.
 (c) You add nothing else to your response of this request but the JSON object.
 (d) escape every special character in the code for json.load to read the JSON object correctly.
 '''
@@ -55,7 +54,3 @@ unittest_regen_cli_comm_instructions_dict = {
     "json_required_format": json_required_format.replace("\n",""),
 }
 
-
-#sys_mssg = f"I give you a JSON Object. In this JSON Object, I want you to replace the value in the dictionary corresponding to each backtesting key. You will not make any other changes to any keys or values of the the JSON object. Your response to this request is exclusively the resulting JSON object after your changes."
-#summary_new_request = "Replace backtesting cli command"
-#new_request = f"I give you this JSON Object: {gpt_response}. I want you to replace the value in the dictionary corresponding to each backtesting key: for example a backtesting key is {mr_atomic.backtest_cli_command_key} followed by an index. The value you with replace it with is the cli command to execute the corresponding backtesting function shown in the key. The code for each backtesting function is in the value for key 'module'. You will not make any other changes to any keys or values of the the JSON object than as instructed. Your response to this request is exclusively the resulting JSON object after your changes. You do not add any other comments to your response."

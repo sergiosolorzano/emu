@@ -7,6 +7,8 @@ import tools.request_utils as ut
 import error_hndl_logging_rq as error_log_hndl
 #openai
 import openai_params as oai
+#import config
+import config as config
 
 #request model raw code from description
 class Feature_Request_ExceptionHndl_and_Logging:
@@ -20,7 +22,7 @@ class Feature_Request_ExceptionHndl_and_Logging:
 
     def prepare_request_args(self):
         #request args
-        summary_new_request = "Add Error and Exception Handling to the code."
+        summary_new_request = "Add Logs and Exception Handling to the code."
         sys_mssg = error_log_hndl.sys_mssg
         request_to_gpt = f'''You will make specific changes to this JSON object: {self.common_instance.gpt_response}.
         \nThis is the description of what the program does in the the code found in the value for key 'module' of the JSON object:\n
@@ -39,5 +41,5 @@ class Feature_Request_ExceptionHndl_and_Logging:
 
     def process_successful_response(self):
         #call base
-        self.common_instance.valid_response_file_management(self.common_instance.module_script_fname, self.common_instance.full_project_dirname, self.common_instance.gpt_response)
+        self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
         return True

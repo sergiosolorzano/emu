@@ -1,79 +1,34 @@
 #!/usr/bin/env python3
 
 # import libraries
-import sys
 import os
 import threading
-
-# from pathlib import Path
 import json
-
 import dataclasses
 import user_interaction as uinteraction
 import log_list_handler
-
 #import tools
 import tools.file_management as fm
 import tools.request_utils as ut
-
 # import openai libs/modules
 import openai_params as oai
-#import ft_requests
-import prompt_txt.raw_code_rq as raw_code
+#import config
+import config as config
 
 class Feature_Common:
-    #region Class Variables Region
     # show request text on screen
-    show_request = True
+    show_request = False
 
     # set model and temp
     model = oai.gpt_engine_deployment_name
     model_temp = 0.7
 
-    # model token settings
-    cum_tokens = 0
-    token_limit = 4096
-    max_response_tokens = 3000
-
-    # paths
-    initial_dir = os.getcwd()
-    root = os.getenv("HOME")
-    prompt_dirname = "prompt_txt"
-    project_dirname = "project"
-    json_dirname = "response_json"
-    custom_json_format_dirname = "custom_json_format"
-    # full dir paths
-    full_prompt_dirname = f"{initial_dir}/{prompt_dirname}"
-    full_project_dirname = f"{initial_dir}/{project_dirname}"
-    full_json_dir = f"{initial_dir}/{json_dirname}"
-    full_custom_json_format_dirname = f"{initial_dir}/{custom_json_format_dirname}"
-
-    # filenames
-    module_script_fname = "module.py"
-    log_fname = "module.log"
-    module_utest_name = "module_utest.py"
-    json_fname = "response.json"
-    custom_json_format_fname = "custom_json_format.json"
-    code_key_in_json = module_script_fname.split(".")[0]
-
-    full_custom_json_format_fn = f"{initial_dir}/{custom_json_format_dirname}/{custom_json_format_fname}"
-    full_path_module = f"{full_project_dirname}/{module_script_fname}"
-
-    # program language
-    program_language = "Python"
-
     # program description
     program_description = None
 
-    # unittest json command key
-    unittest_cli_command_key = "unittest_cli_"
-    #endregion
-
-    def get_gpt_response(self):
-        return self.gpt_response
-
     def __init__(self, program_description=None):
-        # set base common instances
+        self.cum_tokens = 0
+        # set common instances
         self.user_interaction_instance = None
         self.set_user_interaction_instance(uinteraction.User_Interaction())
         #self.log_list_handler_instance = None
@@ -112,7 +67,6 @@ class Feature_Common:
 
         self.cum_tokens += this_conversation_tokens
 
-        # if show_request: #TODO: show on screen the request or not
         print(); print("-" * 40); print()
         print(f"\033[44;97mJob Request: {summary_new_request}\033[0m")
         if self.show_request:
@@ -132,7 +86,7 @@ class Feature_Common:
             engine=self.model[0],
             messages=this_conversation,
             temperature=self.model_temp,
-            max_tokens=self.max_response_tokens,
+            max_tokens=config.max_response_tokens,
         )
 
         clean_response = response['choices'][0]['message']['content'].replace("'''", "'").replace('"""', '"').replace(
@@ -179,7 +133,7 @@ class Feature_Common:
 
     # manage request
     def request_code_enhancement(self, *request_args):
-        # unpack request args for clarity
+        # unpack request args for clarity. pass request_to_gpt to change value for utests and standard
         summary_new_request, sys_mssg, request_to_gpt = request_args
         # send request to model
         return self.send_request(sys_mssg, request_to_gpt, summary_new_request)
@@ -189,12 +143,12 @@ class Feature_Common:
             print(f"\033[43m{success_mssg}\033[0m")
         # version and save
         fm.version_file(full_path_dir, filename, full_path_dir)
-        fm.get_dict_value_save_to_file(gpt_response, self.initial_dir, filename, "#!/usr/bin/env python3\n\n")
-        print(f"Code:\n", fm.get_code_from_dict(gpt_response, self.code_key_in_json))
+        fm.get_dict_value_save_to_file(gpt_response, config.initial_dir, filename, "#!/usr/bin/env python3\n\n")
+        print(f"Code:\n", fm.get_code_from_dict(gpt_response, config.code_key_in_json))
 
-    # TODO: remove for debugging
-    # fm.write_to_file(self.json_fname, self.json_dirname, gpt_response, "w")
-    # end remove for debugging
+        # TODO: remove for debugging
+        # fm.write_to_file(self.json_fname, self.json_dirname, gpt_response, "w")
+        # end remove for debugging
 
     def get_file_path_from_user(self, mssg):
         while True:

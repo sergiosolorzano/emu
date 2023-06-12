@@ -5,7 +5,8 @@ import sys
 import os
 import subprocess
 import shlex
-#import class
+#import config
+import config as config
 #import utils
 import tools.file_management as fm
 import tools.request_utils as ut
@@ -21,6 +22,7 @@ class Feature_Request_Run_Unit_Test_Cases:
         self.common_instance = common_instance
         self.test_counter = 0
         self.restart_all_unittests = False
+        self.comm = None
 
     def prerequest_args_process(self):
         #run unit tests
@@ -31,28 +33,28 @@ class Feature_Request_Run_Unit_Test_Cases:
             #Create unittesting cli command list from gpt response
             unittest_cli_c_list = []
             print(); print("-"*40)
-            unittest_cli_c_list = ut.create_unittest_cli_list(unittest_cli_c_list, self.common_instance.gpt_response_utest, self.common_instance.unittest_cli_command_key)
+            unittest_cli_c_list = ut.create_unittest_cli_list(unittest_cli_c_list, self.common_instance.gpt_response_utest, config.unittest_cli_command_key)
             for unitt in unittest_cli_c_list:
                 print("Unittest command:", unitt)
 
             #run unittests
-            print(); print("-"*40)
             print(f"Running Unittests: {len(unittest_cli_c_list)} tests."); print()
-            os.chdir(self.common_instance.full_project_dirname)
+            os.chdir(config.full_project_dirname)
             for bt in unittest_cli_c_list:
                 try:
-                    comm = self.run_utest_command(bt)
+                    self.run_utest_command(bt)
                 except subprocess.CalledProcessError as e:
-                    if not self.handle_unittest_exception(comm, e):
-                        #skip all tests
-                        return False
-                    else:
+                    user_choice_at_exception = self.handle_unittest_exception(e)
+                    if user_choice_at_exception == "m":
+                        #skip all tests - back to menu
+                        return False, True
+                    elif user_choice_at_exception == "s":
                         #skip this test
                         continue
             break
 
         print(); print(f"\033[43mUnit Testing Complete.\033[0m")
-        os.chdir(fm.initial_dir)
+        os.chdir(config.initial_dir)
         return False, True
 
     def prepare_request_args(self):
@@ -67,16 +69,15 @@ class Feature_Request_Run_Unit_Test_Cases:
         bt_c = test_comm.replace("python ","")
         bt_c = bt_c.replace("python3","")
         comm_list = shlex.split(bt_c)
-        comm = ['python'] + comm_list
-        #TODO: user choose request re-code failure with log: print(); print(f"Running command: {comm}"). Get array cli errors
-        print(f"Running command: {comm}")
-        subprocess.run(comm, check=True)
+        self.comm = ['python'] + comm_list
+        print(f"Running command: {self.comm}")
+        subprocess.run(self.comm, check=True)
         self.test_counter += 1
+        print(); print("-" * 40)
         print(); print("Test:",bt_c)
-        return comm
 
-    def handle_unittest_exception(self, comm, e):
-        print(f"\n\033[31mError or Exception Thrown running a unit test cli command.:{comm}: {e}\n\033[0m")
+    def handle_unittest_exception(self, e):
+        print(f"\n\033[31mError or Exception Thrown running a unit test cli command.:{self.comm}: {e}\n\033[0m")
         #TODO: if "No such file or directory" in str(e) or "returned non-zero exit status" in str(e):
         print(); print("="*40)
         print(); print("Please review the code. Attempt to correct or skip:")
@@ -85,29 +86,14 @@ class Feature_Request_Run_Unit_Test_Cases:
 
         #interact with user:
         #choice skip current test, skip all, or request model re-generate unittest commands
-        mssg = "=>Press \033[1m(r)\033[0m for the engine to (R)egenerate all cli command errors.\n=>Press \033[1m(s)\033[0m to (S)kip the current unit test and continue to the next one.\n=>Press \033[1m(any key)\033[0m to skip running unit tests.\n\nChoice: "
-        mssg_option2 = "\033[41mContinue testing and skip this unit test.\033[0m"
-        mssg_option3 = "\033[41mSkip running all unit tests.\033[0m"
-        choice = self.common_instance.user_interaction_instance.user_choice_two_options(mssg, option1="r", option2="s", mssg_option2=mssg_option2, mssg_option3=mssg_option3)
+        mssg = "=>Press \033[1m(m)\033[0m to go back to (M)enu.\n=>Press \033[1m(s)\033[0m to (S)kip the current unit test and continue to the next one.\n\nChoice: "
+        mssg_option1 = "\033[41mBack to menu and cancel all unit tests.\033[0m"
+        mssg_option3 = "\033[41mContinue testing and skip this unit test.\033[0m"
+        choice = self.common_instance.user_interaction_instance.user_choice_two_options(mssg, option1="m", option2="s", mssg_option1=mssg_option1, mssg_option2=None, mssg_option3=mssg_option3)
         print(); print("="*40)
 
         #take action according to user choice to handle exception
-        return self.action_user_choice(choice)
-
-    #action choice provided by user to handle exception 
-    def action_user_choice(self, choice):
-        #request re-populate unittest cli commands
-        if choice == "r":
-            return True
-            #goes back to beg while loop
-        elif choice == "s":
-            #skip current and continue
-            self.test_counter += 1
-            return True
-        else:
-            #skip running all unit tets
-            print("\033[43mSkipped Unit Tests.\033[0m")
-            return False
+        return choice
 
     #send request to model
     def request_code(self, *request_args):
@@ -127,7 +113,7 @@ class Feature_Request_Run_Unit_Test_Cases:
         #check unittest commands are valid
         if not self.validate_unittest_commands():
             print("Unit test functions not created. Re-create unit test code and cli commands.")
-            fm.version_file(self.common_instance.full_project_dirname, self.common_instance.module_utest_name, self.common_instance.full_project_dirname)
+            fm.version_file(config.full_project_dirname, config.module_utest_name, config.full_project_dirname)
             return False
         #unittest commands valid
         mssg = "Unit test functions CLI commands succesfully created."
@@ -137,7 +123,7 @@ class Feature_Request_Run_Unit_Test_Cases:
         print(); print("-"*40)
         print("Validating Unittest Function CLI commands were created.")
         num_unittests = 0
-        num_unittests = ut.count_values_for_keycontain(self.common_instance.gpt_response_utest, self.common_instance.unittest_cli_command_key)
+        num_unittests = ut.count_values_for_keycontain(self.common_instance.gpt_response_utest, config.unittest_cli_command_key)
         if num_unittests > 0:
             return True
         else:

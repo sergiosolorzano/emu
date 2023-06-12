@@ -1,34 +1,27 @@
 #!/usr/bin/env python3
-#code includes program purpose + JSON format
+#import config
+import config as config
 
-#TODO move to class var
-program_language="Python"
-
-#change of module_name[0] requires change in JSON key for the code
-module_name = "module.py"
-module_utest_name = "module_utest.py"
-module_log_fname = "module.log"
-
-sys_mssg = f'''You program in {program_language}.
+sys_mssg = f'''You program in {config.program_language}.
 You create the code that implements the description in Program Description and that follows these specific requirements as outlined in Requirements.
 Add statement __name__ == '__main__' to the code module .
 You insert the code in a JSON object. Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
 (d) escape every special character in the code for json.load to read the JSON object correctly.
 Your response to this request is exclusively a JSON object using the JSON Object Template provided.
 You must validate the JSON object construct for syntax.
-You ensure parsing the JSON object using {program_language}'s built-in JSON module would not raise an error exception.
+You ensure parsing the JSON object using {config.program_language}'s built-in JSON module would not raise an error exception.
 '''
 #You make no comments in your response.
 
 gpt_task = f'''Your Task:
-(1) To create the code for a single module (.py file) named {module_name} in {program_language}.
+(1) To create the code for a single module (.py file) named {config.module_script_fname} in {config.program_language}.
 (2) The code you create implements the Program Description.
 (3) Your response to this request meets the Requirements.
 '''
 
 json_object_requirements = f'''Your response to this request is exclusively:
 (a) a JSON object with the template described in JSON Required Format Template.
-(b) You ensure parsing the JSON object using {program_language}'s built-in JSON module would not raise an error exception.
+(b) You ensure parsing the JSON object using {config.program_language}'s built-in JSON module would not raise an error exception.
 (c) You add nothing else to your response of this request but the JSON object.
 (d) escape every special character in the code for json.load to read the JSON object correctly.
 '''

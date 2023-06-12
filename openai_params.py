@@ -16,13 +16,4 @@ openai.api_version = self_config['OPENAI_API_VERSION']
 openai.api_base = self_config['OPENAI_API_BASE']
 openai.api_key = self_config['OPENAI_API_KEY']
 
-#token accounting
-cum_tokens = 0
-max_response_tokens = 3000
-token_limit= 4096
-#we don't accumulate conversations
-#arch_conversation=[]
-#module_conversation=[]
-
-#openai request params#TODO delete temp, now set at request_feature
 temperature = 0.7

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-#import base class
-import feature_common as base
+#import config
+import config as config
 #import utils
 import tools.file_management as fm
 import tools.request_utils as ut
@@ -35,8 +35,8 @@ class Feature_Request_Utest:
 	def request_code(self, *request_args):
 		#override base instance vars
 		self.common_instance.u_test_bool = True
-		self.common_instance.model = oai.codex_engine_deployment_name
-		self.common_instance.model_temp = 0.2
+		self.common_instance.model = oai.gpt_engine_deployment_name
+		self.common_instance.model_temp = 0.7
 		#run base request implementation
 		return self.common_instance.request_code_enhancement(*request_args)
 
@@ -44,22 +44,22 @@ class Feature_Request_Utest:
 		#check unittest commands are valid
 		if not self.validate_unittest_commands():
 			print("Unit test functions not created. Re-create unit test code and cli commands.")
-			fm.version_file(self.common_instance.full_project_dirname, self.common_instance.module_utest_name, self.common_instance.full_project_dirname)
+			fm.version_file(config.full_project_dirname, config.module_utest_name, config.full_project_dirname)
 			return False
 		#unittest commands valid
 		mssg = "Unit test functions CLI commands successfully created."
 		#call base
-		self.common_instance.valid_response_file_management(self.common_instance.module_utest_name, self.common_instance.full_project_dirname, self.common_instance.gpt_response_utest, success_mssg=mssg)
+		self.common_instance.valid_response_file_management(config.module_utest_name, config.full_project_dirname, self.common_instance.gpt_response_utest, success_mssg=mssg)
 		return True
 
 	def validate_unittest_commands(self):
 		print(); print("-"*40)
 		print("Validating Unittest Function CLI commands were created.")
 		num_unittests = 0
-		num_unittests = ut.count_values_for_keycontain(self.common_instance.gpt_response_utest, u_test.unittest_cli_command_key)
+		num_unittests = ut.count_values_for_keycontain(self.common_instance.gpt_response_utest, config.unittest_cli_command_key)
 		if num_unittests > 0:
 			return True
 		else:
 			print("Unit test functions not created. Re-create unit test code and cli commands.")
-			fm.version_file(self.common_instance.full_project_dirname, self.common_instance.module_utest_name, self.common_instance.full_project_dirname)
+			fm.version_file(config.full_project_dirname, config.module_utest_name, config.full_project_dirname)
 			return False

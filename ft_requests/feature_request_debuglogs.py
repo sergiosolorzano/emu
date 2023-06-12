@@ -8,6 +8,8 @@ import tools.request_utils as ut
 import debug_rq as dg_r
 #openai
 import openai_params as oai
+#import config
+import config as config
 
 #Request model to debug program with logs
 class Feature_Request_DebugLogs:
@@ -24,14 +26,14 @@ class Feature_Request_DebugLogs:
         if self.user_confirm_requirements_for_request():
             while True:
                 user_comm_tail = self.common_instance.user_interaction_instance.request_input_from_user(
-                    f"\n(Q)uit or Enter the rest of the CLI command to execute program:\npython3 {self.common_instance.full_path_module}: ")
+                    f"\n(Q)uit or Enter the rest of the CLI command to execute program:\npython3 {config.full_path_module}: ")
                 if user_comm_tail.lower() == "q":
                     return False, True
 
                 if not self.execute_prog(user_comm_tail.lower()):
                     #exception occurred
                     #write exception to log file: append cos program writes logs to same log file. Next loop log file is truncated.
-                    fm.write_to_file(self.common_instance.log_fname,self.common_instance.full_project_dirname, str("\n\n" + self.error_mssg), "a")
+                    fm.write_to_file(config.log_fname, config.full_project_dirname, str("\n\n" + self.error_mssg), "a")
                     print("="*40)
 
                     if self.user_action_debug_or_not():
@@ -54,11 +56,11 @@ class Feature_Request_DebugLogs:
         #user enter cli comm and execute
         print("-"*40)
         exception_flag = False
-        self.command = ['python'] + shlex.split(self.common_instance.full_path_module) + shlex.split(user_comm_tail)
+        self.command = ['python'] + shlex.split(config.full_path_module) + shlex.split(user_comm_tail)
         exception_str = ""
         try:
             #truncate log file
-            fm.trunc_file(self.common_instance.log_fname, self.common_instance.full_project_dirname)
+            fm.trunc_file(config.log_fname, config.full_project_dirname)
             print(); print(f"Running command: {self.command}")
             result = subprocess.run(self.command, check=True, capture_output=True, text=True)
             if result.returncode != 0:
@@ -119,7 +121,7 @@ class Feature_Request_DebugLogs:
     def user_confirm_requirements_for_request(self):
         #run the program with debug/logs loop
         while True:
-            user_action = self.common_instance.user_interaction_instance.request_input_from_user(f"\n\033[1;31m[WARNING]\033[0m Note on option requirements:\n\t=> Requires logging functionality, logs will be written to {fm.initial_dir}/{fm.m_module_log_filename}\n\t=> Program execution via CLI, you can add args to the code with the Argparse option.\n\t=> This option is not compatible to run unit tests.\n\n(C)ontinue or back to (M)Menu: \033[0m")
+            user_action = self.common_instance.user_interaction_instance.request_input_from_user(f"\n\033[1;31m[WARNING]\033[0m Note on option requirements:\n\t=> Requires logging functionality, logs will be written to {config.initial_dir}/{config.log_fname}\n\t=> Program execution via CLI, you can add args to the code with the Argparse option.\n\t=> This option is not compatible to run unit tests.\n\n(C)ontinue or back to (M)Menu: \033[0m")
             if user_action.lower() == "c":
                 #request logging from model
                 return True
@@ -192,5 +194,5 @@ class Feature_Request_DebugLogs:
         return self.common_instance.request_code_enhancement(*request_args)
 
     def process_successful_response(self):
-        self.common_instance.valid_response_file_management(self.common_instance.module_script_fname, self.common_instance.full_project_dirname, self.common_instance.gpt_response)
+        self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
         return True

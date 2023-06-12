@@ -7,6 +7,8 @@ import tools.request_utils as ut
 import prompt_txt.docstrings_rq as docs_r
 #openai
 import openai_params as oai
+#import config
+import config as config
 
 #request add docstrings to code
 class Feature_Request_Docstrings:
@@ -37,5 +39,5 @@ class Feature_Request_Docstrings:
 
     def process_successful_response(self):
         #call base
-        self.common_instance.valid_response_file_management(self.common_instance.module_script_fname, self.common_instance.full_project_dirname, self.common_instance.gpt_response)
+        self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
         return True

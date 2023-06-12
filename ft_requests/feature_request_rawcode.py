@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-#import base
-import feature_common as base
+#import config
+import config as config
 #import utils
 import tools.request_utils as ut
 # import openai libs/modules
@@ -22,7 +22,7 @@ class Feature_Request_Rawcode:
 
     def prepare_request_args(self):
         #build args
-        summary_new_request = "Request raw program code."
+        summary_new_request = "Request raw program code. Program Description: "+self.common_instance.program_description
         sys_mssg = raw_code.sys_mssg
         request_to_gpt = ut.concat_dict_to_string(raw_code.raw_instructions_dict) + "\n\n" + self.common_instance.program_description
         #call base
@@ -39,5 +39,5 @@ class Feature_Request_Rawcode:
 
     def process_successful_response(self):
         #call base
-        self.common_instance.valid_response_file_management(self.common_instance.module_script_fname, self.common_instance.full_project_dirname, self.common_instance.gpt_response)
+        self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
         return True

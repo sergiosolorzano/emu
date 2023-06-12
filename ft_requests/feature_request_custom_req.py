@@ -3,6 +3,8 @@
 import custom_req as c_r
 #import openai params
 import openai_params as oai
+#import config
+import config as config
 
 #custom request by user
 class Feature_Request_CustomRequest:
@@ -64,5 +66,5 @@ class Feature_Request_CustomRequest:
 
 	def process_successful_response(self):
 		#call base
-		self.common_instance.valid_response_file_management(self.common_instance.module_script_fname, self.common_instance.full_project_dirname, self.common_instance.gpt_response)
+		self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
 		return True

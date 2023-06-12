@@ -1,59 +1,44 @@
 #!/usr/bin/env python3
-
+import cProfile
 import os
 from pathlib import Path
+#import config
+import config as config
 #import classes
 import user_interaction as uinteraction
 import feature_manager as ft_mgr
-#import menu requests
-import menu_requests.create_menu_sequence as menu_seq
-import menu_requests.run_all as run_all
-import menu_requests.exit_app as exit_app
-#import profiler
-import cProfile
 import pstats
 #import tools
 import tools.file_management as fm
 
-#TODO: Refactor into config file
-# paths
-initial_dir = os.getcwd()
-root = os.getenv("HOME")
-prompt_dirname = "prompt_txt"
-project_dirname = "project"
-json_dirname = "response_json"
-custom_json_format_dirname = "custom_json_format"
-# full dir paths
-full_prompt_dirname = f"{initial_dir}/{prompt_dirname}"
-full_project_dirname = f"{initial_dir}/{project_dirname}"
-full_json_dir = f"{initial_dir}/{json_dirname}"
-full_custom_json_format_dirname = f"{initial_dir}/{custom_json_format_dirname}"
-
 #manage program workflow with all classes
 class Emu_cli:
-
-    menu_type_choices = [10, 11, 12]
+    #menu choice that does not create a feature / instantiate a class
+    menu_type_choices = [8, 9, 10]
 
     #init program classes
     def __init__(self):
         self.feature_manager_instance = ft_mgr.Feature_Manager()
         self.user_interaction_instance = uinteraction.User_Interaction()
-        self.menu_sequence_instance = menu_seq.Create_Menu_Sequence(self.user_interaction_instance)
+        self.menu_choice = None
 
-    def handle_workflow(self, menu_choice=None):
+    def handle_workflow(self):
         #request menu choice from user
+        if self.menu_choice is None:
+            self.menu_choice = self.user_interaction_instance.request_menu()
+
+        #menu or feature choice
+        if int(self.menu_choice) in self.menu_type_choices:
+            if self.menu_choice == '12':
+                return False
+            self.execute_menu_sequence(self.menu_choice)
+
         while True:
-            if menu_choice is None:
-                menu_choice = self.user_interaction_instance.request_menu()
-
-            #menu or feature choice
-            if int(menu_choice) in self.menu_type_choices:
-                self.execute_menu_sequence(menu_choice)
-
-            #implementation of selected feature
-            success, back_to_menu = self.feature_manager_instance.handle_menu_choice(menu_choice)
+            # implementation of selected feature
+            success, back_to_menu = self.feature_manager_instance.handle_menu_choice(self.menu_choice)
             if back_to_menu:
-                break
+                self.menu_choice = None
+                return True
             if not success:
                 #broken JSON response, ask for user action
                 if self.user_interaction_instance.broken_json_user_action():
@@ -61,7 +46,8 @@ class Emu_cli:
                     continue
                 else:
                     print("JSON is invalid, returning to main menu at user's request.")
-                    break
+                    self.menu_choice = None
+                    return True
             #valid JSON response received
             else:
                 if not self.feature_manager_instance.process_valid_response():
@@ -69,54 +55,72 @@ class Emu_cli:
                     continue
                 else:
                     #done
-                    break
+                    self.menu_choice = None
+                    return True
 
     def execute_menu_sequence(self, choice):
         match choice:
             case '10':
-                requested_seq = self.menu_sequence_instance.get_sequence()
+                requested_seq = self.get_sequence()
                 for seq_num in requested_seq:
-                    print("Inside execute seq",seq_num)
-                    self.handle_workflow(str(seq_num))
+                    self.menu_choice = str(seq_num)
+                    self.handle_workflow()
             case '11':
-                print("Pending Implementation")
+                for seq_num in [1,3,4,5,6,7,8,9]:
+                    self.menu_choice=str(seq_num)
+                    self.handle_workflow()
             case '12':
-                exit(0)
+                return
             case _:
                 return
+
+    def get_sequence(self):
+        while True:
+            mssg = "Provide number sequence in menu execution separated by commas: "
+            user_seq = self.user_interaction_instance.request_input_from_user(mssg)
+            numbers = []
+
+            for item in user_seq.split(','):
+                item = item.strip()
+                if item.isdigit():
+                    numbers.append(int(item))
+                else:
+                    print("Invalid sequence.")
+
+            return numbers
 
 def main():
     # TODO option to delete
     # del all project module files and responses in json stored
-    fm.delete_all_dir_files(full_project_dirname)
-    fm.delete_all_dir_files(full_json_dir)
+    fm.delete_all_dir_files(config.full_project_dirname)
+    fm.delete_all_dir_files(config.full_json_dir)
     # delete project files / create project dirs where scripts will be stored
-    fm.create_dir(Path(full_project_dirname))
-    fm.create_dir(Path(full_json_dir))
+    fm.create_dir(Path(config.full_project_dirname))
+    fm.create_dir(Path(config.full_json_dir))
 
     print(); print("-" * 40); print()
     print("\033[43mSlate Clean - Project files deleted. Project directories created.\033[0m")
 
     #create emu_manager instance
     emu = Emu_cli()
-    emu.handle_workflow()
-    print("*******End of Script"); print()
+    while True:
+        if emu.handle_workflow() is False:
+            break
 
-    # profiler
-    # print(); print("=" * 10, end="")
-    # print("Profiler Stats", end="")
-    # print("=" * 10)
-    # p = pstats.Stats("profiler_data.out")
-    #
-    # print(); print("=" * 10, end="")
-    # print("Total Cumulative Stats", end=""); print("=" * 10)
-    # p.sort_stats("cumulative").print_stats(5)
-    #
-    # print(); print(f"\033[43mThe program has exited at the user's request.\033[0m"); print()
-    #
-    # print(); print("-" * 40)
-    # print("End of Script"); print()
+    #profiler
+    print(); print("=" * 10, end="")
+    print("Profiler Stats", end="")
+    print("=" * 10)
+    p = pstats.Stats("profiler_data.out")
+
+    print(); print("=" * 10, end="")
+    print("Total Cumulative Stats", end=""); print("=" * 10)
+    p.sort_stats("cumulative").print_stats(5)
+
+    print(f"\033[43mThe program has exited at the user's request.\033[0m"); print()
+
+    print("-" * 40)
+    print("End of Script"); print()
 
 if __name__ == "__main__":
-    #cProfile.run("main()","profiler_data.out")
-    main()
+    cProfile.run("main()","profiler_data.out")

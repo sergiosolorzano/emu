@@ -6,13 +6,17 @@
         "custom_json_format_dirname": "custom_json_format"
     },
     "file_names": {
-        "module_script_fname": "data.txt",
+        "module_script_fname": "module.py",
         "log_fname": "module.log",
         "module_utest_name": "module_utest.py",
         "json_fname": "response.json",
         "custom_json_format_fname": "custom_json_format.json"
     },
-    {
-        "full_path_prompt_dir":"${workspaceFolder}/prompt_txt"
-    }
+    "openai_tokens": {
+        "token_limit": 4096,
+        "max_response_tokens":3000
+    },
+    "program_language": "python",
+    "language_version": "3.10",
+    "unittest_cli_command_key": "unittest_cli_"
 }

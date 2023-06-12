@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
 
-
-#parent of features(base)
-import sys
-import os
-from pathlib import Path
-
 #import class
 import feature_common as ft_common
 #import feature request classes
@@ -24,10 +18,7 @@ class Feature_Manager:
 
 	#init feature children
 	def __init__(self):
-		#class instances
-		#self.user_interaction_instance = uinteraction.User_Interaction()
-		#self.log_list_handler_instance = log_list_handler.LogListHandler()
-		#instantiate feature base class
+		#instantiate feature common class
 		self.feature_common_instance = ft_common.Feature_Common()
 		self.feature_instance = None
 
@@ -37,14 +28,11 @@ class Feature_Manager:
 		'2': ft_req_loadcode.Feature_Request_Loadcode(self.feature_common_instance),
 		'3': ft_req_argparse.Feature_Request_Argparse(self.feature_common_instance),
 		'4': ft_req_excpt_and_log.Feature_Request_ExceptionHndl_and_Logging(self.feature_common_instance),
-		'5': ft_req_utest.Feature_Request_Utest(self.feature_common_instance),
-		'6': ft_req_run_utests.Feature_Request_Run_Unit_Test_Cases(self.feature_common_instance),
-		'7': ft_req_custom_req.Feature_Request_CustomRequest(self.feature_common_instance),
-		'8': ft_req_deblogs.Feature_Request_DebugLogs(self.feature_common_instance),
-		'9': ft_req_docstrings.Feature_Request_Docstrings(self.feature_common_instance)
-		#'10': menu_seq.Create_Menu_Sequence(self.feature_common_instance),
-		#'11': run_all.Run_All(self.feature_common_instance),
-		#'12': exit_app.Exit_Application(self.feature_common_instance)
+		#'5': ft_req_utest.Feature_Request_Utest(self.feature_common_instance), #removed due to underpeformance
+		#'6': ft_req_run_utests.Feature_Request_Run_Unit_Test_Cases(self.feature_common_instance), #removed due to underpeformance
+		'5': ft_req_custom_req.Feature_Request_CustomRequest(self.feature_common_instance),
+		'6': ft_req_deblogs.Feature_Request_DebugLogs(self.feature_common_instance),
+		'7': ft_req_docstrings.Feature_Request_Docstrings(self.feature_common_instance)
 		}
 
 	def handle_menu_choice(self, choice):

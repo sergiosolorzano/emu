@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+#import config
+import config as config
 
 #import utils
 import tools.request_utils as ut
@@ -6,6 +8,8 @@ import tools.request_utils as ut
 import input_and_argparse_rq as input_and_argparse
 #openai
 import openai_params as oai
+#import config
+import config as config
 
 #request add argparse to code
 class Feature_Request_Argparse:
@@ -37,5 +41,5 @@ class Feature_Request_Argparse:
 
     def process_successful_response(self):
         #call base
-        self.common_instance.valid_response_file_management(self.common_instance.module_script_fname, self.common_instance.full_project_dirname, self.common_instance.gpt_response)
+        self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
         return True

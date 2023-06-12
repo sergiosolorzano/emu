@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-import os
-#import base
-import feature_common as base
 #import utils
 import tools.file_management as fm
 import tools.request_utils as ut
+#import config
+import config as config
 
 #user upload code from file
 class Feature_Request_Loadcode:
@@ -13,7 +12,7 @@ class Feature_Request_Loadcode:
         self.common_instance = common_instance
 
     def prerequest_args_process(self):
-        mssg = f"Enter Path to {self.common_instance.program_language} Script: "
+        mssg = f"Enter Path to {config.program_language} Script: "
         # call base
         full_path_to_script = self.common_instance.get_file_path_from_user(mssg)
 
@@ -39,5 +38,5 @@ class Feature_Request_Loadcode:
 
     def process_successful_response(self):
         #call base: process successful code upload
-        self.common_instance.valid_response_file_management(self.common_instance.module_script_fname, self.common_instance.full_project_dirname, self.common_instance.gpt_response)
+        self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
         return True

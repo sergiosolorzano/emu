@@ -7,38 +7,18 @@ import shutil
 import shlex
 import json
 from pathlib import Path
-
-#TODO: add user option for programming language and module filename
-#TODO:fn and dir module
-m_root = os.getenv("HOME")
-m_prompt_dirname = "prompt_txt"
-m_project_dirname = "project"
-m_json_dirname = "response_json"
-
-sys.path.append(m_root)
-initial_dir = os.getcwd()
-sys.path.append(f'{initial_dir}/{m_prompt_dirname}')
-#dir to store module files
-modules_dir=f"{initial_dir}/{m_project_dirname}"
-json_dir = f"{initial_dir}/{m_json_dirname}"
-
-#import initial raw code request requirements, requires paths above
-import prompt_txt.raw_code_rq as raw_code
 #import my utils
 import tools.request_utils as ut
-
-m_json_filename = "response.json"
-m_custom_json_dirname = "custom_json"
-m_custom_json_filename = "custom_json.json"
-m_module_log_filename = raw_code.module_log_fname
+#import config
+import config as config
 
 def create_empty_module(module_name, ini_dir):
 	#change to modules dir
 	print()
-	os.chdir(modules_dir)
+	os.chdir(config.full_project_dirname)
 
 	#create module file and chmod
-	path_and_fn = Path(modules_dir) / module_name
+	path_and_fn = Path(config.full_project_dirname) / config.module_script_fname
 	path_and_fn.touch()
 	print("-"*40)
 	print(f"File created: {path_and_fn}")
@@ -111,14 +91,14 @@ def write_to_file(filename,path,content, access_mode):
 def get_dict_value_save_to_file(gpt_response, ini_dir, filename, header=""):
 	print(); print("-"*40)
 	#code = ut.get_response_value_for_key(gpt_response, raw_code.module_name.split(".")[0])
-	code = get_code_from_dict(gpt_response, raw_code.module_name.split(".")[0])
+	code = get_code_from_dict(gpt_response, config.code_key_in_json)
 	#print("Code:"); print(); print(code)
-	destination_full_name = os.path.join(modules_dir, filename)
+	destination_full_name = os.path.join(config.full_project_dirname, filename)
 	if not os.path.exists(destination_full_name):
 		create_empty_module(filename, ini_dir)
 	#add bash to script
 	code = header + code
-	write_to_file(filename, modules_dir, code, "w")
+	write_to_file(filename, config.full_project_dirname, code, "w")
 
 def get_code_from_dict(gpt_response, dict_key):
 	return ut.get_response_value_for_key(gpt_response, dict_key)
@@ -147,10 +127,6 @@ def version_file(path_original_fn, original_fn, path_dest_fn):
 		print(f"\033[43mNo versioning at this point.\033[0m")
 		pass
 
-	# 	print(f"\033[43mFile {original_full_path_fn} not available to version it {e}\033[0m")
-	# except Exception as e:
-	# 	print(f"\033[43mException versioning (copy) {original_full_path_fn} to {destination_full_name}: {e}\033[0m")
-
 def read_file_stored_to_buffer(filename, path):
 	full_path = os.path.join(path, filename)
 	path_to_file = Path(path, filename)
@@ -172,14 +148,13 @@ def insert_script_in_json(a_script):
 	script_dict = {"module": a_script}
 	return script_dict
 
-
 def delete_all_dir_files(target_dir):
 	#del all project module files
 	if os.path.exists(target_dir):
 		with os.scandir(target_dir) as this_dir:
 			for file_name in this_dir:
 				if file_name.is_file():
-					os.remove(os.path.join(modules_dir, file_name))
+					os.remove(os.path.join(config.full_project_dirname, file_name))
 
 def create_dir(target_dir):
 	#os.makedirs(target_dir, exist_ok=True)

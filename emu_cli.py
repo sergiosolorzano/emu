@@ -5,12 +5,15 @@ from pathlib import Path
 #import classes
 import user_interaction as uinteraction
 import feature_manager as ft_mgr
+#import menu requests
+import menu_requests.create_menu_sequence as menu_seq
+import menu_requests.run_all as run_all
+import menu_requests.exit_app as exit_app
 #import profiler
 import cProfile
 import pstats
 #import tools
 import tools.file_management as fm
-
 
 #TODO: Refactor into config file
 # paths
@@ -28,35 +31,59 @@ full_custom_json_format_dirname = f"{initial_dir}/{custom_json_format_dirname}"
 
 #manage program workflow with all classes
 class Emu_cli:
+
+    menu_type_choices = [10, 11, 12]
+
     #init program classes
     def __init__(self):
         self.feature_manager_instance = ft_mgr.Feature_Manager()
         self.user_interaction_instance = uinteraction.User_Interaction()
+        self.menu_sequence_instance = menu_seq.Create_Menu_Sequence(self.user_interaction_instance)
 
-    def handle_workflow(self):
+    def handle_workflow(self, menu_choice=None):
         #request menu choice from user
         while True:
-            menu_choice = self.user_interaction_instance.request_menu()
-            while True:
-                success, back_to_menu = self.feature_manager_instance.handle_menu_choice(menu_choice)
-                if back_to_menu:
-                    break
-                if not success:
-                    #broken JSON response, ask for user action
-                    if self.user_interaction_instance.broken_json_user_action():
-                        #user choice to request code from model again
-                        continue
-                    else:
-                        print("JSON is invalid, returning to main menu at user's request.")
-                        break
-                #valid JSON response received
+            if menu_choice is None:
+                menu_choice = self.user_interaction_instance.request_menu()
+
+            #menu or feature choice
+            if int(menu_choice) in self.menu_type_choices:
+                self.execute_menu_sequence(menu_choice)
+
+            #implementation of selected feature
+            success, back_to_menu = self.feature_manager_instance.handle_menu_choice(menu_choice)
+            if back_to_menu:
+                break
+            if not success:
+                #broken JSON response, ask for user action
+                if self.user_interaction_instance.broken_json_user_action():
+                    #user choice to request code from model again
+                    continue
                 else:
-                    if not self.feature_manager_instance.process_valid_response():
-                        #something went wrong, request again from model
-                        continue
-                    else:
-                        #done
-                        break
+                    print("JSON is invalid, returning to main menu at user's request.")
+                    break
+            #valid JSON response received
+            else:
+                if not self.feature_manager_instance.process_valid_response():
+                    #something went wrong, request again from model
+                    continue
+                else:
+                    #done
+                    break
+
+    def execute_menu_sequence(self, choice):
+        match choice:
+            case '10':
+                requested_seq = self.menu_sequence_instance.get_sequence()
+                for seq_num in requested_seq:
+                    print("Inside execute seq",seq_num)
+                    self.handle_workflow(str(seq_num))
+            case '11':
+                print("Pending Implementation")
+            case '12':
+                exit(0)
+            case _:
+                return
 
 def main():
     # TODO option to delete

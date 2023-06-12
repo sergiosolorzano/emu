@@ -169,8 +169,8 @@ def print_json_on_screen(json_data):
 	print(json.dumps(json_data, indent=2, separators=(',', ':')))
 
 def insert_script_in_json(a_script):
-	dict = {"module": a_script}
-	return dict
+	script_dict = {"module": a_script}
+	return script_dict
 
 
 def delete_all_dir_files(target_dir):

@@ -21,12 +21,12 @@ class Feature_Request_Loadcode:
         mssg = f"Enter Short Program Description (used for requests): "
         self.common_instance.program_description = self.common_instance.user_interaction_instance.request_input_from_user(mssg)
 
-        # call base
+        # call common
         user_script = self.common_instance.read_code_from_file(full_path_to_script)
         # hack to step script as a gpt code response for continued conversation with gpt
         self.common_instance.gpt_response = fm.insert_script_in_json(user_script)
         # print loaded code
-        code = ut.get_response_value_for_key(self.common_instance.gpt_response, self.common_instance.module_script_fname.split(".")[0])
+        #code = ut.get_response_value_for_key(self.common_instance.gpt_response, self.common_instance.module_script_fname.split(".")[0])
         #print(code); print()
         print(f"\033[43mScript loaded.\033[0m")
 

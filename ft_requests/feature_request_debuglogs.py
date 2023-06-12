@@ -178,6 +178,7 @@ class Feature_Request_DebugLogs:
                     if 0 <= u_temp <= 1.0:
                         self.common_instance.model_temp = u_temp
                         print(f"Model selected: {self.common_instance.model[1]} Temperature {self.common_instance.model_temp}")
+                        return
                     else:
                         print(f"Invalid temperature {u_temp}. Value must be float or int value 0-1.")
                 else:

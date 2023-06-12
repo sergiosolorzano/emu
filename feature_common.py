@@ -162,10 +162,10 @@ class Feature_Common:
             return False
 
         if self.u_test_bool:
-            print(f"*****u_test_bool {self.u_test_bool}")
+            #print(f"*****u_test_bool {self.u_test_bool}")
             self.gpt_response_utest = json.loads(clean_response)  # .strip("\n") #.replace('```', '')
         else:
-            print(f"*****u_test_bool {self.u_test_bool}")
+            #print(f"*****u_test_bool {self.u_test_bool}")
             self.gpt_response = json.loads(clean_response)  # .strip("\n")  #.replace('```', '')
 
         # JSON response valid

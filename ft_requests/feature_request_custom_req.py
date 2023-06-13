@@ -17,7 +17,7 @@ class Feature_Request_CustomRequest:
 	def prerequest_args_process(self):
 		# send additional requests, not back to menu
 		# get user custom request
-		print()
+		print(); print(f"\033[44;97mJob: Run Code With Custom Prompt.\033[0m")
 		print(
 			f"\n\033[1;31m[WARNING]\033[0m A custom request requires code have been loaded.\033[0m")
 		print()

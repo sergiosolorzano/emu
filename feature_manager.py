@@ -21,6 +21,9 @@ class Feature_Manager:
 		#instantiate feature common class
 		self.feature_common_instance = ft_common.Feature_Common()
 		self.feature_instance = None
+		self.ready_to_prepare_request_args = False
+		self.back_to_menu = False
+		self.request_args = None
 
 		#dict of feature instances, pass shared common instance
 		self.feature_instances = {
@@ -36,20 +39,32 @@ class Feature_Manager:
 		}
 
 	def handle_menu_choice(self, choice):
+		print("At handle_menu_choice choice", choice)
 		#get feature instance according to menu choice
 		self.feature_instance = self.feature_instances[choice]
 
 		#meet requirements to request args
-		ready_to_prepare_request_args, back_to_menu = self.feature_instance.prerequest_args_process()
-		#get request args
-		if ready_to_prepare_request_args:
-			request_args = self.feature_instance.prepare_request_args()
+		if not self.ready_to_prepare_request_args:
+			self.ready_to_prepare_request_args, self.back_to_menu = self.feature_instance.prerequest_args_process()
 
-			#do not return back to menu
-			return self.feature_instance.request_code(*request_args), back_to_menu
-		else:
-			#return back to menu
-			return True, back_to_menu
+		#get request args
+		if self.ready_to_prepare_request_args and self.request_args is None:
+			self.request_args = self.feature_instance.prepare_request_args()
+		# do not return back to menu
+		return self.feature_instance.request_code(*self.request_args), self.back_to_menu
+
+		#return back to menu
+		#return True, self.back_to_menu
 
 	def process_valid_response(self):
+		self.reset_vars_end_process()
 		return self.feature_instance.process_successful_response()
+
+	def reset_vars_end_process(self):
+		print("Resetting vars at manager")
+		self.ready_to_prepare_request_args=False
+		self.request_args = None
+		self.back_to_menu = False
+		self.request_args = None
+
+

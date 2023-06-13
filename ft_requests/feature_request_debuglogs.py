@@ -22,6 +22,7 @@ class Feature_Request_DebugLogs:
         self.command = None
 
     def prerequest_args_process(self):
+        print(f"\033[44;97mJob: Your Custom Request:\033[0m")
         #user ensure the code has the requirements to run this option
         if self.user_confirm_requirements_for_request():
             while True:
@@ -101,7 +102,8 @@ class Feature_Request_DebugLogs:
         #user choose another command or back to menu
         mssg= "Run another (C)ommand or (M)enu: "
 
-        if self.common_instance.user_interaction_instance.user_choice_two_options(mssg, option1="c",option2="m") == "c":
+        user_choice = self.common_instance.user_interaction_instance.user_choice_two_options(mssg, option1="c",option2="m") == "c"
+        if user_choice == "c":
             #execute program again
             return True
         else:

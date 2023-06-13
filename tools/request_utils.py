@@ -37,9 +37,9 @@ def concat_dict_to_string(mydict):
 
 def token_limit(tokens_used_snapshot):
     if tokens_used_snapshot >= config.token_limit:
-        print("Reached max tokens. Continue (c) or any key to exit.")
+        print(f"Reached max tokens {tokens_used_snapshot} of {config.token_limit}. Continue (c) or any key to exit.")
         cont = input("")
-        if cont.lower() != "c" or cont.lower() != "C":
+        if cont.lower() != "c":
             print(); print("Exiting at user request.")
             exit()
 

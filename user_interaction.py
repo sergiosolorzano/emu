@@ -41,7 +41,8 @@ class User_Interaction:
                         print(); print(f"\033[41mInvalid Option\033[0m")
                         choice = None
 
-    def broken_json_user_action(self):
+    @staticmethod
+    def broken_json_user_action():
         while True:
             user_choice = input("The model's JSON response is broken, re-request? y/n: ")
             match user_choice.lower():
@@ -56,7 +57,8 @@ class User_Interaction:
     def request_input_from_user(self, mssg):
         return input(mssg)
 
-    def user_choice_two_options(self, mssg, mssg_option1=None, mssg_option2=None, mssg_option3=None, option1="y", option2="n"):
+    @staticmethod
+    def user_choice_two_options(mssg, mssg_option1=None, mssg_option2=None, mssg_option3=None, option1="y", option2="n"):
         while True:
             choice = input(mssg)
             if choice.lower() == option1:

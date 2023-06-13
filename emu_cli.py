@@ -21,58 +21,79 @@ class Emu_cli:
         self.feature_manager_instance = ft_mgr.Feature_Manager()
         self.user_interaction_instance = uinteraction.User_Interaction()
         self.menu_choice = None
+        self.success = None
+        self.back_to_menu = None
 
     def handle_workflow(self):
-        #request menu choice from user
-        if self.menu_choice is None:
-            self.menu_choice = self.user_interaction_instance.request_menu()
-
-        #menu or feature choice
-        if int(self.menu_choice) in self.menu_type_choices:
-            if self.menu_choice == '12':
-                return False
-            self.execute_menu_sequence(self.menu_choice)
-
         while True:
+            print("In while loop handle_workflow choice ", self.menu_choice)
             # implementation of selected feature
-            success, back_to_menu = self.feature_manager_instance.handle_menu_choice(self.menu_choice)
-            if back_to_menu:
-                self.menu_choice = None
+            self.success, self.back_to_menu = self.feature_manager_instance.handle_menu_choice(self.menu_choice)
+            if self.back_to_menu:
+                print("Going back to menu")
                 return True
-            if not success:
-                #broken JSON response, ask for user action
+            if not self.success:
+                #broken JSON response, back to menu
                 if self.user_interaction_instance.broken_json_user_action():
                     #user choice to request code from model again
+                    print("JSON IS BROKEN")
                     continue
                 else:
                     print("JSON is invalid, returning to main menu at user's request.")
-                    self.menu_choice = None
                     return True
             #valid JSON response received
             else:
+                print("At Else")
                 if not self.feature_manager_instance.process_valid_response():
                     #something went wrong, request again from model
+                    print("VALID RESPONSE NOT VALID")
                     continue
                 else:
-                    #done
-                    self.menu_choice = None
-                    return True
+                    if self.back_to_menu:
+                        print("At bottom back to menu")
+                        return True
+                    else:
+                        #done
+                        print("AT ELSE BOTTOM")
+                        continue
 
-    def execute_menu_sequence(self, choice):
-        match choice:
-            case '10':
+    def reset_vars(self):
+        self.menu_choice = None
+        self.success = None
+        self.back_to_menu = None
+
+    def menu_user_choice(self):
+        print("At top menu_user_choice choice ", self.menu_choice)
+        # request menu choice from user
+        if self.menu_choice is None:
+            self.menu_choice = self.user_interaction_instance.request_menu()
+        print("At medium menu_user_choice choice ", self.menu_choice)
+        outcome = True
+        match self.menu_choice:
+            case '1' | '2' | '3' | '4' | '5' | '6' | '7':
+                self.menu_choice = str(self.menu_choice)
+                outcome = self.handle_workflow()
+                self.reset_vars()
+                return outcome
+            case '8':
                 requested_seq = self.get_sequence()
                 for seq_num in requested_seq:
                     self.menu_choice = str(seq_num)
-                    self.handle_workflow()
-            case '11':
-                for seq_num in [1,3,4,5,6,7,8,9]:
+                    outcome = self.handle_workflow()
+                    self.reset_vars()
+                return outcome
+            case '9':
+                for seq_num in [1,3,4,5,6,7]:
                     self.menu_choice=str(seq_num)
-                    self.handle_workflow()
-            case '12':
-                return
+                    outcome = self.handle_workflow()
+                    self.reset_vars()
+                return outcome
+            case '10':
+                #exit
+                return False
             case _:
-                return
+                #back to menu
+                return True
 
     def get_sequence(self):
         while True:
@@ -104,7 +125,9 @@ def main():
     #create emu_manager instance
     emu = Emu_cli()
     while True:
-        if emu.handle_workflow() is False:
+        print("Calling emu.handle_workflow() from main")
+        emu.reset_vars()
+        if emu.menu_user_choice() is False:
             break
 
     #profiler

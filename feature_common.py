@@ -138,7 +138,8 @@ class Feature_Common:
         # send request to model
         return self.send_request(sys_mssg, request_to_gpt, summary_new_request)
 
-    def valid_response_file_management(self, filename, full_path_dir, gpt_response, success_mssg=None):
+    @staticmethod
+    def valid_response_file_management(filename, full_path_dir, gpt_response, success_mssg=None):
         if success_mssg is not None:
             print(f"\033[43m{success_mssg}\033[0m")
         # version and save

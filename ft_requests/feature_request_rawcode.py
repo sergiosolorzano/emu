@@ -22,7 +22,7 @@ class Feature_Request_Rawcode:
 
     def prepare_request_args(self):
         #build args
-        summary_new_request = "Request raw program code. Program Description: "+self.common_instance.program_description
+        summary_new_request = "Request the program code for the program description provided."
         sys_mssg = raw_code.sys_mssg
         request_to_gpt = ut.concat_dict_to_string(raw_code.raw_instructions_dict) + "\n\n" + self.common_instance.program_description
         #call base

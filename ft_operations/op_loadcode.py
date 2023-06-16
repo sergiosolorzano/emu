@@ -6,12 +6,13 @@ import tools.request_utils as ut
 import config as config
 
 #user upload code from file
-class Feature_Request_Loadcode:
+class Op_Loadcode:
 
     def __init__(self, common_instance):
         self.common_instance = common_instance
+        self.full_path_to_script = None
 
-    def prerequest_args_process(self):
+    def run_operation(self):
         mssg = f"Enter Path to {config.program_language} Script: "
         # call base
         full_path_to_script = self.common_instance.get_file_path_from_user(mssg)
@@ -29,12 +30,8 @@ class Feature_Request_Loadcode:
         #print(code); print()
         print(f"\033[43mScript loaded.\033[0m")
 
-        #don't send additional requests, not back to menu
-        return False, False
+        return True
 
-    def prepare_request_args(self):
-        #no args to build because there is no request
-        return None
 
     def process_successful_response(self):
         #call base: process successful code upload

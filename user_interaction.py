@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import os
 
 class User_Interaction:
 
@@ -13,8 +12,6 @@ class User_Interaction:
         print("2.  Load Raw Code Script From File")
         print("3.  Add Argparse")
         print("4.  Exception Handling and Logging")
-        #print("5.  Add Unit Test Cases")
-        #print("6.  Run Unit Test Cases")
         print("5.  User Custom Request")
         print(f"\tRequirement: code to be already loaded. A JSON file to request "
               f"the format of the response.")

@@ -17,8 +17,7 @@ class Feature_Request_Argparse:
         self.common_instance = common_instance
 
     def prerequest_args_process(self):
-        # send additional requests, not back to menu
-        return True, False
+        return True
 
     def prepare_request_args(self):
         #request args

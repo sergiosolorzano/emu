@@ -21,93 +21,14 @@ class Feature_Request_DebugLogs:
         # command when error occurred
         self.command = None
 
-    def prerequest_args_process(self):
-        print(f"\033[44;97mJob: Your Custom Request:\033[0m")
-        #user ensure the code has the requirements to run this option
-        if self.user_confirm_requirements_for_request():
-            while True:
-                user_comm_tail = self.common_instance.user_interaction_instance.request_input_from_user(
-                    f"\n(Q)uit or Enter the rest of the CLI command to execute program:\npython3 {config.full_path_module}: ")
-                if user_comm_tail.lower() == "q":
-                    return False, True
-
-                if not self.execute_prog(user_comm_tail.lower()):
-                    #exception occurred
-                    #write exception to log file: append cos program writes logs to same log file. Next loop log file is truncated.
-                    fm.write_to_file(config.log_fname, config.full_project_dirname, str("\n\n" + self.error_mssg), "a")
-                    print("="*40)
-
-                    if self.user_action_debug_or_not():
-                        #user chose to send logs on request for debug, not back to menu
-                        return True, False
-                else:
-                    #user chose not debug current error
-                    if self.user_action_next_command_or_menu():
-                        #user chose run another command
-                        continue
-                    else:
-                        #user chose back to menu
-                        return False, True
-
-        else:
-            #no further request, back to menu
-            return False, True
-
-    def execute_prog(self, user_comm_tail):
-        #user enter cli comm and execute
-        print("-"*40)
-        exception_flag = False
-        self.command = ['python'] + shlex.split(config.full_path_module) + shlex.split(user_comm_tail)
-        exception_str = ""
-        try:
-            #truncate log file
-            fm.trunc_file(config.log_fname, config.full_project_dirname)
-            print(); print(f"Running command: {self.command}")
-            result = subprocess.run(self.command, check=True, capture_output=True, text=True)
-            if result.returncode != 0:
-                raise subprocess.CalledProcessError(result.returncode, result.args, result.stdout, result.stderr)
-            print("Command executed successfully")
-            print(f"Command output: {result.stdout}")
-            print(f"Command return code: {result.returncode}")
-            print(f"Command stderr: {result.stderr}")
-        except subprocess.CalledProcessError as e:
-            print("="*40); print(f"\033[31mSubprocess Exception thrown, log:\033[0m")
-            exception_flag = True
-            print(f"Command failed with exit code {e.returncode}")
-            print(f"Command output: {e.output}")
-            print(f"Command error: {e.stderr}")
-            if e.stderr or e.returncode != 0 or "error" in e.output.lower():
-                exception_str += "subprocess.CalledProcessError command returncode:" + str(e.returncode) \
-                + f"\nsubprocess.CalledProcessError command error:" + str(e.stderr) \
-                + f"\nsubprocess.CalledProcessError command output:" + str(e.output)
-        except Exception as e:
-            print("="*40); print(f"\033[31mProgram exception thrown, log:\033[0m")
-            exception_flag = True
-            #print("RAW Exception",e);print()
-            #print log to logfile and screen
-            exception_str += e
-
-        if exception_str != "":
-            # add exception message to log_list_handler
-            self.common_instance.logger_instance.exception(exception_str)
-            # pop log exception
-            self.error_mssg = self.common_instance.log_list_handler_instance.pop()
-            # print exception on terminal
-            # log_list_handler.print_logs()
-            return False
-
-        return True
-
-    def user_action_next_command_or_menu(self):
-        #user choose another command or back to menu
-        mssg= "Run another (C)ommand or (M)enu: "
-
-        user_choice = self.common_instance.user_interaction_instance.user_choice_two_options(mssg, option1="c",option2="m") == "c"
-        if user_choice == "c":
-            #execute program again
-            return True
-        else:
-            return False
+    def request_manager(self):
+        if self.user_action_debug_or_not():
+            args = self.prepare_request_args()
+            request_success = self.request_code(args)
+            if request_success:
+                return True
+            else:
+                return False
 
     def prepare_request_args(self):
         #request args
@@ -120,16 +41,6 @@ class Feature_Request_DebugLogs:
         args_tpl = (summary_new_request, sys_mssg, request_to_gpt)
         return args_tpl
             
-    def user_confirm_requirements_for_request(self):
-        #run the program with debug/logs loop
-        while True:
-            user_action = self.common_instance.user_interaction_instance.request_input_from_user(f"\n\033[1;31m[WARNING]\033[0m Note on option requirements:\n\t=> Requires logging functionality, logs will be written to {config.initial_dir}/{config.log_fname}\n\t=> Program execution via CLI, you can add args to the code with the Argparse option.\n\t=> This option is not compatible to run unit tests.\n\n(C)ontinue or back to (M)Menu: \033[0m")
-            if user_action.lower() == "c":
-                #request logging from model
-                return True
-            else:
-                return False
-
     def user_action_debug_or_not(self):
         while True:
             print(); choice = input("Request debug with log file? y/n: ")

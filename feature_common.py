@@ -35,8 +35,6 @@ class Feature_Common:
         self.logger_instance = None
         self.log_list_handler_instance = None
         self.set_log_list_handler_instance(log_list_handler.config_custom_logger())
-        #utest flag
-        self.u_test_bool = False
         #set prog desc
         if program_description is not None:
             self.program_description = program_description
@@ -115,15 +113,8 @@ class Feature_Common:
             # JSON response invalid, re-request or quit
             return False
 
-        if self.u_test_bool:
-            #print(f"*****u_test_bool {self.u_test_bool}")
-            self.gpt_response_utest = json.loads(clean_response)  # .strip("\n") #.replace('```', '')
-        else:
-            #print(f"*****u_test_bool {self.u_test_bool}")
-            self.gpt_response = json.loads(clean_response)  # .strip("\n")  #.replace('```', '')
+        self.gpt_response = json.loads(clean_response)  # .strip("\n")  #.replace('```', '')
 
-        # JSON response valid
-        self.u_test_bool = False
         return True
 
     @staticmethod

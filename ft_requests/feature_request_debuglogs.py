@@ -102,8 +102,6 @@ class Feature_Request_DebugLogs:
 
     #send request to model
     def request_code(self, *request_args):
-        #override base instance vars
-        self.common_instance.u_test_bool = False
         #run base request implementation
         return self.common_instance.request_code_enhancement(*request_args)
 

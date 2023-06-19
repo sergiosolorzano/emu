@@ -21,7 +21,7 @@ class Emu_cli:
         self.back_to_menu = None
 
     def handle_workflow(self):
-        self.feature_manager_instance.handle_menu_choice()
+        self.feature_manager_instance.get_menu_choice()
 
 
 

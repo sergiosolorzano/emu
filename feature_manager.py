@@ -15,9 +15,11 @@ import ft_requests.feature_request_docstrings as ft_req_docstrings
 #manage feature children classes
 class Feature_Manager:
 
-	menu_sequence_choices = ['8', '9']
+	menu_sequence_choice = '8'
+	menu_runall_choice = '9'
 	menu_op_choices = ['2', '6']
 	menu_feature_choices = ['1', '3', '4', '5', '7']
+	menu_all_available_choices = ['1','3', '4', '7', '5', '6']
 
 	#init feature children
 	def __init__(self):
@@ -43,46 +45,56 @@ class Feature_Manager:
 		'7': ft_req_docstrings.Feature_Request_Docstrings(self.feature_common_instance)
 		}
 
+	def get_menu_choice(self):
+		sequence = []
+		while True:
+			#self.reset_vars_end_process()
+			self.menu_choice = self.user_interaction_instance.request_menu()
+
+			if self.menu_choice == self.menu_sequence_choice:
+				sequence = self.get_sequence()
+				print("Executing Sequence:",sequence)
+
+			elif self.menu_choice == self.menu_runall_choice:
+				sequence= self.menu_all_available_choices
+				print("Executing Sequence:",sequence)
+
+			else:
+				sequence = self.menu_choice
+			for c in sequence:
+				self.menu_choice = str(c)
+				self.feature_instance = self.feature_instances[self.menu_choice]
+				self.handle_menu_choice()
+				self.reset_vars_end_process()
+
 	def handle_menu_choice(self):
 		while True:
-			print("At feature mgr - top handle menu, choice is ",self.menu_choice)
-			self.reset_vars_end_process()
-			self.menu_choice = self.user_interaction_instance.request_menu()
-			self.feature_instance = self.feature_instances[self.menu_choice]
+			if self.menu_choice in self.menu_feature_choices:
+				if self.pre_request_complete is False:
+					self.pre_request_complete = self.feature_instance.prerequest_args_process()
 
-			while True:
-				if self.menu_choice in self.menu_feature_choices:
-					if self.pre_request_complete is False:
-						self.pre_request_complete = self.feature_instance.prerequest_args_process()
+				if self.pre_request_complete and self.prepare_args_complete is False:
+					self.args = self.feature_instance.prepare_request_args()
+					if self.args:
+						self.prepare_args_complete = True
 
-					if self.pre_request_complete and self.prepare_args_complete is False:
-						self.args = self.feature_instance.prepare_request_args()
-						if self.args:
-							self.prepare_args_complete = True
+				if self.prepare_args_complete and self.send_request_complete is False:
+					self.send_request_complete = self.feature_instance.request_code(self.args)
 
-					if self.prepare_args_complete and self.send_request_complete is False:
-						self.send_request_complete = self.feature_instance.request_code(self.args)
+					if not self.send_request_complete:
+						if self.user_interaction_instance.broken_json_user_action():
+							# user choice to request code from model again
+							print("JSON IS BROKEN, send request again now.")
+							continue
 
-						if not self.send_request_complete:
-							if self.user_interaction_instance.broken_json_user_action():
-								# user choice to request code from model again
-								print("JSON IS BROKEN, send request again now.")
-								continue
+			if self.menu_choice in self.menu_op_choices:
+				run_op_completed = self.feature_instance.run_operation()
 
-					# valid JSON response received
-					# if not self.process_valid_response():
-					# 	# something went wrong, request again from model
-					# 	print("WOOPS SOMETHING WENT VERY WRONG, INVALID RESPONSE - BACK TO MENU")
+				if not run_op_completed:
+					break
 
-				if self.menu_choice in self.menu_op_choices:
-					run_op_completed = self.feature_instance.run_operation()
-
-					if not run_op_completed:
-						break
-
-				self.process_valid_response()
-
-				break
+			self.process_valid_response()
+			break
 
 	def get_sequence(self):
 		while True:
@@ -104,7 +116,7 @@ class Feature_Manager:
 
 
 	def reset_vars_end_process(self):
-		print("Resetting vars at manager")
+		#print("Resetting vars at manager")
 		self.feature_instance = None
 		self.menu_choice = None
 		self.pre_request_complete = False

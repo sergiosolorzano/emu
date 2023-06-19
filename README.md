@@ -2,35 +2,48 @@ Generates the code for a program description requested by the user using OpenAI 
 
 Code changes/additions are added on a per-menu-request basis.
 
-Selected log entries from running unit-tests and running the resulting program are sent to GPT for debug.
+Selected log entries from running the resulting program are sent to GPT for debug.
 
-Project is work in progress.
-
-Repo file structure (outdated):
+Repo file structure:
 ```
 .
-├── file_management.py		#file management utilities
-├── openai_params.py		
-├── openai_requests.py		#build, receive and send requests
-├── project					#dir: resulting scripts saved here
-├── prompt_txt				#text prompt requests for openai model
-│			├── clean_json_rq.py
-│			├── error_hndl__logging_rq.py
-│			├── input_and_argparse_rq.py
-│			├── raw_code_rq.py
-│			├── unittest_cli_comm_rq.py
-│			├── docstrings_rq.py
-│			├── debug_rq.py
-│			├── custom_req.py
-│			└── unittest_rq.py
-
+├── config.json 												#project file and paths
+├── config.py 													#module with project file and paths
+├── creds 														#credentials folder for OpenAI API
+│   └── self_config.py 								#OpenAI API credentials. See example sample_self_config.py
+├── emu_cli.py 													#run this module to run the program
+├── feature_common.py 											#common methods for feature requests to API
+├── feature_manager.py 											#manager for each feature requested by user in the menu
+├── ft_operations 												#non-API requests directory
+│   ├── op_loadcode.py 								#loads code from local file to apply code change requests to it
+│   ├── op_run_program.py 							#run the code
+├── ft_requests 												#feature text requests directory
+│   ├── feature_request_argparse.py 						#standard add argparse request
+│   ├── feature_request_custom_req.py 					#user enters custom system and request prompt
+│   ├── feature_request_debuglogs.py 						#send logs from running the program to API to debug error found in logs
+│   ├── feature_request_docstrings.py 					#add docstrings
+│   ├── feature_request_excpt_and_log.py 					#add exception handling and logs to the code
+│   ├── feature_request_rawcode.py 						#generate initial code from a program description
+├── log_list_handler.py 										
+├── openai_params.py 											#openai required API parameters
+├── project 													#project output directory
+│   ├── module.log
+│   ├── module.py 									#code requested stored here and versioned
+├── prompt_txt 													#prompt specs directory for each request
+│   ├── clean_json_rq.py
+│   ├── custom_req.py
+│   ├── debug_rq.py
+│   ├── docstrings_rq.py
+│   ├── error_hndl_logging_rq.py
+│   ├── input_and_argparse_rq.py
+│   ├── raw_code_rq.py
 ├── README.md
 ├── requirements.txt
-├── response_json			#dir: response json files
-├── log_list_handler.py		#custom log handler
-├── sample_self_config.py	#Sample: openai/azure models keys.
-├── sg_utils.py				#request management utilities
-└── simple_selfgen.py		#Menu block. Requires pointing scripts that import self_config.py (e.g sys.path.append) to dir where you save self_config.py
+├── sample_self_config.py
+├── tools 														#file and request management utilities directory
+│   ├── file_management.py
+│   └── request_utils.py
+├── user_interaction.py 										#user interaction class
 ```
 ---------------------------------------------
 
@@ -41,21 +54,33 @@ Add this package to your sys.path
 ---------------------------------------------
 
 Configuring OpenAI model and temperature per request:
-For now these can be set for each request in function arguments:
-
-Script: simple_selfgen.py
-Functions:
-	request_raw_code()
-	request_code_enhancement()
-	validate_and_clean_json()
-Use Keyword Arguments for Functions:
-	new_temp = 0.2
-	new_engine = oai.codex_engine_deployment_name or oai.gpt_engine_deployment_name
-
+For now set for each request in request_code() e.g. ft_requests/feature_request_argparse.py:
+```
+    def request_code(self, *request_args):
+        #override common instance vars
+        self.common_instance.u_test_bool = False
+        self.common_instance.model = oai.gpt_engine_deployment_name
+        self.common_instance.model_temp = 0.7
+        return self.common_instance.request_code_enhancement(*request_args)
+```
 ---------------------------------------------
 
-Updating the JSON file for Custom Requests:
-Path to JSON: File/dir variables declared at file_management.py
-Expected JSON structure: Flat no nesting.
+Execution module: emu_cli.py
+
+1.  Generate Raw Code
+		Request model for code according to a description you provide.
+2.  Load Raw Code Script From File
+3.  Add Argparse
+4.  Exception Handling and Logging
+5.  User Custom Request
+		Requirement: code to be already loaded. A JSON format for the response entered at custom_req.py json_required_format variable.
+6.  Run Program And Request Repair of Debug Logs
+	Run the program and upon errors send the log error captured for the model to amend the code accordingly.
+7.  Add Docstrings To Program Code.
+8.  Set Menu Sequence
+9.  Run All
+10. Exit
+
+Choose your request: 
 
 ---------------------------------------------

@@ -13,14 +13,13 @@ class User_Interaction:
         print("3.  Add Argparse")
         print("4.  Exception Handling and Logging")
         print("5.  User Custom Request")
-        print(f"\tRequirement: code to be already loaded. A JSON file to request "
-              f"the format of the response.")
-        print("6.  Run Program With Enter Debug/Logs Loop")
+        print(f"\tRequirement: code to be already loaded. A JSON format for the response entered at custom_req.py json_required_format variable.")
+        print("6.  Run Program And Request Repair of Debug Logs")
         print(f"\tRun the program and upon errors send the log error captured for the model to amend the code "
               f"accordingly.")
         print("7.  Add Docstrings To Program Code.")
-        print("8. Set Menu Sequence")
-        print("9. Run All")
+        print("8.  Set Menu Sequence")
+        print("9.  Run All")
         print("10. Exit")
 
         while True:

@@ -55,6 +55,11 @@ Add this package to your sys.path
 
 ---------------------------------------------
 
+Authentication:
+Create a directory at the root of this project and save sample_self_config.py. Rename this py file to self_config.py and enter your endpoints and keys.
+
+---------------------------------------------
+
 Configuring OpenAI model and temperature per request:
 For now set for each request in request_code() e.g. ft_requests/feature_request_argparse.py:
 ```

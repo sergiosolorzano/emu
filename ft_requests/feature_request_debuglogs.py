@@ -29,6 +29,7 @@ class Feature_Request_DebugLogs:
                 return True
             else:
                 return False
+        return False
 
     def prepare_request_args(self):
         #request args

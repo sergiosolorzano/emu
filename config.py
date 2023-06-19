@@ -33,6 +33,7 @@ code_key_in_json = module_script_fname.split(".")[0]
 #full path files
 full_custom_json_format_fname = f"{initial_dir}/{custom_json_format_dirname}/{custom_json_format_fname}"
 full_path_module = f"{full_project_dirname}/{module_script_fname}"
+full_path_logfile = f"{full_project_dirname}/{log_fname}"
 
 # program language
 program_language = config_data["program_language"]

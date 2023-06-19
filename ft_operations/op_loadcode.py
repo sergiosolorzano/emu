@@ -31,8 +31,6 @@ class Op_Loadcode:
         print(f"\033[43mScript loaded.\033[0m")
 
         return True
-
-
     def process_successful_response(self):
         #call base: process successful code upload
         self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)

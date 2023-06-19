@@ -25,25 +25,26 @@ class Op_Run_Program:
         self.command = None
         self.request_debug_instance = req_deblogs.Feature_Request_DebugLogs(self.common_instance)
 
-    def run_operation(self, user_comm_tail):
+    def run_operation(self):
         if self.user_confirm_requirements_for_request():
             while True:
                 user_comm_tail = self.get_user_command()
+                if user_comm_tail is False:
+                    return False
+
                 code_success = self.execute_code(user_comm_tail)
                 #exception
                 if not code_success:
                     success_request = self.request_debug_instance.request_manager()
                     if success_request:
                         return True
-                    else:
-                        return True
+
+                another_op = self.user_action_next_command_or_menu()
+                if another_op:
+                    continue
                 else:
-                    another_op = self.user_action_next_command_or_menu()
-                    if another_op:
-                        continue
-                    else:
-                        #back to menu
-                        return False
+                    #back to menu
+                    return False
         else:
             #back to menu
             return False
@@ -51,8 +52,9 @@ class Op_Run_Program:
     def user_action_next_command_or_menu(self):
         #user choose another command or back to menu
         mssg= "Run another (C)ommand or (M)enu: "
+        mssg_option3 = "Invalid choice."
 
-        user_choice = self.common_instance.user_interaction_instance.user_choice_two_options(mssg, option1="c",option2="m") == "c"
+        user_choice = self.common_instance.user_interaction_instance.user_choice_two_options(mssg, mssg_option3=mssg_option3, option1="c",option2="m")
         if user_choice == "c":
             #execute program again
             return True
@@ -85,7 +87,7 @@ class Op_Run_Program:
         # user enter cli comm and execute
         print("-" * 40)
         exception_flag = False
-        self.command = ['python'] + shlex.split(config.full_path_module) + shlex.split(user_comm_tail)
+        self.command = self.request_debug_instance.command = ['python'] + shlex.split(config.full_path_module) + shlex.split(user_comm_tail)
         exception_str = ""
         try:
             # truncate log file
@@ -122,9 +124,13 @@ class Op_Run_Program:
             # add exception message to log_list_handler
             self.common_instance.logger_instance.exception(exception_str)
             # pop log exception
-            self.error_mssg = self.common_instance.log_list_handler_instance.pop()
+            self.error_mssg = self.request_debug_instance.error_mssg = self.common_instance.log_list_handler_instance.pop()
             # print exception on terminal
             # log_list_handler.print_logs()
             return False
 
+        return True
+
+    def process_successful_response(self):
+        self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
         return True

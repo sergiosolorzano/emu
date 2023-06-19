@@ -38,6 +38,5 @@ class Feature_Request_Rawcode:
         return self.common_instance.request_code_enhancement(*request_args)
 
     def process_successful_response(self):
-        #call base
         self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
         return True

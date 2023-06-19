@@ -17,7 +17,7 @@ import config as config
 
 class Feature_Common:
     # show request text on screen
-    show_request = False
+    show_request = True
 
     # set model and temp
     model = oai.gpt_engine_deployment_name
@@ -108,7 +108,7 @@ class Feature_Common:
             print(f"\n\033[1;92mResponse: CumTokens:{self.cum_tokens} RespTokens:{this_conversation_tokens}\n\033[0m\033[92m{pretty_json_response}\n\033[0m")
         except Exception as e:
             print(f"Exception on JSON Received: {e}: {clean_response:<10} \n"); print()
-            print("RAW response:", clean_response)
+            #print("RAW response:", clean_response)
             print("-" * 40)
             # JSON response invalid, re-request or quit
             return False
@@ -117,13 +117,12 @@ class Feature_Common:
 
         return True
 
-    @staticmethod
-    def build_request_args(summary_new_request, sys_mssg, request_to_gpt):
+    def build_request_args(self, summary_new_request, sys_mssg, request_to_gpt):
         args_tpl = (summary_new_request, sys_mssg, request_to_gpt)
         return args_tpl
 
     # manage request
-    def request_code_enhancement(self, *request_args):
+    def request_code_enhancement(self, request_args):
         # unpack request args for clarity. pass request_to_gpt to change value for utests and standard
         summary_new_request, sys_mssg, request_to_gpt = request_args
         # send request to model

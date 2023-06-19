@@ -21,7 +21,7 @@ without leaving no spaces from the beginning to the first character inserted.
 (3) If there is an exception the program terminates gracefully with an error message.
 (4) Error handling for Input Validation: The program should validate all input and be prepared to handle invalid or unexpected input in a robust way.
 **Logging**:
-(1) Without removing any print statements from the code, add the necessary handlers to write log records to a file named {config.project_dirname}/{config.log_fname}
+(1) Without removing any print statements from the code, add the necessary handlers to write log records to a file named {config.full_path_logfile}
 (2) Without removing any print statements from the code, record to the log file all program errors info and exceptions and user actions. Add argument exc_info=True to every logging call.
 (3) Set log level to debug.
 (4) use the built-in logging package

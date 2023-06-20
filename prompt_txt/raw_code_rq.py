@@ -6,7 +6,7 @@ sys_mssg = f'''You program in {config.program_language}.
 You create the code that implements the description in Program Description and that follows these specific requirements as outlined in Requirements.
 Add statement __name__ == '__main__' to the code module .
 You insert the code in a JSON object. Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
-Multi-line strings within the code must be enclosed in triple quotes. (d) escape every special character in the code for json.load to read the JSON object correctly.
+Escape every special character in the code you create. Load to read the JSON object correctly.
 Your response to this request is exclusively a JSON object using the JSON Object Template provided.
 You must validate the JSON object construct for syntax.
 You ensure parsing the JSON object using {config.program_language}'s built-in JSON module would not raise an error exception.
@@ -23,7 +23,7 @@ json_object_requirements = f'''Your response to this request is exclusively:
 (a) a JSON object with the template described in JSON Required Format Template.
 (b) You ensure parsing the JSON object using {config.program_language}'s built-in JSON module would not raise an error exception.
 (c) You add nothing else to your response of this request but the JSON object.
-(d) escape every special character in the code for json.load to read the JSON object correctly.
+(d) Escape every special characters throughout the code for json.load to read the JSON object correctly.
 '''
 
 task_requirements = '''Your response to this request meets every requirement. Requirements:
@@ -50,11 +50,11 @@ module_requirements = '''Code Requirements:
 (5) the code meets the requirements described in:'Comment Requirements'
 (6) place every module you import are at the top of the code and not inside any function you create
 (7) Do not enclose anything either at the beginning or the end in the JSON Object with three double or single quotes
-(8) Multi-line strings within the code must be enclosed in triple quotes.
 '''
+#(8) Multi-line strings within the code must be enclosed in triple quotes.
 json_required_format ='''JSON Required Format Template:
 {
-"module":"Insert here the code you produced as described in Program Description leaving no spaces from the beginning to the first character inserted"
+"module":"Insert here the code you produced as described in Program Description leaving no spaces from the beginning to the first character inserted. Escape every special character in the code you create."
 }
 '''
 

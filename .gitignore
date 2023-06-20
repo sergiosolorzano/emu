@@ -3,8 +3,9 @@
 **/profiler_data.out
 **/project/
 **/creds/
-**/profiler_data.out
 **/.idea/
 **/.venv
 **/venv/
 **/.vscode/
+**/1.py
+**/2.py

@@ -4,6 +4,7 @@
 import os
 import threading
 import json
+import textwrap
 import dataclasses
 import user_interaction as uinteraction
 import log_list_handler
@@ -48,7 +49,7 @@ class Feature_Common:
     def set_log_list_handler_instance(self, log_list_handler_instance):
         self.logger_instance, self.log_list_handler_instance = log_list_handler_instance
 
-    # request module code
+    #request module code
     def send_request(self, sys_mssg, request_to_gpt, summary_new_request):
         this_conversation = []
 
@@ -69,7 +70,7 @@ class Feature_Common:
         print(f"\033[44;97mJob Request: {summary_new_request}\033[0m")
         if self.show_request:
             print(
-                f"\n\033[1;97mRequest: CumTokens:{self.cum_tokens} Req_Tokens:{request_tokens}\033[0m: {request_to_gpt}")
+                f"\n\033[1;97mRequest: CumTokens:{self.cum_tokens} Req_Tokens:{request_tokens}\033[0m: System Message:{sys_mssg}\nPrompt:{request_to_gpt}")
         else:
             print(f"\n\033[1;97mRequest Sent: CumTokens:{self.cum_tokens} Req_Tokens:{request_tokens}\033[0m")
 
@@ -104,13 +105,13 @@ class Feature_Common:
         print("-" * 40)
         try:
             pretty_json_response = json.dumps(json.loads(clean_response), indent=2,
-                                              separators=(',', ':'))  # .replace('```', '')
+                                              separators=(',', ':'))
             print(f"\n\033[1;92mResponse: CumTokens:{self.cum_tokens} RespTokens:{this_conversation_tokens}\n\033[0m\033[92m{pretty_json_response}\n\033[0m")
         except Exception as e:
-            print(f"Exception on JSON Received: {e}: {clean_response:<10} \n"); print()
+            print(f"Exception on JSON Received: {e}: {clean_response:<10} \n")
             #print("RAW response:", clean_response)
             print("-" * 40)
-            # JSON response invalid, re-request or quit
+            # JSON response invalid re-request or quit
             return False
 
         self.gpt_response = json.loads(clean_response)  # .strip("\n")  #.replace('```', '')

@@ -53,6 +53,10 @@ Python v3.10+ required
 Python required packages: See requirements.txt
 Add this package to your sys.path
 
+*Path Change Required:*
+Change path to your python environment at config.json: e.g. "python_env_path": "/home/sergio/anaconda3/bin/python"
+For path of current env set value to "python"
+
 ---------------------------------------------
 
 Authentication:

@@ -24,7 +24,7 @@ class Feature_Request_Rawcode:
         #build args
         summary_new_request = "Request the program code for the program description provided."
         sys_mssg = raw_code.sys_mssg
-        request_to_gpt = ut.concat_dict_to_string(raw_code.raw_instructions_dict) + "\n\n" + self.common_instance.program_description
+        request_to_gpt = ut.concat_dict_to_string(raw_code.raw_instructions_dict) + "\n\n" + "Program Description:" + self.common_instance.program_description
         #call base
         return self.common_instance.build_request_args(summary_new_request, sys_mssg, request_to_gpt)
 

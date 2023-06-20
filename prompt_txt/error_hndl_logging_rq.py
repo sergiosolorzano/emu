@@ -8,12 +8,11 @@ If there is an exception the program terminates gracefully with an error message
 You will not delete any of the code I give you.
 Your response to this request is exclusively a JSON object using the JSON Object Template provided.
 Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
-Multi-line strings within the code must be enclosed in triple quotes.
 Escape every special character in the code for json.load to read the JSON object correctly.
 You must validate the JSON object construct for syntax and parsing the JSON object would not raise an error exception 
 according to {config.program_language}'s built-in JSON module. Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
 '''
-
+#Multi-line strings within the code must be enclosed in triple quotes.
 gpt_task = f'''Your Task:
 **Exception Handling**:
 (1) add error and exception handling functionality, found in {config.program_language}'s built in packages, to the code found in this JSON object's value for key 'module' 

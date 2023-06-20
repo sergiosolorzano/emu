@@ -18,5 +18,6 @@
     },
     "program_language": "python",
     "language_version": "3.10",
-    "unittest_cli_command_key": "unittest_cli_"
+    "unittest_cli_command_key": "unittest_cli_",
+    "python_env_path": "/home/sergio/anaconda3/bin/python"
 }

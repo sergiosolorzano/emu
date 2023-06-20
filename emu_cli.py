@@ -22,7 +22,6 @@ class Emu_cli:
 
     def handle_workflow(self):
         if self.feature_manager_instance.get_menu_choice() is False:
-            print("Choice is False at 10")
             return
 
 
@@ -43,7 +42,6 @@ def main():
     emu = Emu_cli()
     emu.handle_workflow()
     os.chdir(config.initial_dir)
-    print("****Exiting at dir ",os.getcwd())
     # profiler
     print()
     print("=" * 10, end="")

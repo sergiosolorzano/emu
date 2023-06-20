@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import shlex
 import subprocess
+import sys
+
 # import utils
 import tools.file_management as fm
 import tools.request_utils as ut
@@ -86,7 +88,8 @@ class Op_Run_Program:
     def execute_code(self, user_comm_tail):
         # user enter cli comm and execute
         print("-" * 40)
-        self.command = self.request_debug_instance.command = ['python'] + shlex.split(config.full_path_module) + shlex.split(user_comm_tail)
+        #self.command = self.request_debug_instance.command = ['python'] + shlex.split(config.full_path_module) + shlex.split(user_comm_tail)
+        self.command = self.request_debug_instance.command = [config.python_env_path] + shlex.split(config.full_path_module) + shlex.split(user_comm_tail)
         exception_str = ""
         try:
             # truncate log file

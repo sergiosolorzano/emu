@@ -45,3 +45,6 @@ unittest_cli_command_key = config_data["unittest_cli_command_key"]
 #openai tokens
 max_response_tokens=config_data["openai_tokens"]["max_response_tokens"]
 token_limit=config_data["openai_tokens"]["token_limit"]
+
+#python path with required environment
+python_env_path = config_data["python_env_path"]

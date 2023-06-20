@@ -76,33 +76,37 @@ class Feature_Manager:
 				self.reset_vars_end_process()
 
 	def handle_menu_choice(self):
-		while True:
-			if self.menu_choice in self.menu_feature_choices:
-				if self.pre_request_complete is False:
-					self.pre_request_complete = self.feature_instance.prerequest_args_process()
+		if self.feature_common_instance.gpt_response is None and (self.menu_choice != '1' and self.menu_choice != '2'):
+			return
+		else:
+			while True:
+				if self.menu_choice in self.menu_feature_choices:
+					if self.pre_request_complete is False:
+						self.pre_request_complete = self.feature_instance.prerequest_args_process()
 
-				if self.pre_request_complete and self.prepare_args_complete is False:
-					self.args = self.feature_instance.prepare_request_args()
-					if self.args:
-						self.prepare_args_complete = True
+					if self.pre_request_complete and self.prepare_args_complete is False:
+						self.args = self.feature_instance.prepare_request_args()
+						if self.args:
+							self.prepare_args_complete = True
 
-				if self.prepare_args_complete and self.send_request_complete is False:
-					self.send_request_complete = self.feature_instance.request_code(self.args)
+					if self.prepare_args_complete and self.send_request_complete is False:
+						self.send_request_complete = self.feature_instance.request_code(self.args)
 
-					if not self.send_request_complete:
-						if self.user_interaction_instance.broken_json_user_action():
-							# user choice to request code from model again
-							print("JSON IS BROKEN, send request again now.")
-							continue
+						if not self.send_request_complete:
+							if self.user_interaction_instance.broken_json_user_action():
+								# user choice to request code from model again
+								print("JSON IS BROKEN, send request again now.")
+								continue
 
-			if self.menu_choice in self.menu_op_choices:
-				run_op_completed = self.feature_instance.run_operation()
+				if self.menu_choice in self.menu_op_choices:
+					run_op_completed = self.feature_instance.run_operation()
 
-				if not run_op_completed:
-					break
+					if not run_op_completed:
+						break
+				if self.feature_common_instance.gpt_response is not None:
+					self.process_valid_response()
 
-			self.process_valid_response()
-			break
+				break
 
 	def get_sequence(self):
 		while True:

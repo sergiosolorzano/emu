@@ -15,6 +15,7 @@ import ft_requests.feature_request_docstrings as ft_req_docstrings
 #manage feature children classes
 class Feature_Manager:
 
+	menu_exit_choice = '10'
 	menu_sequence_choice = '8'
 	menu_runall_choice = '9'
 	menu_op_choices = ['2', '6']
@@ -51,6 +52,9 @@ class Feature_Manager:
 			#self.reset_vars_end_process()
 			self.menu_choice = self.user_interaction_instance.request_menu()
 
+			if self.menu_choice == '10':
+				return False
+
 			if self.menu_choice == self.menu_sequence_choice:
 				sequence = self.get_sequence()
 				print("Executing Sequence:",sequence)
@@ -63,6 +67,10 @@ class Feature_Manager:
 				sequence = self.menu_choice
 			for c in sequence:
 				self.menu_choice = str(c)
+
+				if self.menu_choice == '10':
+					return False
+
 				self.feature_instance = self.feature_instances[self.menu_choice]
 				self.handle_menu_choice()
 				self.reset_vars_end_process()

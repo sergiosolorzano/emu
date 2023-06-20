@@ -36,8 +36,8 @@ class Op_Run_Program:
                 #exception
                 if not code_success:
                     success_request = self.request_debug_instance.request_manager()
-                    if success_request:
-                        return True
+                    #if success_request:
+                    #    continue
 
                 another_op = self.user_action_next_command_or_menu()
                 if another_op:
@@ -62,7 +62,7 @@ class Op_Run_Program:
             return False
 
     def get_user_command(self):
-        print(f"\033[44;97mJob: Your Custom Request:\033[0m")
+        #print(f"\033[44;97mJob: Your Custom Request:\033[0m")
         # user ensure the code has the requirements to run this option
         while True:
             user_comm_tail = self.common_instance.user_interaction_instance.request_input_from_user(
@@ -86,7 +86,6 @@ class Op_Run_Program:
     def execute_code(self, user_comm_tail):
         # user enter cli comm and execute
         print("-" * 40)
-        exception_flag = False
         self.command = self.request_debug_instance.command = ['python'] + shlex.split(config.full_path_module) + shlex.split(user_comm_tail)
         exception_str = ""
         try:
@@ -102,9 +101,8 @@ class Op_Run_Program:
             print(f"Command return code: {result.returncode}")
             print(f"Command stderr: {result.stderr}")
         except subprocess.CalledProcessError as e:
-            print("=" * 40);
+            print("=" * 40)
             print(f"\033[31mSubprocess Exception thrown, log:\033[0m")
-            exception_flag = True
             print(f"Command failed with exit code {e.returncode}")
             print(f"Command output: {e.output}")
             print(f"Command error: {e.stderr}")
@@ -113,9 +111,8 @@ class Op_Run_Program:
                                  + f"\nsubprocess.CalledProcessError command error:" + str(e.stderr) \
                                  + f"\nsubprocess.CalledProcessError command output:" + str(e.output)
         except Exception as e:
-            print("=" * 40);
-            print(f"\033[31mProgram exception thrown, log:\033[0m")
-            exception_flag = True
+            print("=" * 40)
+            print(f"\033[31mProgram exception thrown, log in file:\033[0m {e}")
             # print("RAW Exception",e);print()
             # print log to logfile and screen
             exception_str += e

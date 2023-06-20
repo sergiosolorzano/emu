@@ -4,8 +4,8 @@ import config as config
 
 #send logs to debug program
 sys_mssg = f'''You will change the code to correct the error shown in Error for the script written in {config.program_language} I give you.
-You will keep the changes to the minimum maintaining the structure of the code I give you. Remove any exit() statement  from the code.
-Your response to this request is exclusively a JSON object using the JSON Object Template provided.
+You will keep the changes to the minimum maintaining the structure of the code I give you. Remove any exit() statement from the code.
+Multi-line strings within the code must be enclosed in triple quotes. Your response to this request is exclusively a JSON object using the JSON Object Template provided.
 You must validate the JSON object construct for syntax and parsing the JSON object would not raise an error exception 
 according to {config.program_language}'s built-in JSON module .
 Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
@@ -18,6 +18,7 @@ error = '''This is the Error thrown when executing the command in linux:'''
 
 gpt_task = f'''Your Task:
 You will change the code to correct the error shown in Error for the script written in {config.program_language} I give you.
+Multi-line strings within the code are enclosed in triple quotes.
 Remove any exit() statement  from the code.
 You will keep the changes to the minimum maintaining the structure of the code I give you.
 '''

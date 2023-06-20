@@ -26,16 +26,17 @@ class Feature_Request_DebugLogs:
             args = self.prepare_request_args()
             request_success = self.request_code(args)
             if request_success:
+                self.process_successful_response()
                 return True
             else:
                 return False
-        return False
+        return True
 
     def prepare_request_args(self):
         #request args
         summary_new_request = "Change the code to correct errors shown in the log file."
         sys_mssg = dg_r.sys_mssg
-        request_to_gpt = f'''You will make specific changes to this JSON object: {self.common_instance.gpt_response}.
+        request_to_gpt = f'''You will make specific changes to the value of this JSON object which is the code: {self.common_instance.gpt_response}.
         \nThis is the description of what the program does in the the code found in the value for key 'module' of the JSON object:\n{self.common_instance.program_description}.
         \n{ut.concat_dict_to_string(dg_r.debug_instructions_dict)}\n\n{dg_r.command}{self.command}\n\n{dg_r.error}{self.error_mssg}'''
 
@@ -44,7 +45,7 @@ class Feature_Request_DebugLogs:
             
     def user_action_debug_or_not(self):
         while True:
-            print(); choice = input("Request debug with log file? y/n: ")
+            print(); choice = input("Request debug with log? y/n: ")
             match choice.lower():
                 case 'y':
                     #set engine defaults

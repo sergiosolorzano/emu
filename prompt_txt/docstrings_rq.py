@@ -7,6 +7,7 @@ sys_mssg = f'''You are going to add docstrings to a script written in {config.pr
 You will not delete any of the code I give you.
 Your response to this request is exclusively a JSON object using the JSON Object Template provided.
 Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+Multi-line strings within the code must be enclosed in triple quotes.
 Escape every special character in the code for json.load to read the JSON object correctly.
 You must validate the JSON object construct in your response for syntax. Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
 You ensure parsing the JSON object in your response using {config.program_language}'s built-in JSON module would not raise an error exception.
@@ -17,8 +18,9 @@ Purpose: Every function, class, and module should start with a concise summary o
 Parameters: For functions or methods, describe each input parameter (name and expected type), explaining what it represents and any assumptions or constraints about its value.
 Return Value: Describe the type and meaning of the value returned by the function or method. If the function doesn't return anything (returns None), this should also be mentioned.
 Exceptions: Document any errors that the function or method can raise. Explain the conditions under which they are raised.
-Usage Examples: If possible, include a simple example showing a common usage of the function or method. This can be particularly useful for complex functions.
+Usage Examples: Include a simple example showing a common usage of the function or method. This can be particularly useful for complex functions.
 Remember, the goal of the docstring is to help other developers understand the purpose and usage of the code without having to read the actual implementation.
+Multi-line strings within the code must be enclosed in triple quotes.
 '''
 
 json_object_requirements = f'''Your response to this request is exclusively:

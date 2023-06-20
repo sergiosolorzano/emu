@@ -11,6 +11,7 @@ Your response to this request is exclusively a JSON object using the JSON Object
 You must validate the JSON object construct for syntax.
 You ensure parsing the JSON object using {config.program_language}'s built-in JSON module would not raise an error exception.
 Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+Multi-line strings within the code must be enclosed in triple quotes.
 Escape every special character in the code for json.load to read the JSON object correctly.
 '''
 
@@ -23,6 +24,7 @@ without leaving no spaces from the beginning to the first character inserted.
 (5) Add Argparse arguments for version (version = 1.0) and help only for program() arguments.
 Create the argparse input help for each individual argument in program().
 (6) Code argparse to display help with the arguments to execute program() and a description for these arguements.
+(7) Multi-line strings within the code must be enclosed in triple quotes.
 '''
 
 json_object_requirements = f'''Your response to this request is exclusively:

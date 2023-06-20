@@ -21,7 +21,9 @@ class Emu_cli:
         self.back_to_menu = None
 
     def handle_workflow(self):
-        self.feature_manager_instance.get_menu_choice()
+        if self.feature_manager_instance.get_menu_choice() is False:
+            print("Choice is False at 10")
+            return
 
 
 
@@ -40,15 +42,19 @@ def main():
     #create emu_manager instance
     emu = Emu_cli()
     emu.handle_workflow()
-
-    #profiler
-    print(); print("=" * 10, end="")
+    os.chdir(config.initial_dir)
+    print("****Exiting at dir ",os.getcwd())
+    # profiler
+    print()
+    print("=" * 10, end="")
     print("Profiler Stats", end="")
     print("=" * 10)
-    p = pstats.Stats("profiler_data.out")
 
-    print(); print("=" * 10, end="")
-    print("Total Cumulative Stats", end=""); print("=" * 10)
+    print()
+    print("=" * 10, end="")
+    print("Total Cumulative Stats", end="")
+    print("=" * 10)
+    p = pstats.Stats(profiler_file)
     p.sort_stats("cumulative").print_stats(5)
 
     print(f"\033[43mThe program has exited at the user's request.\033[0m"); print()
@@ -57,4 +63,5 @@ def main():
     print("End of Script"); print()
 
 if __name__ == "__main__":
-    cProfile.run("main()","profiler_data.out")
+    profiler_file = "profiler_data.out"
+    cProfile.run("main()",profiler_file)

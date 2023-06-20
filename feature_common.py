@@ -136,7 +136,7 @@ class Feature_Common:
         # version and save
         fm.version_file(full_path_dir, filename, full_path_dir)
         fm.get_dict_value_save_to_file(gpt_response, config.initial_dir, filename, "#!/usr/bin/env python3\n\n")
-        print(f"Code:\n", fm.get_code_from_dict(gpt_response, config.code_key_in_json))
+        #print(f"Code:\n", fm.get_code_from_dict(gpt_response, config.code_key_in_json))
 
         # TODO: remove for debugging
         # fm.write_to_file(self.json_fname, self.json_dirname, gpt_response, "w")

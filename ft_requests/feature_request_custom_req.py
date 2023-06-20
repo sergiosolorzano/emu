@@ -35,11 +35,11 @@ class Feature_Request_CustomRequest:
 
 		print("Enter request to change the code:")
 		self.custom_sys_req_input = self.common_instance.user_interaction_instance.request_input_from_user(
-			"Part 1/3 - Enter Short System Prompt: ")
+			"Part 1/2 - Enter Short System Prompt: ")
 		print()
 		self.custom_conv_req_input = self.common_instance.user_interaction_instance.request_input_from_user(
 			"Part 2/2 - Enter Request Prompt: ")
-		return True, False
+		return True
 
 	def prepare_request_args(self):
 		#build args

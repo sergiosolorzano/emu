@@ -10,6 +10,7 @@ You must validate the JSON object construct for syntax and parsing the JSON obje
 according to {config.program_language}'s built-in JSON module .
 Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
 Escape every special character in the code for json.load to read the JSON object correctly.
+Do not use multi-line in the code you create.
 '''
 
 command = '''The program throws an error when running the script with this command from a linux terminal:'''
@@ -20,6 +21,7 @@ gpt_task = f'''Your Task:
 You will change the code to correct the error shown in Error for the script written in {config.program_language} I give you.
 Remove any exit() statement  from the code.
 You will keep the changes to the minimum maintaining the structure of the code I give you.
+Do not use multi-line in the code you create.
 '''
 #Multi-line strings within the code are enclosed in triple quotes.
 json_object_requirements = f'''Your response to this request is exclusively:

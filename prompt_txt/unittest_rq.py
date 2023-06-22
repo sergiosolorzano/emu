@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-#import config
-import config as config
+#import config_dir
+from config_dir import config as config
 
 #add unittest
 sys_mssg = f'''You are going to add unit testing functionality using {config.program_language}'s built-in unittest package to a script written in {config.program_language} I give you.

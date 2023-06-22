@@ -95,7 +95,7 @@ class Feature_Manager:
 						if not self.send_request_complete:
 							if self.user_interaction_instance.broken_json_user_action():
 								# user choice to request code from model again
-								print("JSON IS BROKEN, send request again now.")
+								print("JSON IS BROKEN, send request again.")
 								continue
 
 				if self.menu_choice in self.menu_op_choices:

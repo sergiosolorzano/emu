@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-#import config
-import config as config
+#import config_dir
+from config_dir import config as config
 
 #send logs to debug program
 sys_mssg = f'''You will change the code to correct the error shown in Error for the script written in {config.program_language} I give you.

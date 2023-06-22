@@ -3,8 +3,9 @@
 import os
 import json
 
-#read config data
-with open("config.json") as f:
+#read config_dir data
+path_to_file = os.getcwd()+"/config_dir/config.json"
+with open(path_to_file) as f:
     config_data = json.load(f)
 
 #dir names

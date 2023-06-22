@@ -9,3 +9,5 @@
 **/.vscode/
 **/1.py
 **/2.py
+**/test_cerebras.txt
+**/*.csv

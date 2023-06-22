@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-#import config
-import config as config
+#import config_dir
+from config_dir import config as config
+
 #add logging and exception handling to code
 sys_mssg = f'''You are going to add error and exception handling and logging functionality to a script written in {config.program_language} I give you.
 If there is an exception the program terminates gracefully with an error message.

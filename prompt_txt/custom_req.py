@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-#import config
-import config as config
+#import config_dir
+from config_dir import config as config
 
 #user custom request to gpt
 sys_mssg = f'''Apply the following changes to a script written in {config.program_language} I give you.

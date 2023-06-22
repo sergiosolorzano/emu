@@ -9,10 +9,11 @@ This template is being updated to also generate the full program code but reques
 Repo file structure:
 ```
 .
-├── config.json 		#project file and paths
-├── config.py 			#module with project file and paths
+├── config_dir          #file configuration
+              ├── config.json         #project file and paths
+              ├── config.py           #module with project file and paths
 ├── creds 			#credentials folder for OpenAI API
-│   └── self_config.py 		#OpenAI API credentials. See example sample_self_config.py
+│   └── self_config.py 		#OpenAI API credentials. Move sample_self_config.py to be this file and fill credentials data
 ├── emu_cli.py 			#run this module to run the program
 ├── feature_common.py 		#common methods for feature requests to API
 ├── feature_manager.py 		#manager for each feature requested by user in the menu

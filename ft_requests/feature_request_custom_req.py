@@ -3,8 +3,9 @@
 import custom_req as c_r
 #import openai params
 import openai_params as oai
-#import config
-import config as config
+#import config_dir
+from config_dir import config as config
+
 
 #custom request by user
 class Feature_Request_CustomRequest:
@@ -58,7 +59,7 @@ class Feature_Request_CustomRequest:
 	#send request to model
 	def request_code(self, *request_args):
 		#override base instance vars
-		self.common_instance.model = oai.gpt_engine_deployment_name
+		self.common_instance.model = oai.primary_engine_deployment_name
 		self.common_instance.model_temp = 0.7
 		#run base request implementation
 		return self.common_instance.request_code_enhancement(*request_args)

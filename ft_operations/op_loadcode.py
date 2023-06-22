@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 #import utils
 import tools.file_management as fm
-import tools.request_utils as ut
-#import config
-import config as config
+#import config_dir
+from config_dir import config as config
+
 
 #user upload code from file
 class Op_Loadcode:

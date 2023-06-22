@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-#import config
-import config as config
+#import config_dir
+from config_dir import config as config
 
 #add unittest
 sys_mssg = f'''You are going to generate the cli commands to execute in linux for existing unittest functions in code I give you.

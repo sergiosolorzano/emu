@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 
-import sys
 import os
 import subprocess
 import shutil
-import shlex
 import json
 from pathlib import Path
 #import my utils
 import tools.request_utils as ut
-#import config
-import config as config
+#import config_dir
+from config_dir import config as config
+
 
 def create_empty_module(module_name, ini_dir):
 	#change to modules dir

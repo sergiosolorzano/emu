@@ -2,8 +2,7 @@
 import cProfile
 import os
 from pathlib import Path
-#import config
-import config as config
+import config_dir.config as config
 #import classes
 import user_interaction as uinteraction
 import feature_manager as ft_mgr

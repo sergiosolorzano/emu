@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-#import config
-import config as config
+#import config_dir
+from config_dir import config as config
 
 sys_mssg = f'''You program in {config.program_language}.
 You create the code that implements the description in Program Description and that follows these specific requirements as outlined in Requirements.

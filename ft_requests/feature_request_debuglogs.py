@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
-import shlex
-import subprocess
 #import utils
-import tools.file_management as fm
 import tools.request_utils as ut
 #import request text
 import debug_rq as dg_r
 #openai
 import openai_params as oai
-#import config
-import config as config
+#import config_dir
+from config_dir import config as config
+
 
 #Request model to debug program with logs
 class Feature_Request_DebugLogs:
@@ -37,8 +35,8 @@ class Feature_Request_DebugLogs:
         summary_new_request = "Change the code to correct errors shown in the log file."
         sys_mssg = dg_r.sys_mssg
         request_to_gpt = f'''You will make specific changes to the value of this JSON object which is the code: {self.common_instance.gpt_response}.
-        \nThis is the description of what the program does in the the code found in the value for key 'module' of the JSON object:\n{self.common_instance.program_description}.
-        \n{ut.concat_dict_to_string(dg_r.debug_instructions_dict)}\n\n{dg_r.command}{self.command}\n\n{dg_r.error}{self.error_mssg}'''
+                \nThis is the description of what the program does in the the code found in the value for key 'module' of the JSON object:\n{self.common_instance.program_description}.
+                \n{ut.concat_dict_to_string(dg_r.debug_instructions_dict)}\n\n{dg_r.command}{self.command}\n\n{dg_r.error}{self.error_mssg}'''
 
         args_tpl = (summary_new_request, sys_mssg, request_to_gpt)
         return args_tpl
@@ -50,7 +48,7 @@ class Feature_Request_DebugLogs:
                 case 'y':
                     #set engine defaults
                     self.common_instance.model_temp = 0.2
-                    self.common_instance.model = oai.codex_engine_deployment_name
+                    self.common_instance.model = oai.secondary_engine_deployment_name
                     #user set engine/temperature
                     self.get_user_model_and_temp()
                     return True
@@ -69,13 +67,16 @@ class Feature_Request_DebugLogs:
                 return
             elif cont.lower() == "c":
                 while True:
-                    print(); choice = input(f"1. Gpt-3.5 Turbo\n2. Codex\nChoose model? ")
+                    print(); choice = input(f"1. Gpt-3.5 Turbo\n2. code-davinci-002\n3. text-davinci-003\nChoose model? ")
                     match choice:
                         case '1':
-                            self.common_instance.model = oai.gpt_engine_deployment_name
+                            self.common_instance.model = oai.primary_engine_deployment_name
                             break
                         case '2':
-                            self.common_instance.model = oai.codex_engine_deployment_name
+                            self.common_instance.model = oai.secondary_engine_deployment_name
+                            break
+                        case '3':
+                            self.common_instance.model = oai.tertiary_engine_deployment_name
                             break
                         case _:
                             print("Invalid model selection.")
@@ -104,6 +105,9 @@ class Feature_Request_DebugLogs:
     #send request to model
     def request_code(self, *request_args):
         #run base request implementation
+        # override base instance vars
+        self.common_instance.model = oai.secondary_engine_deployment_name
+        self.common_instance.model_temp = 0.7
         return self.common_instance.request_code_enhancement(*request_args)
 
     def process_successful_response(self):

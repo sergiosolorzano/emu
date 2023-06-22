@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-#import config
-import config as config
+#import config_dir
+from config_dir import config as config
 
 #add input and argparse
 sys_mssg = f'''You are going to add argparse arguments functionality to a script written in {config.program_language} version above {config.language_version} I give you.

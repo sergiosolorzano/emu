@@ -66,6 +66,7 @@ class Feature_Request_DebugLogs:
                 print(f"Engine selected: {self.common_instance.model[1]} Temperature {self.common_instance.model_temp}")
                 return
             elif cont.lower() == "c":
+                print();print(f"NOTE: Code-davinci-002 and text-davinci-003 models do not evaluate the logs but only debug the code.\nGpt-3.5 Turbo evaluates the error logs.")
                 while True:
                     print(); choice = input(f"1. Gpt-3.5 Turbo\n2. code-davinci-002\n3. text-davinci-003\nChoose model? ")
                     match choice:

@@ -6,10 +6,12 @@ from creds.self_config import self_config_huggingface
 import tools.file_management as fm
 import config_dir.config as config
 
+#TODO
 #Call cerebras/Cerebras-GPT-111M to guarantee JSON format
 class Guarantee_JSON:
     cerebras_gpt_111_Base = self_config_huggingface['HUGGINGFACE_CEREBRAS_GPT_111M_BASE']
     cerebras_gpt_111_Bearer = self_config_huggingface['huggingface_cerberas_GPT_111M_BEARER']
+
     def __init__(self):
         self.API_URL = self.cerebras_gpt_111_Base
         self.headers = {"Authorization": self.cerebras_gpt_111_Bearer}

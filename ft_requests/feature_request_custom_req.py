@@ -27,7 +27,7 @@ class Feature_Request_CustomRequest:
 		if self.common_instance.program_description is None:
 			print(f"No program description available but one is required.")
 		else:
-			mssg = f"Current Program Description: {self.common_instance.program_description}. Update? y/n: "
+			mssg = f"Current Program Description: {self.common_instance.program_description} Update? y/n: "
 			mssg_option3 = f"Invalid choice. "
 			prog_desc_choice = self.common_instance.user_interaction_instance.user_choice_two_options(mssg=mssg, mssg_option1=None, mssg_option2=None, mssg_option3=mssg_option3)
 		if prog_desc_choice == "y":

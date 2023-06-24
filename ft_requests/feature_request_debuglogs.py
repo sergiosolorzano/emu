@@ -109,7 +109,7 @@ class Feature_Request_DebugLogs:
         # override base instance vars
         self.common_instance.model = oai.secondary_engine_deployment_name
         self.common_instance.model_temp = 0.7
-        return self.common_instance.request_code_enhancement(*request_args)
+        return self.common_instance.request_code_enhancement(*request_args, debug_mode=True)
 
     def process_successful_response(self):
         self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)

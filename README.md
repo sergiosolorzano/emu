@@ -70,7 +70,6 @@ For now set for each request in request_code() e.g. ft_requests/feature_request_
 ```
     def request_code(self, *request_args):
         #override common instance vars
-        self.common_instance.u_test_bool = False
         self.common_instance.model = oai.gpt_engine_deployment_name
         self.common_instance.model_temp = 0.7
         return self.common_instance.request_code_enhancement(*request_args)
@@ -96,3 +95,5 @@ Execution module: emu_cli.py
 Choose your request: 
 
 ----------------------------------------------
+
+Toggle showing text from requests: At config_dir/config.py toggle bool show_request

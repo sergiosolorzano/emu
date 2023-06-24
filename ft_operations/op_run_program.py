@@ -32,9 +32,7 @@ class Op_Run_Program:
                 code_success = self.execute_code(user_comm_tail)
                 #exception
                 if not code_success:
-                    success_request = self.request_debug_instance.request_manager()
-                    #if success_request:
-                    #    continue
+                    self.request_debug_instance.request_manager()
 
                 another_op = self.user_action_next_command_or_menu()
                 if another_op:
@@ -49,7 +47,7 @@ class Op_Run_Program:
     def user_action_next_command_or_menu(self):
         #user choose another command or back to menu
         mssg= "Run another (C)ommand or (M)enu: "
-        mssg_option3 = "Invalid choice."
+        mssg_option3 = "\033[1;31m[WARNING]\033[0m Invalid choice."
 
         user_choice = self.common_instance.user_interaction_instance.user_choice_two_options(mssg, mssg_option3=mssg_option3, option1="c",option2="m")
         if user_choice == "c":

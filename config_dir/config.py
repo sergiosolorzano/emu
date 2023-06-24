@@ -49,3 +49,6 @@ token_limit=config_data["openai_tokens"]["token_limit"]
 
 #python path with required environment
 python_env_path = config_data["python_env_path"]
+
+#show requests on terminal
+show_request = False

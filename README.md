@@ -12,6 +12,7 @@ Repo file structure:
 ├── config_dir          #file configuration
       ├── config.json         #project file and paths
       ├── config.py           #module with project file and paths
+      ├── openai_params.py              #openai required API parameters
 ├── creds 			#credentials folder for OpenAI API
 │   └── self_config.py 		#OpenAI API credentials. Move sample_self_config.py to be this file and fill credentials data
 ├── emu_cli.py 			#run this module to run the program
@@ -28,7 +29,6 @@ Repo file structure:
 │   ├── feature_request_excpt_and_log.py 	#add exception handling and logs to the code
 │   ├── feature_request_rawcode.py 		#generate initial code from a program description
 ├── log_list_handler.py 										
-├── openai_params.py 				#openai required API parameters
 ├── project 					#project output directory
 │   ├── module.log 
 │   ├── module.py 				#code requested stored here and versioned

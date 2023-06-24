@@ -2,9 +2,8 @@
 #import request text
 import custom_req as c_r
 #import openai params
-import openai_params as oai
 #import config_dir
-from config_dir import config as config
+from config_dir import config as config, openai_params as oai
 
 
 #custom request by user

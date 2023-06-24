@@ -28,19 +28,20 @@ log_fname = config_data["file_names"]["log_fname"]
 module_utest_name = config_data["file_names"]["module_utest_name"]
 json_fname = config_data["file_names"]["json_fname"]
 custom_json_format_fname = config_data["file_names"]["custom_json_format_fname"]
-#key in json file to get the code
-code_key_in_json = module_script_fname.split(".")[0]
 
 #full path files
 full_custom_json_format_fname = f"{initial_dir}/{custom_json_format_dirname}/{custom_json_format_fname}"
 full_path_module = f"{full_project_dirname}/{module_script_fname}"
 full_path_logfile = f"{full_project_dirname}/{log_fname}"
 
+#key in json file to get the code
+code_key_in_json = module_script_fname.split(".")[0]
+
 # program language
 program_language = config_data["program_language"]
 language_version = config_data["language_version"]
 
-#unit test cli key
+#unit test cli key TODO
 unittest_cli_command_key = config_data["unittest_cli_command_key"]
 
 #openai tokens
@@ -51,4 +52,4 @@ token_limit=config_data["openai_tokens"]["token_limit"]
 python_env_path = config_data["python_env_path"]
 
 #show requests on terminal
-show_request = False
+show_request = True

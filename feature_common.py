@@ -4,14 +4,13 @@
 import os
 import threading
 import json
-import dataclasses
 import user_interaction as uinteraction
 import log_list_handler
 #import tools
 import tools.file_management as fm
 import tools.request_utils as ut
 # import openai libs/modules
-import openai_params as oai
+from config_dir import openai_params as oai
 import config_dir.config as config
 
 class Feature_Common:

@@ -12,9 +12,9 @@ Repo file structure:
 ├── config_dir          #file configuration
       ├── config.json         #project file and paths
       ├── config.py           #module with project file and paths
-      ├── openai_params.py              #openai required API parameters
+      ├── openai_params.py              #openai required OpenAI API parameters
 ├── creds 			#credentials folder for OpenAI API
-│   └── self_config.py 		#OpenAI API credentials. Move sample_self_config.py to be this file and fill credentials data
+│   └── self_config.py 		#Azure OpenAI API credentials. Move sample_self_config.py to be this file and fill credentials data
 ├── emu_cli.py 			#run this module to run the program
 ├── feature_common.py 		#common methods for feature requests to API
 ├── feature_manager.py 		#manager for each feature requested by user in the menu
@@ -62,6 +62,7 @@ For path of current env set value to "python"
 
 Authentication:
 Create a directory at the root of this project and save sample_self_config.py. Rename this py file to self_config.py and enter your endpoints and keys.
+Project tested with Azure OpenAI API. Untested OpenAI API.
 
 ---------------------------------------------
 

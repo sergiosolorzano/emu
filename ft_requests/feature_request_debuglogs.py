@@ -4,9 +4,8 @@ import tools.request_utils as ut
 #import request text
 import debug_rq as dg_r
 #openai
-import openai_params as oai
 #import config_dir
-from config_dir import config as config
+from config_dir import config as config, openai_params as oai
 
 
 #Request model to debug program with logs

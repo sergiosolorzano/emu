@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
 #import config_dir
-from config_dir import config as config
+from config_dir import config as config, openai_params as oai
 #import utils
 import tools.request_utils as ut
 # import openai libs/modules
-import openai_params as oai
 #import request text
 import raw_code_rq as raw_code
 

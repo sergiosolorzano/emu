@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
 import tiktoken
-import openai_params as oai
 import time
 #import config_dir
-from config_dir import config as config
+from config_dir import config as config, openai_params as oai
 
 
 #calculate tokens in messages list

@@ -6,7 +6,7 @@ import tools.request_utils as ut
 #import request text
 import input_and_argparse_rq as input_and_argparse
 #openai
-import openai_params as oai
+from config_dir import openai_params as oai
 #import config_dir
 import config_dir.config as config
 

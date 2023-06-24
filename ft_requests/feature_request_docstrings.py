@@ -5,9 +5,8 @@ import tools.request_utils as ut
 #import request text
 import prompt_txt.docstrings_rq as docs_r
 #openai
-import openai_params as oai
 #import config_dir
-from config_dir import config as config
+from config_dir import config as config, openai_params as oai
 
 
 #request add docstrings to code

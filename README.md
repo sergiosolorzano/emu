@@ -10,7 +10,7 @@ Repo file structure:
 ```
 .
 ├── config_dir          #file configuration
-      ├── config.json         #project file and paths
+      ├── config.json         #project files and paths
       ├── config.py           #module with project file and paths
       ├── openai_params.py              #openai required OpenAI API parameters
 ├── creds 			#credentials folder for OpenAI API

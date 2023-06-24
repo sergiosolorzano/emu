@@ -1,4 +1,4 @@
-Generates the code for a program description requested by the user using OpenAI API gpt-3.5-turbo and code-davinci-002 models.
+Generates the code for a program description requested by the user using Azure OpenAI API gpt-3.5-turbo and code-davinci-002 models.
 
 Code changes/additions are added on a per-menu-API-request basis.
 

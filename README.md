@@ -4,7 +4,8 @@ Code changes/additions are added on a per-menu-API-request basis.
 
 Selected log entries from running the resulting program are sent to GPT for debug.
 
-This template is being updated to also generate the full program code but requesting from the API atomic modules with the objective of optimizing token expense.
+<video src="https://github.com/sergiosolorzano/emu/assets/24430655/bb6f7a3c-b6de-4abe-870d-866651a1536e" controls="controls" muted="muted" playsinline="playsinline">
+      </video>
 
 Repo file structure:
 ```

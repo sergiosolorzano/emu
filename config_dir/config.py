@@ -2,11 +2,81 @@
 
 import os
 import json
+import openai
+from creds.self_config import self_config_azure_openai
+from creds.self_config import self_config_openai_api
 
 #read config_dir data
 path_to_file = os.getcwd()+"/config_dir/config.json"
 with open(path_to_file) as f:
     config_data = json.load(f)
+
+#set default (fall back unless specified) api for this session
+class Model_API:
+    #avaialble APIs
+    AZURE_OPENAI_API=0
+    OPENAI_API=1
+
+    @staticmethod
+    def runtime_set_openai_credentials(model_api):
+        if model_api == Model_API.AZURE_OPENAI_API:
+            # set azure openai credentials
+            openai.api_type = self_config_azure_openai['OPENAI_API_TYPE']
+            openai.api_version = self_config_azure_openai['OPENAI_API_VERSION']
+            openai.api_base = self_config_azure_openai['OPENAI_API_BASE']
+            openai.api_key = self_config_azure_openai['OPENAI_API_KEY']
+        elif model_api == Model_API.OPENAI_API:
+            openai.organization = self_config_openai_api['OPENAI_ORGANIZATION']
+            openai.api_key = self_config_openai_api['OPENAI_API_KEY']
+
+#default starting session API, re-assigned by request
+used_api = Model_API.AZURE_OPENAI_API
+
+# model keys must match those entered in self_config.py
+class Azure_OpenAI_Model:
+    gpt35_deployment_name = self_config_azure_openai["gpt_engine_350301_deployment_name"]
+    codex_deployment_name = self_config_azure_openai["codex_engine_002_deployment_name"]
+    davincitext_deployment_name = self_config_azure_openai["davincitext_003_deployment_name"]
+
+    gpt35_model_name = self_config_azure_openai["gpt_engine_350301_name"]
+    codex_model_name = self_config_azure_openai["codex_engine_002_name"]
+    davincitext_model_name = self_config_azure_openai["davincitext_engine_003_name"]
+
+# model keys must match those entered in self_config.py
+class OpenAI_Model:
+    gpt35_deployment_name = self_config_openai_api["gpt_engine_350613_deployment_name"]
+    codex_deployment_name = self_config_openai_api["codex_engine_002_deployment_name"]
+    davincitext_deployment_name = self_config_openai_api["davincitext_003_deployment_name"]
+
+    gpt35_model_name = self_config_openai_api["gpt_engine_350613_name"]
+    codex_model_name = self_config_openai_api["codex_engine_002_name"]
+    davincitext_model_name = self_config_openai_api["davincitext_engine_003_name"]
+
+##---Required to be set by user---
+#set API that corresponds to model
+request_argparse_api=Model_API.AZURE_OPENAI_API
+request_custom_req_api=Model_API.AZURE_OPENAI_API
+request_debuglogs_api=Model_API.AZURE_OPENAI_API
+request_docstrings_api=Model_API.AZURE_OPENAI_API
+request_excpt_and_logs_api=Model_API.AZURE_OPENAI_API
+request_rawcode_api=Model_API.AZURE_OPENAI_API
+
+#set model for each request feature
+model_request_argparse = (Azure_OpenAI_Model.gpt35_deployment_name,Azure_OpenAI_Model.gpt35_model_name)
+model_request_custom_req = (Azure_OpenAI_Model.gpt35_deployment_name,Azure_OpenAI_Model.gpt35_model_name)
+model_request_debuglogs = (Azure_OpenAI_Model.codex_deployment_name,Azure_OpenAI_Model.codex_model_name)
+model_request_docstrings = (Azure_OpenAI_Model.gpt35_deployment_name,Azure_OpenAI_Model.gpt35_model_name)
+model_request_excpt_and_logs = (Azure_OpenAI_Model.gpt35_deployment_name,Azure_OpenAI_Model.gpt35_model_name)
+model_request_rawcode = (Azure_OpenAI_Model.gpt35_deployment_name,Azure_OpenAI_Model.gpt35_model_name)
+
+#set model temperature
+model_request_argparse_temperature = 0.7
+model_request_custom_req_temperature = 0.7
+model_request_debuglogs_temperature = 0.4
+model_request_docstrings_temperature = 0.7
+model_request_excpt_and_logs_temperature = 0.2
+model_request_rawcode_temperature = 0.7
+##---End Required to be set by user---
 
 #dir names
 initial_dir = os.getcwd()
@@ -53,3 +123,7 @@ python_env_path = config_data["python_env_path"]
 
 #show requests on terminal
 show_request = True
+
+
+
+

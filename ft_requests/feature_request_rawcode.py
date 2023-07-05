@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 #import config_dir
-from config_dir import config as config, openai_params as oai
+from config_dir import config as config
 #import utils
 import tools.request_utils as ut
 # import openai libs/modules
@@ -30,8 +30,9 @@ class Feature_Request_Rawcode:
     #send request to model
     def request_code(self, *request_args):
         #override base instance vars
-        self.common_instance.model = oai.primary_engine_deployment_name
-        self.common_instance.model_temp = 0.7
+        config.used_api = config.request_rawcode_api
+        self.common_instance.model = config.model_request_rawcode
+        self.common_instance.model_temp = config.model_request_rawcode_temperature
         #run base request implementation
         return self.common_instance.request_code_enhancement(*request_args)
 

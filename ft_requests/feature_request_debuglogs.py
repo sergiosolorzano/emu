@@ -5,7 +5,7 @@ import tools.request_utils as ut
 import debug_rq as dg_r
 #openai
 #import config_dir
-from config_dir import config as config, openai_params as oai
+from config_dir import config as config
 
 
 #Request model to debug program with logs
@@ -19,6 +19,11 @@ class Feature_Request_DebugLogs:
         self.command = None
 
     def request_manager(self):
+        # # override base instance vars
+        # config.used_api = config.request_debuglogs_api
+        # self.common_instance.model = config.model_request_debuglogs
+        # self.common_instance.model_temp = config.model_request_debuglogs_temperature
+
         if self.user_action_debug_or_not():
             args = self.prepare_request_args()
             request_success = self.request_code(args)
@@ -46,8 +51,9 @@ class Feature_Request_DebugLogs:
             match choice.lower():
                 case 'y':
                     #set engine defaults
-                    self.common_instance.model_temp = 0.2
-                    self.common_instance.model = oai.secondary_engine_deployment_name
+                    config.used_api = config.request_debuglogs_api
+                    self.common_instance.model = config.model_request_debuglogs
+                    self.common_instance.model_temp = config.model_request_debuglogs_temperature
                     #user set engine/temperature
                     self.get_user_model_and_temp()
                     return True
@@ -58,8 +64,9 @@ class Feature_Request_DebugLogs:
                     continue
 
     def get_user_model_and_temp(self):
+        attribute_name = [attr_name for attr_name, attr_value in vars(config.Model_API).items() if attr_value == config.used_api][0]
         while True:
-            print(); print(f"Default Model: {self.common_instance.model[1]} Temperature: {self.common_instance.model_temp}")
+            print(); print(f"Default Model: {attribute_name} {self.common_instance.model[1]} Temperature: {self.common_instance.model_temp}")
             cont = self.common_instance.user_interaction_instance.request_input_from_user("(A)accept defaults or (C)hange? a/c: ")
             if cont.lower() == "a":
                 print(f"Engine selected: {self.common_instance.model[1]} Temperature {self.common_instance.model_temp}")
@@ -67,16 +74,26 @@ class Feature_Request_DebugLogs:
             elif cont.lower() == "c":
                 print();print(f"NOTE: Code-davinci-002 and text-davinci-003 models do not evaluate the logs but only debug the code.\nGpt-3.5 Turbo evaluates the error logs.")
                 while True:
-                    print(); choice = input(f"1. Gpt-3.5 Turbo\n2. code-davinci-002\n3. text-davinci-003\nChoose model? ")
+                    print();
+                    choice = input(f"1. {attribute_name} Gpt-3.5 Turbo\n2. {attribute_name} code-davinci-002\n3. {attribute_name} text-davinci-003\nChoose model? ")
                     match choice:
                         case '1':
-                            self.common_instance.model = oai.primary_engine_deployment_name
+                            if config.used_api == config.Model_API.AZURE_OPENAI_API:
+                                self.common_instance.model = (config.Azure_OpenAI_Model.gpt35_deployment_name, config.Azure_OpenAI_Model.gpt35_model_name)
+                            elif config.used_api == config.Model_API.OPENAI_API:
+                                self.common_instance.model = (config.OpenAI_Model.gpt35_deployment_name, config.OpenAI_Model.gpt35_model_name)
                             break
                         case '2':
-                            self.common_instance.model = oai.secondary_engine_deployment_name
+                            if config.used_api == config.Model_API.AZURE_OPENAI_API:
+                                self.common_instance.model = (config.Azure_OpenAI_Model.codex_deployment_name,config.Azure_OpenAI_Model.codex_model_name)
+                            elif config.used_api == config.Model_API.OPENAI_API:
+                                self.common_instance.model = (config.OpenAI_Model.codex_deployment_name,config.OpenAI_Model.codex_model_name)
                             break
                         case '3':
-                            self.common_instance.model = oai.tertiary_engine_deployment_name
+                            if config.used_api == config.Model_API.AZURE_OPENAI_API:
+                                self.common_instance.model = (config.Azure_OpenAI_Model.davincitext_deployment_name, config.Azure_OpenAI_Model.davincitext_model_name)
+                            elif config.used_api == config.Model_API.OPENAI_API:
+                                self.common_instance.model = (config.OpenAI_Model.davincitext_deployment_name, config.OpenAI_Model.davincitext_model_name)
                             break
                         case _:
                             print("Invalid model selection.")
@@ -105,9 +122,6 @@ class Feature_Request_DebugLogs:
     #send request to model
     def request_code(self, *request_args):
         #run base request implementation
-        # override base instance vars
-        self.common_instance.model = oai.secondary_engine_deployment_name
-        self.common_instance.model_temp = 0.7
         return self.common_instance.request_code_enhancement(*request_args, debug_mode=True)
 
     def process_successful_response(self):

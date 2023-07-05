@@ -71,7 +71,7 @@ class Op_Run_Program:
         # run the program with debug/logs loop
         while True:
             user_action = self.common_instance.user_interaction_instance.request_input_from_user(
-                f"\n\033[1;31m[WARNING]\033[0m Note on option requirements:\n\t=> Requires logging functionality, logs will be written to {config.initial_dir}/{config.log_fname}\n\t=> Program execution via CLI, you can add args to the code with the Argparse option.\n\t=> This option is not compatible to run unit tests.\n\n(C)ontinue or back to (M)Menu: \033[0m")
+                f"\n\033[1;31m[WARNING]\033[0m Note on option requirements:\n\t=> Requires logging functionality, logs will be written to {config.initial_dir}/{config.log_fname}\n\t=> Program execution via CLI, you can add args to the code with the Argparse option.\n\n(C)ontinue or back to (M)Menu: \033[0m")
             if user_action.lower() == "c":
                 return True
             else:

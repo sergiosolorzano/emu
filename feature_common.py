@@ -10,16 +10,15 @@ import log_list_handler
 import tools.file_management as fm
 import tools.request_utils as ut
 # import openai libs/modules
-from config_dir import openai_params as oai
 import config_dir.config as config
 
 class Feature_Common:
     # show request text on screen
     show_request = config.show_request
 
-    # set model and temp
-    model = oai.primary_engine_deployment_name
-    model_temp = 0.7
+    #instance model and temp class vars
+    model = None
+    model_temp = None
 
     # program description
     program_description = None
@@ -51,22 +50,24 @@ class Feature_Common:
     def send_request(self, sys_mssg, request_to_gpt, summary_new_request, debug_mode=False):
         clean_response = None
         this_conversation = []
-
         try:
-            if oai.used_api == oai.Model_API.AZURE_OPENAI_API:
+            if config.used_api == config.Model_API.AZURE_OPENAI_API:
                 if self.model[1] == 'gpt-3.5-turbo-0301':
                     system_message = {"role": "system", "content": sys_mssg}
                     this_conversation.append(system_message)
                     # request requirements
                     this_conversation.append({"role": "user", "content": request_to_gpt})
-                    request_tokens = this_conversation_tokens = ut.num_tokens_from_messages(this_conversation)
+                    request_tokens = this_conversation_tokens = ut.num_tokens_from_messages(this_conversation,self.model[1])
                     ut.token_limit(request_tokens)
                     self.cum_tokens += this_conversation_tokens
 
                     self.print_request_information(summary_new_request, request_tokens, sys_mssg, request_to_gpt)
                     self.start_stop_event(start=True, stop=False)
 
-                    response = oai.openai.ChatCompletion.create(
+                    #update api keys according to current api choice
+                    config.Model_API.runtime_set_openai_credentials(config.used_api)
+
+                    response = config.openai.ChatCompletion.create(
                         engine=self.model[0],
                         messages=this_conversation,
                         temperature=self.model_temp,
@@ -76,17 +77,17 @@ class Feature_Common:
                     this_conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
 
                 elif (self.model[1] == 'code-davinci-002' or self.model[1] == 'text-davinci-003') and debug_mode is True:
-                    model_prompt = f"#####Fix bugs in the below module\n###Buggy {config.program_language}\n{ut.get_response_value_for_key(self.gpt_response, config.code_key_in_json)}\n###Fixed {config.program_language}"
+                    model_prompt = f"#####Fix bugs in the module below\n###Buggy {config.program_language}\n{ut.get_response_value_for_key(self.gpt_response, config.code_key_in_json)}\n###Fixed {config.program_language}"
 
                     this_conversation.append({"role": "user", "content": model_prompt})
-                    request_tokens = this_conversation_tokens = ut.num_tokens_from_messages(this_conversation)
+                    request_tokens = this_conversation_tokens = ut.num_tokens_from_messages(this_conversation,self.model[1])
                     ut.token_limit(request_tokens)
                     self.cum_tokens += this_conversation_tokens
 
                     self.print_request_information(summary_new_request, request_tokens, None, model_prompt)
                     self.start_stop_event(start=True, stop=False)
 
-                    response = oai.openai.Completion.create(
+                    response = config.openai.Completion.create(
                         engine=self.model[0],
                         prompt=model_prompt,
                         temperature=self.model_temp,
@@ -102,10 +103,10 @@ class Feature_Common:
                     print("\033[1;31m[WARNING]\033[0m Model not available for this request.\033[0m")
                     return True
 
-            elif oai.used_api == oai.Model_API.OPENAI_API:
+            elif config.used_api == config.Model_API.OPENAI_API:
                 #TODO
                 pass
-        except oai.openai.OpenAIError as e:
+        except config.openai.OpenAIError as e:
             # Handle connection error or timeout here
             print(f"1;31m[WARNING]\033[0mAn OpenAI error occurred:\033[0m ", str(e))
         except Exception as e:
@@ -113,7 +114,7 @@ class Feature_Common:
 
         self.start_stop_event(start=False,stop=True)
 
-        this_conversation_tokens = ut.num_tokens_from_messages(this_conversation)
+        this_conversation_tokens = ut.num_tokens_from_messages(this_conversation,self.model[1])
         self.cum_tokens += this_conversation_tokens
 
         ut.token_limit(this_conversation_tokens)
@@ -160,7 +161,8 @@ class Feature_Common:
             print(f"\n\033[1;97mRequest Sent: CumTokens:{self.cum_tokens} Req_Tokens:{request_tokens}\033[0m")
 
         print()
-        print(f"\033[1;97mModel Settings:\033[0m Engine: {self.model[1]}, Temperature: {self.model_temp}")
+        attribute_name = [attr_name for attr_name, attr_value in vars(config.Model_API).items() if attr_value == config.used_api][0]
+        print(f"\033[1;97mModel Settings:\033[0m API: {attribute_name}, Engine: {self.model[1]}, Temperature: {self.model_temp}")
 
     def build_request_args(self, summary_new_request, sys_mssg, request_to_gpt):
         args_tpl = (summary_new_request, sys_mssg, request_to_gpt)

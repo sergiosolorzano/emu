@@ -6,7 +6,7 @@ import tools.request_utils as ut
 import error_hndl_logging_rq as error_log_hndl
 #openai
 #import config_dir
-from config_dir import config as config, openai_params as oai
+from config_dir import config as config
 
 
 #request model raw code from description
@@ -32,8 +32,9 @@ class Feature_Request_ExceptionHndl_and_Logging:
     #send request to model
     def request_code(self, *request_args):
         #override base instance vars
-        self.common_instance.model = oai.primary_engine_deployment_name
-        self.common_instance.model_temp = 0.2
+        config.used_api = config.request_excpt_and_logs_api
+        self.common_instance.model = config.model_request_excpt_and_logs
+        self.common_instance.model_temp = config.model_request_excpt_and_logs_temperature
         #call base
         return self.common_instance.request_code_enhancement(*request_args)
 

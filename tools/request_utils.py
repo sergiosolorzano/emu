@@ -3,11 +3,11 @@
 import tiktoken
 import time
 #import config_dir
-from config_dir import config as config, openai_params as oai
+from config_dir import config as config
 
 
 #calculate tokens in messages list
-def num_tokens_from_messages(messages, model=oai.deployment_name[1]):
+def num_tokens_from_messages(messages, model):
     encoding = tiktoken.encoding_for_model(model)
     num_tokens = 0
     for message in messages:

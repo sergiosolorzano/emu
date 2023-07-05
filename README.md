@@ -10,11 +10,11 @@ Repo file structure:
 ```
 .
 ├── config_dir          #file configuration
-      ├── config.json         #project files and paths
-      ├── config.py           #module with project file and paths
-      ├── openai_params.py              #openai required OpenAI API parameters
+      ├── config.json         #project files, paths, token limits metadata 
+      ├── config.py           #set by user API, model, temperature for each request
 ├── creds 			#credentials folder for OpenAI API
-│   └── self_config.py 		#Azure OpenAI API credentials. Move sample_self_config.py to be this file and fill credentials data
+│   └── self_config.py 		#Azure OpenAI API credentials & model names metadata
+                                        #Move sample_self_config.py to self_config.py and fill data
 ├── emu_cli.py 			#run this module to run the program
 ├── feature_common.py 		#common methods for feature requests to API
 ├── feature_manager.py 		#manager for each feature requested by user in the menu
@@ -61,33 +61,33 @@ For path of current env set value to "python"
 ---------------------------------------------
 
 Authentication:
-Create a directory at the root of this project and save sample_self_config.py. Rename this py file to self_config.py and enter your endpoints and keys.
+Create "creds" directory at the root of this project and save in it sample_self_config.py. Rename this py file to self_config.py and enter your endpoints, model/deployment names and keys.
 Project tested with Azure OpenAI API. Untested OpenAI API.
 
 ---------------------------------------------
 
 Configuring OpenAI model and temperature per request:
-For now set for each request in request_code() e.g. ft_requests/feature_request_argparse.py:
-```
-    def request_code(self, *request_args):
-        #override common instance vars
-        self.common_instance.model = oai.gpt_engine_deployment_name
-        self.common_instance.model_temp = 0.7
-        return self.common_instance.request_code_enhancement(*request_args)
+- Model keys for class class Azure_OpenAI_Model and OpenAI_Model must match model keys used in self_config.py
+- Set API that corresponds to model, e.g.
+    request_argparse_api=Model_API.AZURE_OPENAI_API
+- Set model for each request type, e.g.:
+    model_request_argparse = (Azure_OpenAI_Model.gpt35_deployment_name,Azure_OpenAI_Model.gpt35_model_name)
+- Set model temperature for each request type, e.g.:
+    model_request_argparse_temperature = 0.7
 ```
 ---------------------------------------------
 
 Execution module: emu_cli.py
 
 1.  Generate Raw Code
-		Request model for code according to a description you provide.
+        Request model for code according to a description you provide.
 2.  Load Raw Code Script From File
 3.  Add Argparse
 4.  Exception Handling and Logging
 5.  User Custom Request
-		Requirement: code to be already loaded. A JSON format for the response entered at custom_req.py json_required_format variable.
+        Requirement: code to be already loaded. Expected JSON response as specified in custom_req.py json_required_format variable.
 6.  Run Program And Request Repair of Debug Logs
-	Run the program and upon errors send the log error captured for the model to amend the code accordingly.
+        Run the program and upon errors send the log error captured for the model to amend the code accordingly.
 7.  Add Docstrings To Program Code.
 8.  Set Menu Sequence
 9.  Run All

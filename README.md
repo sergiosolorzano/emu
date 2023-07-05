@@ -17,7 +17,7 @@ Repo file structure:
       ├── config.py           #set by user API, model, temperature for each request
 ├── credentials			#credentials folder for OpenAI API
 │   └── self_config.py             #Azure OpenAI API credentials & model names metadata
-            #Move sample_self_config.py to self_config.py and fill data
+                                    #Move sample_self_config.py to self_config.py and fill data
 ├── emu_cli.py                  #run this module to run the program
 ├── feature_common.py 	        #common methods for feature requests to API
 ├── feature_manager.py 		    #manager for each feature requested by user in the menu

@@ -15,13 +15,13 @@ Repo file structure:
 ├── config_dir                #file configuration
       ├── config.json         #project files, paths, token limits metadata 
       ├── config.py           #set by user API, model, temperature for each request
-├── creds 			      #credentials folder for OpenAI API
+├── creds 			          #credentials folder for OpenAI API
 │   └── self_config.py 		#Azure OpenAI API credentials & model names metadata
-                              #Move sample_self_config.py to self_config.py and fill data
-├── emu_cli.py 			#run this module to run the program
-├── feature_common.py 		#common methods for feature requests to API
-├── feature_manager.py 		#manager for each feature requested by user in the menu
-├── ft_operations 		#non-API requests directory
+                                        #Move sample_self_config.py to self_config.py and fill data
+├── emu_cli.py                  #run this module to run the program
+├── feature_common.py 	        #common methods for feature requests to API
+├── feature_manager.py 		    #manager for each feature requested by user in the menu
+├── ft_operations 		        #non-API requests directory
 │   ├── op_loadcode.py 		#loads code from local file to apply code change requests to it
 │   ├── op_run_program.py 	#run the code
 ├── ft_requests 		#feature text requests directory

@@ -13,8 +13,8 @@ Repo file structure:
 
 .
 ├── config_dir                 #file configuration
-      ├── config.json          #project files, paths, token limits metadata 
-      ├── config.py            #set by user API, model, temperature for each request
+      ├── config.json                #project files, paths, token limits metadata 
+      ├── config.py                  #set by user API, model, temperature for each request
 ├── credentials                #credentials folder for OpenAI API
 │   └── self_config.py              #Azure OpenAI API credentials & model names metadata
                                     #Move sample_self_config.py to self_config.py and fill data
@@ -24,18 +24,18 @@ Repo file structure:
 ├── ft_operations               #non-API requests directory
 │   ├── op_loadcode.py 		      #loads code from local file to apply code change requests to it
 │   ├── op_run_program.py 	      #run the code
-├── ft_requests 		#feature text requests directory
+├── ft_requests                 #feature text requests directory
 │   ├── feature_request_argparse.py 		#standard add argparse request
 │   ├── feature_request_custom_req.py 		#user enters custom system and request prompt
 │   ├── feature_request_debuglogs.py 		#send logs from running the program to API to debug error found in logs
 │   ├── feature_request_docstrings.py 		#add docstrings
-│   ├── feature_request_excpt_and_log.py 	#add exception handling and logs to the code
-│   ├── feature_request_rawcode.py 		#generate initial code from a program description
+│   ├── feature_request_excpt_and_log.py        #add exception handling and logs to the code
+│   ├── feature_request_rawcode.py              #generate initial code from a program description
 ├── log_list_handler.py 										
-├── project 					#project output directory
+├── project                      #project output directory
 │   ├── module.log 
 │   ├── module.py 				#code requested stored here and versioned
-├── prompt_txt 					#prompt specs directory for each request
+├── prompt_txt                   #prompt specs directory for each request
 │   ├── clean_json_rq.py
 │   ├── custom_req.py
 │   ├── debug_rq.py
@@ -46,10 +46,10 @@ Repo file structure:
 ├── README.md
 ├── requirements.txt
 ├── sample_self_config.py
-├── tools 					#file and request management utilities directory
+├── tools                         #file and request management utilities directory
 │   ├── file_management.py
 │   └── request_utils.py
-├── user_interaction.py 			#user interaction class
+├── user_interaction.py           #user interaction class
 ```
 ---------------------------------------------
 

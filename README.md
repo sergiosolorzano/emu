@@ -34,7 +34,7 @@ Repo file structure:
 ├── log_list_handler.py 										
 ├── project                      #project output directory
 │   ├── module.log 
-│   ├── module.py 				#code requested stored here and versioned
+│   ├── module.py                  #code requested stored here and versioned
 ├── prompt_txt                   #prompt specs directory for each request
 │   ├── clean_json_rq.py
 │   ├── custom_req.py

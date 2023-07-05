@@ -1,8 +1,8 @@
-Generates the code for a program description requested by the user using Azure OpenAI API gpt-3.5-turbo and code-davinci-002 models.
+Generates the code for a program description requested by the user using Azure OpenAI API gpt-3.5-turbo.
 
 Code changes/additions are added on a per-menu-API-request basis.
 
-If the program throws when run, log errors are sent to AI model for debug.
+If the program throws when run, log errors are sent to GPT, code or text-davinci models for debug.
 
 <video src="https://github.com/sergiosolorzano/emu/assets/24430655/bb6f7a3c-b6de-4abe-870d-866651a1536e" controls="controls" muted="muted" playsinline="playsinline">
       </video>

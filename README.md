@@ -2,7 +2,7 @@ Generates the code for a program description requested by the user using Azure O
 
 Code changes/additions are added on a per-menu-API-request basis.
 
-Selected log entries from running the resulting program are sent to GPT for debug.
+If the program throws when run, log errors are sent to AI model for debug.
 
 <video src="https://github.com/sergiosolorzano/emu/assets/24430655/bb6f7a3c-b6de-4abe-870d-866651a1536e" controls="controls" muted="muted" playsinline="playsinline">
       </video>

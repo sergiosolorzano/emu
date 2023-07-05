@@ -74,11 +74,12 @@ Configuring OpenAI model and temperature per request:
     model_request_argparse = (Azure_OpenAI_Model.gpt35_deployment_name,Azure_OpenAI_Model.gpt35_model_name)
 - Set model temperature for each request type, e.g.:
     model_request_argparse_temperature = 0.7
-```
+
 ---------------------------------------------
 
-Execution module: emu_cli.py
-
+Execution of this program: 
+At command line ./emu_cli.py shows menu:
+```
 1.  Generate Raw Code
         Request model for code according to a description you provide.
 2.  Load Raw Code Script From File
@@ -94,7 +95,8 @@ Execution module: emu_cli.py
 10. Exit
 
 Choose your request: 
+```
 
 ----------------------------------------------
 
-Toggle showing text from requests: At config_dir/config.py toggle bool show_request
+Toggle to show the prompt for each requests: At config_dir/config.py toggle bool show_request

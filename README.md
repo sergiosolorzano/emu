@@ -7,8 +7,10 @@ Selected log entries from running the resulting program are sent to GPT for debu
 <video src="https://github.com/sergiosolorzano/emu/assets/24430655/bb6f7a3c-b6de-4abe-870d-866651a1536e" controls="controls" muted="muted" playsinline="playsinline">
       </video>
 
-Repo file structure:
+---------------------------------------------
 ```
+Repo file structure:
+
 .
 ├── config_dir          #file configuration
       ├── config.json         #project files, paths, token limits metadata 

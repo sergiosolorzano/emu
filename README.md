@@ -4,6 +4,12 @@ Code changes/additions are added on a per-menu-API-request basis.
 
 If the program throws when run, log errors are sent to GPT, code or text-davinci models for debug.
 
+<p align="center">
+<img width="150" alt="star" src="https://github.com/sergiosolorzano/ai_gallery/assets/24430655/3c0b02ea-9b11-401a-b6f5-c61b69ad651b">
+</p>
+
+---------------------------------------------
+
 <video src="https://github.com/sergiosolorzano/emu/assets/24430655/bb6f7a3c-b6de-4abe-870d-866651a1536e" controls="controls" muted="muted" playsinline="playsinline">
       </video>
 

@@ -1,0 +1,2336 @@
+Directory structure:
+└── sergiosolorzano-emu/
+    ├── README.md
+    ├── emu_cli.py
+    ├── feature_common.py
+    ├── feature_manager.py
+    ├── gtee_json.py
+    ├── log_list_handler.py
+    ├── requirements.txt
+    ├── sample_self_config.py
+    ├── user_interaction.py
+    ├── config_dir/
+    │   ├── config.json
+    │   └── config.py
+    ├── ft_operations/
+    │   ├── op_loadcode.py
+    │   └── op_run_program.py
+    ├── ft_requests/
+    │   ├── feature_request_argparse.py
+    │   ├── feature_request_custom_req.py
+    │   ├── feature_request_debuglogs.py
+    │   ├── feature_request_docstrings.py
+    │   ├── feature_request_excpt_and_log.py
+    │   └── feature_request_rawcode.py
+    ├── prompt_txt/
+    │   ├── custom_req.py
+    │   ├── debug_rq.py
+    │   ├── docstrings_rq.py
+    │   ├── error_hndl_logging_rq.py
+    │   ├── input_and_argparse_rq.py
+    │   ├── raw_code_rq.py
+    │   ├── unittest_cli_comm_rq.py
+    │   └── unittest_rq.py
+    └── tools/
+        ├── file_management.py
+        └── request_utils.py
+
+================================================
+File: README.md
+================================================
+<p align="center">
+  <a href="https://deepwiki.com/sergiosolorzano/emu">
+    <img src="https://img.shields.io/badge/DeepWiki-sergiosolorzano%2Femu-blue.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAyCAYAAAAnWDnqAAAAAXNSR0IArs4c6QAAA05JREFUaEPtmUtyEzEQhtWTQyQLHNak2AB7ZnyXZMEjXMGeK/AIi+QuHrMnbChYY7MIh8g01fJoopFb0uhhEqqcbWTp06/uv1saEDv4O3n3dV60RfP947Mm9/SQc0ICFQgzfc4CYZoTPAswgSJCCUJUnAAoRHOAUOcATwbmVLWdGoH//PB8mnKqScAhsD0kYP3j/Yt5LPQe2KvcXmGvRHcDnpxfL2zOYJ1mFwrryWTz0advv1Ut4CJgf5uhDuDj5eUcAUoahrdY/56ebRWeraTjMt/00Sh3UDtjgHtQNHwcRGOC98BJEAEymycmYcWwOprTgcB6VZ5JK5TAJ+fXGLBm3FDAmn6oPPjR4rKCAoJCal2eAiQp2x0vxTPB3ALO2CRkwmDy5WohzBDwSEFKRwPbknEggCPB/imwrycgxX2NzoMCHhPkDwqYMr9tRcP5qNrMZHkVnOjRMWwLCcr8ohBVb1OMjxLwGCvjTikrsBOiA6fNyCrm8V1rP93iVPpwaE+gO0SsWmPiXB+jikdf6SizrT5qKasx5j8ABbHpFTx+vFXp9EnYQmLx02h1QTTrl6eDqxLnGjporxl3NL3agEvXdT0WmEost648sQOYAeJS9Q7bfUVoMGnjo4AZdUMQku50McDcMWcBPvr0SzbTAFDfvJqwLzgxwATnCgnp4wDl6Aa+Ax283gghmj+vj7feE2KBBRMW3FzOpLOADl0Isb5587h/U4gGvkt5v60Z1VLG8BhYjbzRwyQZemwAd6cCR5/XFWLYZRIMpX39AR0tjaGGiGzLVyhse5C9RKC6ai42ppWPKiBagOvaYk8lO7DajerabOZP46Lby5wKjw1HCRx7p9sVMOWGzb/vA1hwiWc6jm3MvQDTogQkiqIhJV0nBQBTU+3okKCFDy9WwferkHjtxib7t3xIUQtHxnIwtx4mpg26/HfwVNVDb4oI9RHmx5WGelRVlrtiw43zboCLaxv46AZeB3IlTkwouebTr1y2NjSpHz68WNFjHvupy3q8TFn3Hos2IAk4Ju5dCo8B3wP7VPr/FGaKiG+T+v+TQqIrOqMTL1VdWV1DdmcbO8KXBz6esmYWYKPwDL5b5FA1a0hwapHiom0r/cKaoqr+27/XcrS5UwSMbQAAAABJRU5ErkJggg==" alt="DeepWiki" />
+  </a>
+</p>
+
+Generates the code for a program description requested by the user using Azure OpenAI API gpt-3.5-turbo.
+
+Code changes/additions are added on a per-menu-API-request basis.
+
+If the program throws when run, log errors are sent to GPT, code or text-davinci models for debug.
+
+<p align="center">
+<img width="150" alt="star" src="https://github.com/sergiosolorzano/ai_gallery/assets/24430655/3c0b02ea-9b11-401a-b6f5-c61b69ad651b">
+</p>
+
+---------------------------------------------
+
+<video src="https://github.com/sergiosolorzano/emu/assets/24430655/bb6f7a3c-b6de-4abe-870d-866651a1536e" controls="controls" muted="muted" playsinline="playsinline">
+      </video>
+
+---------------------------------------------
+```
+Repo file structure:
+
+.
+â”œâ”€â”€ config_dir                 #file configuration
+      â”œâ”€â”€ config.json                #project files, paths, token limits metadata 
+      â”œâ”€â”€ config.py                  #set by user API, model, temperature for each request
+â”œâ”€â”€ credentials                #credentials folder for OpenAI API
+â”‚Â Â  â””â”€â”€ self_config.py              #Azure OpenAI API credentials & model names metadata
+                                    #Move sample_self_config.py to self_config.py and fill data
+â”œâ”€â”€ emu_cli.py                  #run this module to run the program
+â”œâ”€â”€ feature_common.py 	        #common methods for feature requests to API
+â”œâ”€â”€ feature_manager.py          #manager for each feature requested by user in the menu
+â”œâ”€â”€ ft_operations               #non-API requests directory
+â”‚Â Â  â”œâ”€â”€ op_loadcode.py 		      #loads code from local file to apply code change requests to it
+â”‚Â Â  â”œâ”€â”€ op_run_program.py 	      #run the code
+â”œâ”€â”€ ft_requests                 #feature text requests directory
+â”‚Â Â  â”œâ”€â”€ feature_request_argparse.py 		#standard add argparse request
+â”‚Â Â  â”œâ”€â”€ feature_request_custom_req.py 		#user enters custom system and request prompt
+â”‚Â Â  â”œâ”€â”€ feature_request_debuglogs.py 		#send logs from running the program to API to debug error found in logs
+â”‚Â Â  â”œâ”€â”€ feature_request_docstrings.py 		#add docstrings
+â”‚Â Â  â”œâ”€â”€ feature_request_excpt_and_log.py        #add exception handling and logs to the code
+â”‚Â Â  â”œâ”€â”€ feature_request_rawcode.py              #generate initial code from a program description
+â”œâ”€â”€ log_list_handler.py 										
+â”œâ”€â”€ project                      #project output directory
+â”‚Â Â  â”œâ”€â”€ module.log 
+â”‚Â Â  â”œâ”€â”€ module.py                  #code requested stored here and versioned
+â”œâ”€â”€ prompt_txt                   #prompt specs directory for each request
+â”‚Â Â  â”œâ”€â”€ clean_json_rq.py
+â”‚Â Â  â”œâ”€â”€ custom_req.py
+â”‚Â Â  â”œâ”€â”€ debug_rq.py
+â”‚Â Â  â”œâ”€â”€ docstrings_rq.py
+â”‚Â Â  â”œâ”€â”€ error_hndl_logging_rq.py
+â”‚Â Â  â”œâ”€â”€ input_and_argparse_rq.py
+â”‚Â Â  â”œâ”€â”€ raw_code_rq.py
+â”œâ”€â”€ README.md
+â”œâ”€â”€ requirements.txt
+â”œâ”€â”€ sample_self_config.py
+â”œâ”€â”€ tools                         #file and request management utilities directory
+â”‚Â Â  â”œâ”€â”€ file_management.py
+â”‚Â Â  â””â”€â”€ request_utils.py
+â”œâ”€â”€ user_interaction.py           #user interaction class
+```
+---------------------------------------------
+
+Python v3.10+ required
+Python required packages: See requirements.txt
+Add this package to your sys.path
+
+*Path Change Required:*
+Change path to your python environment at config.json: e.g. "python_env_path": "/home/sergio/anaconda3/bin/python"
+For path of current env set value to "python"
+
+---------------------------------------------
+
+Authentication:
+Create "creds" directory at the root of this project and save in it sample_self_config.py. Rename this py file to self_config.py and enter your endpoints, model/deployment names and keys.
+Project tested with Azure OpenAI API. Untested OpenAI API.
+
+---------------------------------------------
+
+Configuring OpenAI model and temperature per request:
+- Model keys for class class Azure_OpenAI_Model and OpenAI_Model must match model keys used in self_config.py
+- Set API that corresponds to model, e.g.
+    request_argparse_api=Model_API.AZURE_OPENAI_API
+- Set model for each request type, e.g.:
+    model_request_argparse = (Azure_OpenAI_Model.gpt35_deployment_name,Azure_OpenAI_Model.gpt35_model_name)
+- Set model temperature for each request type, e.g.:
+    model_request_argparse_temperature = 0.7
+
+---------------------------------------------
+
+Execution of this program: 
+At command line ./emu_cli.py shows menu:
+```
+1.  Generate Raw Code
+        Request model for code according to a description you provide.
+2.  Load Raw Code Script From File
+3.  Add Argparse
+4.  Exception Handling and Logging
+5.  User Custom Request
+        Requirement: code to be already loaded. Expected JSON response as specified in custom_req.py json_required_format variable.
+6.  Run Program And Request Repair of Debug Logs
+        Run the program and upon errors send the log error captured for the model to amend the code accordingly.
+7.  Add Docstrings To Program Code.
+8.  Set Menu Sequence
+9.  Run All
+10. Exit
+
+Choose your request: 
+```
+
+----------------------------------------------
+
+Toggle to show the prompt for each requests: At config_dir/config.py toggle bool show_request
+
+<br>If you find this helpful you can buy me a coffee :)
+   
+<a href="https://www.buymeacoffee.com/sergiosolorzano" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
+      
+
+
+
+================================================
+File: emu_cli.py
+================================================
+#!/usr/bin/env python3
+import cProfile
+import os
+from pathlib import Path
+import config_dir.config as config
+#import classes
+import user_interaction as uinteraction
+import feature_manager as ft_mgr
+import pstats
+#import tools
+import tools.file_management as fm
+
+#manage program workflow with all classes
+class Emu_cli:
+    #init program classes
+    def __init__(self):
+        self.feature_manager_instance = ft_mgr.Feature_Manager()
+        self.menu_choice = None
+        self.success = None
+        self.back_to_menu = None
+
+    def handle_workflow(self):
+        if self.feature_manager_instance.get_menu_choice() is False:
+            return
+
+
+
+def main():
+    # TODO option to delete
+    # del all project module files and responses in json stored
+    fm.delete_all_dir_files(config.full_project_dirname)
+    fm.delete_all_dir_files(config.full_json_dir)
+    # delete project files / create project dirs where scripts will be stored
+    fm.create_dir(Path(config.full_project_dirname))
+    fm.create_dir(Path(config.full_json_dir))
+
+    print(); print("-" * 40); print()
+    print("\033[43mSlate Clean - Project files deleted. Project directories created.\033[0m")
+
+    #create emu_manager instance
+    emu = Emu_cli()
+    emu.handle_workflow()
+    os.chdir(config.initial_dir)
+    # profiler
+    print()
+    print("=" * 10, end="")
+    print("Profiler Stats", end="")
+    print("=" * 10)
+
+    print()
+    print("=" * 10, end="")
+    print("Total Cumulative Stats", end="")
+    print("=" * 10)
+    p = pstats.Stats(profiler_file)
+    p.sort_stats("cumulative").print_stats(5)
+
+    print(f"\033[43mThe program has exited at the user's request.\033[0m"); print()
+
+    print("-" * 40)
+    print("End of Script"); print()
+
+if __name__ == "__main__":
+    profiler_file = "profiler_data.out"
+    cProfile.run("main()",profiler_file)
+
+
+
+================================================
+File: feature_common.py
+================================================
+#!/usr/bin/env python3
+
+# import libraries
+import os
+import threading
+import json
+import user_interaction as uinteraction
+import log_list_handler
+#import tools
+import tools.file_management as fm
+import tools.request_utils as ut
+# import openai libs/modules
+import config_dir.config as config
+
+class Feature_Common:
+    # show request text on screen
+    show_request = config.show_request
+
+    #instance model and temp class vars
+    model = None
+    model_temp = None
+
+    # program description
+    program_description = None
+
+    def __init__(self, program_description=None):
+        self.cum_tokens = 0
+        # set common instances
+        self.user_interaction_instance = None
+        self.set_user_interaction_instance(uinteraction.User_Interaction())
+        #self.log_list_handler_instance = None
+        self.logger_instance = None
+        self.log_list_handler_instance = None
+        self.set_log_list_handler_instance(log_list_handler.config_custom_logger())
+        #set prog desc
+        if program_description is not None:
+            self.program_description = program_description
+        #init responses
+        self.gpt_response = None
+        self.stop_event=None
+        self.thread=None
+
+    def set_user_interaction_instance(self, user_interaction_instance):
+        self.user_interaction_instance = user_interaction_instance
+
+    def set_log_list_handler_instance(self, log_list_handler_instance):
+        self.logger_instance, self.log_list_handler_instance = log_list_handler_instance
+
+    #request module code
+    def send_request(self, sys_mssg, request_to_gpt, summary_new_request, debug_mode=False):
+        clean_response = None
+        this_conversation = []
+        try:
+            if config.used_api == config.Model_API.AZURE_OPENAI_API:
+                if self.model[1] == 'gpt-3.5-turbo-0301':
+                    system_message = {"role": "system", "content": sys_mssg}
+                    this_conversation.append(system_message)
+                    # request requirements
+                    this_conversation.append({"role": "user", "content": request_to_gpt})
+                    request_tokens = this_conversation_tokens = ut.num_tokens_from_messages(this_conversation,self.model[1])
+                    ut.token_limit(request_tokens)
+                    self.cum_tokens += this_conversation_tokens
+
+                    self.print_request_information(summary_new_request, request_tokens, sys_mssg, request_to_gpt)
+                    self.start_stop_event(start=True, stop=False)
+
+                    #update api keys according to current api choice
+                    config.Model_API.runtime_set_openai_credentials(config.used_api)
+
+                    response = config.openai.ChatCompletion.create(
+                        engine=self.model[0],
+                        messages=this_conversation,
+                        temperature=self.model_temp,
+                        max_tokens=config.max_response_tokens,
+                    )
+                    clean_response = response['choices'][0]['message']['content'].replace("'''", "'").replace('"""','"').replace('```', '`')
+                    this_conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
+
+                elif (self.model[1] == 'code-davinci-002' or self.model[1] == 'text-davinci-003') and debug_mode is True:
+                    model_prompt = f"#####Fix bugs in the module below\n###Buggy {config.program_language}\n{ut.get_response_value_for_key(self.gpt_response, config.code_key_in_json)}\n###Fixed {config.program_language}"
+
+                    this_conversation.append({"role": "user", "content": model_prompt})
+                    request_tokens = this_conversation_tokens = ut.num_tokens_from_messages(this_conversation,self.model[1])
+                    ut.token_limit(request_tokens)
+                    self.cum_tokens += this_conversation_tokens
+
+                    self.print_request_information(summary_new_request, request_tokens, None, model_prompt)
+                    self.start_stop_event(start=True, stop=False)
+
+                    response = config.openai.Completion.create(
+                        engine=self.model[0],
+                        prompt=model_prompt,
+                        temperature=self.model_temp,
+                        max_tokens=config.max_response_tokens,
+                        stop=["###"]
+                    )
+                    for choice in response.choices:
+                        if "text" in choice:
+                            clean_response = json.dumps({"module":choice.text}) #string
+                            this_conversation.append({"role": "assistant", "content": choice.text})
+
+                else:
+                    print("\033[1;31m[WARNING]\033[0m Model not available for this request.\033[0m")
+                    return True
+
+            elif config.used_api == config.Model_API.OPENAI_API:
+                #TODO
+                pass
+        except config.openai.OpenAIError as e:
+            # Handle connection error or timeout here
+            print(f"1;31m[WARNING]\033[0mAn OpenAI error occurred:\033[0m ", str(e))
+        except Exception as e:
+            print(f"1;31m[WARNING]\033[0m Request error occurred:\n{e}")
+
+        self.start_stop_event(start=False,stop=True)
+
+        this_conversation_tokens = ut.num_tokens_from_messages(this_conversation,self.model[1])
+        self.cum_tokens += this_conversation_tokens
+
+        ut.token_limit(this_conversation_tokens)
+
+        print("-" * 40)
+        try:
+            pretty_json_response = json.dumps(json.loads(clean_response), indent=2,separators=(',', ':'))
+            print(f"\n\033[1;92mResponse: CumTokens:{self.cum_tokens} RespTokens:{this_conversation_tokens}\n\033[0m\033[92m{pretty_json_response}\n\033[0m")
+        except Exception as e:
+            print(f"Exception on JSON Received: {e}: {clean_response:<10} \n")
+            #print("RAW response:", clean_response)
+            print("-" * 40)
+            # JSON response invalid re-request or quit
+            return False
+
+        self.gpt_response = json.loads(clean_response)  # .strip("\n")  #.replace('```', '')
+
+        return True
+
+    def start_stop_event(self,start, stop):
+        # start timer
+        if start:
+            self.stop_event = threading.Event()
+            self.thread = threading.Thread(target=ut.spinning_timer, args=("Awaiting Response...", self.stop_event))
+            self.thread.start()
+
+        # stop timer
+        if stop:
+            self.stop_event.set()
+            self.thread.join()
+            print('\r\033[K', end='')  # Clear the line
+
+    def print_request_information(self, summary_new_request, request_tokens, sys_mssg, message_or_prompt):
+        print();print("-" * 40);print()
+        print(f"\033[44;97mJob Request: {summary_new_request}\033[0m")
+
+        if self.show_request:
+            if sys_mssg is not None:
+                print(f"\n\033[1;97mRequest: CumTokens:{self.cum_tokens} Req_Tokens:{request_tokens}\033[0m: System Message:{sys_mssg}\nPrompt:{message_or_prompt}")
+            else:
+                print(
+                    f"\n\033[1;97mRequest: CumTokens:{self.cum_tokens} Req_Tokens:{request_tokens}\033[0m: \nPrompt:{message_or_prompt}")
+        else:
+            print(f"\n\033[1;97mRequest Sent: CumTokens:{self.cum_tokens} Req_Tokens:{request_tokens}\033[0m")
+
+        print()
+        attribute_name = [attr_name for attr_name, attr_value in vars(config.Model_API).items() if attr_value == config.used_api][0]
+        print(f"\033[1;97mModel Settings:\033[0m API: {attribute_name}, Engine: {self.model[1]}, Temperature: {self.model_temp}")
+
+    def build_request_args(self, summary_new_request, sys_mssg, request_to_gpt):
+        args_tpl = (summary_new_request, sys_mssg, request_to_gpt)
+        return args_tpl
+
+    # manage request
+    def request_code_enhancement(self, request_args, debug_mode=False):
+        # unpack request args for clarity. pass request_to_gpt to change value for utests and standard
+        summary_new_request, sys_mssg, request_to_gpt = request_args
+        # send request to model
+        return self.send_request(sys_mssg, request_to_gpt, summary_new_request, debug_mode)
+
+    @staticmethod
+    def valid_response_file_management(filename, full_path_dir, gpt_response, success_mssg=None):
+        if success_mssg is not None:
+            print(f"\033[43m{success_mssg}\033[0m")
+        # version and save
+        fm.version_file(full_path_dir, filename, full_path_dir)
+        fm.get_dict_value_save_to_file(gpt_response, config.initial_dir, filename, "#!/usr/bin/env python3\n\n")
+        print(f"Code:\n", fm.get_code_from_dict(gpt_response, config.code_key_in_json))
+
+        # TODO: remove for debugging
+        # fm.write_to_file(self.json_fname, self.json_dirname, gpt_response, "w")
+        # end remove for debugging
+
+    def get_file_path_from_user(self, mssg):
+        while True:
+            full_path_to_file = self.user_interaction_instance.request_input_from_user(mssg)
+            if not fm.validate_filepath(full_path_to_file):
+                continue
+            else:
+                return full_path_to_file
+
+    @staticmethod
+    def read_code_from_file(full_path_to_script):
+        # read script
+        code = fm.read_file_stored_to_buffer(os.path.basename(full_path_to_script),
+                                             os.path.dirname(full_path_to_script))
+        return code
+
+
+
+================================================
+File: feature_manager.py
+================================================
+#!/usr/bin/env python3
+
+#import class
+import feature_common as ft_common
+import user_interaction as uinteraction
+#import feature request classes
+import ft_operations.op_loadcode as op_loadcode
+import ft_operations.op_run_program as op_deblogs
+import ft_requests.feature_request_rawcode as ft_req_raw
+import ft_requests.feature_request_argparse as ft_req_argparse
+import ft_requests.feature_request_excpt_and_log as ft_req_excpt_and_log
+import ft_requests.feature_request_custom_req as ft_req_custom_req
+import ft_requests.feature_request_docstrings as ft_req_docstrings
+
+#manage feature children classes
+class Feature_Manager:
+
+	menu_exit_choice = '10'
+	menu_sequence_choice = '8'
+	menu_runall_choice = '9'
+	menu_op_choices = ['2', '6']
+	menu_feature_choices = ['1', '3', '4', '5', '7']
+	menu_all_available_choices = ['1','3', '4', '7', '5', '6']
+
+	#init feature children
+	def __init__(self):
+		#instantiate feature common class
+		self.feature_common_instance = ft_common.Feature_Common()
+		self.user_interaction_instance = uinteraction.User_Interaction()
+		self.feature_instance = None
+		self.menu_choice = None
+		self.pre_request_complete = False
+		self.prepare_args_complete = False
+		self.send_request_complete = False
+		self.back_to_menu = False
+		self.args = None
+
+		#dict of feature instances, pass shared common instance
+		self.feature_instances = {
+		'1': ft_req_raw.Feature_Request_Rawcode(self.feature_common_instance),
+		'2': op_loadcode.Op_Loadcode(self.feature_common_instance),
+		'3': ft_req_argparse.Feature_Request_Argparse(self.feature_common_instance),
+		'4': ft_req_excpt_and_log.Feature_Request_ExceptionHndl_and_Logging(self.feature_common_instance),
+		'5': ft_req_custom_req.Feature_Request_CustomRequest(self.feature_common_instance),
+		'6': op_deblogs.Op_Run_Program(self.feature_common_instance),
+		'7': ft_req_docstrings.Feature_Request_Docstrings(self.feature_common_instance)
+		}
+
+	def get_menu_choice(self):
+		sequence = []
+		while True:
+			#self.reset_vars_end_process()
+			self.menu_choice = self.user_interaction_instance.request_menu()
+
+			if self.menu_choice == '10':
+				return False
+
+			if self.menu_choice == self.menu_sequence_choice:
+				sequence = self.get_sequence()
+				print("Executing Sequence:",sequence)
+
+			elif self.menu_choice == self.menu_runall_choice:
+				sequence= self.menu_all_available_choices
+				print("Executing Sequence:",sequence)
+
+			else:
+				sequence = self.menu_choice
+			for c in sequence:
+				self.menu_choice = str(c)
+
+				if self.menu_choice == '10':
+					return False
+
+				self.feature_instance = self.feature_instances[self.menu_choice]
+				self.handle_menu_choice()
+				self.reset_vars_end_process()
+
+	def handle_menu_choice(self):
+		if self.feature_common_instance.gpt_response is None and (self.menu_choice != '1' and self.menu_choice != '2'):
+			return
+		else:
+			while True:
+				if self.menu_choice in self.menu_feature_choices:
+					if self.pre_request_complete is False:
+						self.pre_request_complete = self.feature_instance.prerequest_args_process()
+
+					if self.pre_request_complete and self.prepare_args_complete is False:
+						self.args = self.feature_instance.prepare_request_args()
+						if self.args:
+							self.prepare_args_complete = True
+
+					if self.prepare_args_complete and self.send_request_complete is False:
+						self.send_request_complete = self.feature_instance.request_code(self.args)
+
+						if not self.send_request_complete:
+							if self.user_interaction_instance.broken_json_user_action():
+								# user choice to request code from model again
+								print("JSON IS BROKEN, send request again.")
+								continue
+
+				if self.menu_choice in self.menu_op_choices:
+					run_op_completed = self.feature_instance.run_operation()
+
+					if not run_op_completed:
+						break
+				if self.feature_common_instance.gpt_response is not None:
+					self.process_valid_response()
+
+				break
+
+	def get_sequence(self):
+		while True:
+			mssg = "Provide number sequence in menu execution separated by commas: "
+			user_seq = self.user_interaction_instance.request_input_from_user(mssg)
+			numbers = []
+
+			for item in user_seq.split(','):
+				item = item.strip()
+				if item.isdigit():
+					numbers.append(int(item))
+				else:
+					print("Invalid sequence.")
+
+			return numbers
+
+	def process_valid_response(self):
+		self.feature_instance.process_successful_response()
+
+
+	def reset_vars_end_process(self):
+		#print("Resetting vars at manager")
+		self.feature_instance = None
+		self.menu_choice = None
+		self.pre_request_complete = False
+		self.prepare_args_complete = False
+		self.send_request_complete = False
+		self.back_to_menu = False
+		self.args = None
+
+
+
+================================================
+File: gtee_json.py
+================================================
+#!/usr/bin/env python3
+import requests
+#import credentials
+from creds.self_config import self_config_huggingface
+#import tools
+import tools.file_management as fm
+import config_dir.config as config
+
+#TODO
+#Call cerebras/Cerebras-GPT-111M to guarantee JSON format
+class Guarantee_JSON:
+    cerebras_gpt_111_Base = self_config_huggingface['HUGGINGFACE_CEREBRAS_GPT_111M_BASE']
+    cerebras_gpt_111_Bearer = self_config_huggingface['huggingface_cerberas_GPT_111M_BEARER']
+
+    def __init__(self):
+        self.API_URL = self.cerebras_gpt_111_Base
+        self.headers = {"Authorization": self.cerebras_gpt_111_Bearer}
+
+    API_URL = cerebras_gpt_111_Base
+    headers = {"Authorization": cerebras_gpt_111_Bearer}
+
+    def query(self, payload):
+        response = requests.post(self.API_URL, headers=self.headers, json=payload)
+        return response.json()
+
+
+json_test=fm.read_file_stored_to_buffer("test.txt", config.initial_dir)
+guarantee = Guarantee_JSON()
+print(guarantee.cerebras_gpt_111_Base, guarantee.cerebras_gpt_111_Bearer)
+#json_test = """Correct this JSON object: {""module"": ""def program():\n    #import necessary modules\n    import sqlite3\n\n    #create a connection to the database\n    conn = sqlite3.connect(\'clients.db\')\n\n    #create a cursor object\n    c = conn.cursor()\n\n    #create a table for clients\n    c.execute(\'CREATE TABLE clients\n                (id INTEGER PRIMARY KEY,\n                name TEXT,\n                age INTEGER,\n                email TEXT,\n                phone TEXT)\')\n\n    #add clients to the table\n    c.execute("INSERT INTO clients(name, age, email, phone)\n                VALUES(\'John Doe\', 30, \'johndoe@email.com\', \'555-555-5555\')")\n    c.execute("INSERT INTO clients (name, age, email, phone)\n                VALUES (\'Jane Doe\', 25, \'janedoe@email.com\', \'555-555-5556\')")\n\n    #commit changes to the database\n    conn.commit()\n\n    #close the connection\n    conn.close()\n\nif __name__ == \'__main__\':\n    program()"}"""
+#json_test = "My Name is Thomas"
+output = guarantee.query({
+    "inputs": json_test
+})
+
+print("Query output:", output)
+
+
+
+
+
+
+================================================
+File: log_list_handler.py
+================================================
+#!/usr/bin/env python3
+
+import logging
+
+class LogListHandler(logging.Handler):
+
+	def __init__(self, *args, **kwargs):
+		super(LogListHandler, self).__init__(*args, **kwargs)
+		self.log_records = []
+
+	def emit(self, record):
+		self.log_records.append(self.format(record))
+
+	def pop(self):
+		return self.log_records.pop()
+
+	def print_logs(self):
+		print("Logs:")
+		for c, l in enumerate(self.log_records):
+			print(f"Log {c}: {l}")
+
+#create custom logger
+def config_custom_logger():
+	# Create an instance of LogListHandler
+	log_list_handler = LogListHandler()
+
+	log_list_handler.setLevel(logging.DEBUG)
+	formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+	log_list_handler.setFormatter(formatter)
+
+	#add logger
+	logger = logging.getLogger(__name__)
+	logger.addHandler(log_list_handler)
+	logger.setLevel(logging.DEBUG)
+
+	return logger, log_list_handler
+
+
+
+================================================
+File: requirements.txt
+================================================
+tiktoken
+openai
+
+
+
+================================================
+File: sample_self_config.py
+================================================
+#Azure EndPoints
+self_config_azure_openai = {'OPENAI_API_BASE': 'https://[YOUR AZURE OPENAI NAME].openai.azure.com/',
+'OPENAI_API_KEY':'[YOUR KEY]',
+'OPENAI_API_TYPE':'azure',
+'OPENAI_API_VERSION':'2023-03-15-preview',
+'gpt_engine_350301_deployment_name':'[YOUR MODEL DEPLOYMENT NAME]',
+'codex_engine_002_deployment_name':'[YOUR MODEL DEPLOYMENT NAME]',
+'davincitext_003_deployment_name':'[YOUR MODEL DEPLOYMENT NAME]',
+"gpt_engine_350301_name": "[YOUR MODEL NAME]",
+"codex_engine_002_name": "[YOUR MODEL NAME]",
+"davincitext_engine_003_name": "[YOUR MODEL NAME]"
+}
+
+self_config_openai_api = {'OPENAI_API_KEY':'[YOUR KEY]',
+'OPENAI_ORGANIZATION':'[YOUR ORGANIZATION ID]',
+'gpt_engine_350613_deployment_name':'[YOUR MODEL DEPLOYMENT NAME]',
+"codex_engine_002_deployment_name": "[YOUR MODEL DEPLOYMENT NAME]",
+'davincitext_003_deployment_name':'[YOUR MODEL DEPLOYMENT NAME]',
+"gpt_engine_350613_name": "[YOUR MODEL NAME]",
+"codex_engine_002_name": "c[YOUR MODEL NAME]",
+"davincitext_engine_003_name": "[YOUR MODEL NAME]"
+}
+
+#enhance with other models
+self_config_huggingface = {'HUGGINGFACE_CEREBRAS_GPT_111M_BASE':'https://api-inference.huggingface.co/models/cerebras/Cerebras-GPT-111M',
+'huggingface_cerberas_GPT_111M_BEARER':'[YOUR KEY]'
+}
+
+
+================================================
+File: user_interaction.py
+================================================
+#!/usr/bin/env python3
+
+class User_Interaction:
+
+    #user request choice
+    def request_menu(self, choice=None):
+        print(); print("-"*40); print()
+        #model generates the code according to user description
+        print("1.  Generate Raw Code")
+        print(f"\tRequest model for code according to a description you provide.")
+        #upload script instead of the model generating the code
+        print("2.  Load Raw Code Script From File")
+        print("3.  Add Argparse")
+        print("4.  Exception Handling and Logging")
+        print("5.  User Custom Request")
+        print(f"\tRequirement: code to be already loaded. A JSON format for the response entered at custom_req.py json_required_format variable.")
+        print("6.  Run Program And Request Repair of Debug Logs")
+        print(f"\tRun the program and upon errors send the log error captured for the model to amend the code "
+              f"accordingly.")
+        print("7.  Add Docstrings To Program Code.")
+        print("8.  Set Menu Sequence")
+        print("9.  Run All")
+        print("10. Exit")
+
+        while True:
+            print()
+            if choice is None:
+                choice = input("Choose your request: ")
+            else:
+                print("Choose your request: ", choice)
+
+            match choice:
+                case _:
+                    if choice.isdigit() and 1 <= int(choice) <= 12:
+                        return choice
+                    else:
+                        print(); print(f"\033[41mInvalid Option\033[0m")
+                        choice = None
+
+    @staticmethod
+    def broken_json_user_action():
+        while True:
+            user_choice = input("The model's JSON response is broken, re-request? y/n: ")
+            match user_choice.lower():
+                case 'y':
+                    return True
+                case 'n':
+                    return False
+                case _:
+                    print("Invalid selection.")
+                    continue
+
+    def request_input_from_user(self, mssg):
+        return input(mssg)
+
+    @staticmethod
+    def user_choice_two_options(mssg, mssg_option1=None, mssg_option2=None, mssg_option3=None, option1="y", option2="n"):
+        while True:
+            choice = input(mssg)
+            if choice.lower() == option1:
+                if mssg_option1 is not None:
+                    print(mssg_option1)
+                break
+            elif choice.lower() == option2:
+                if mssg_option2 is not None:
+                    print(mssg_option2)
+                break
+            else:
+                if mssg_option3 is not None:
+                    print(mssg_option3)
+                continue
+        return choice.lower()
+
+
+def broken_json_user_action():
+    return None
+
+
+
+================================================
+File: config_dir/config.json
+================================================
+{
+    "folder_locations": {
+        "prompt_dirname": "prompt_txt",
+        "project_dirname": "project",
+        "json_dirname": "response_json",
+        "custom_json_format_dirname": "custom_json_format"
+    },
+    "file_names": {
+        "module_script_fname": "module.py",
+        "log_fname": "module.log",
+        "module_utest_name": "module_utest.py",
+        "json_fname": "response.json",
+        "custom_json_format_fname": "custom_json_format.json"
+    },
+    "openai_tokens": {
+        "token_limit": 4096,
+        "max_response_tokens":3000
+    },
+    "program_language": "python",
+    "language_version": "3.10",
+    "unittest_cli_command_key": "unittest_cli_",
+    "python_env_path": "/home/sergio/anaconda3/bin/python"
+}
+
+
+
+================================================
+File: config_dir/config.py
+================================================
+#!/usr/bin/env python3
+
+import os
+import json
+import openai
+from creds.self_config import self_config_azure_openai
+from creds.self_config import self_config_openai_api
+
+#read config_dir data
+path_to_file = os.getcwd()+"/config_dir/config.json"
+with open(path_to_file) as f:
+    config_data = json.load(f)
+
+#set default (fall back unless specified) api for this session
+class Model_API:
+    #avaialble APIs
+    AZURE_OPENAI_API=0
+    OPENAI_API=1
+
+    @staticmethod
+    def runtime_set_openai_credentials(model_api):
+        if model_api == Model_API.AZURE_OPENAI_API:
+            # set azure openai credentials
+            openai.api_type = self_config_azure_openai['OPENAI_API_TYPE']
+            openai.api_version = self_config_azure_openai['OPENAI_API_VERSION']
+            openai.api_base = self_config_azure_openai['OPENAI_API_BASE']
+            openai.api_key = self_config_azure_openai['OPENAI_API_KEY']
+        elif model_api == Model_API.OPENAI_API:
+            openai.organization = self_config_openai_api['OPENAI_ORGANIZATION']
+            openai.api_key = self_config_openai_api['OPENAI_API_KEY']
+
+#default starting session API, re-assigned by request
+used_api = Model_API.AZURE_OPENAI_API
+
+# model keys must match those entered in self_config.py
+class Azure_OpenAI_Model:
+    gpt35_deployment_name = self_config_azure_openai["gpt_engine_350301_deployment_name"]
+    codex_deployment_name = self_config_azure_openai["codex_engine_002_deployment_name"]
+    davincitext_deployment_name = self_config_azure_openai["davincitext_003_deployment_name"]
+
+    gpt35_model_name = self_config_azure_openai["gpt_engine_350301_name"]
+    codex_model_name = self_config_azure_openai["codex_engine_002_name"]
+    davincitext_model_name = self_config_azure_openai["davincitext_engine_003_name"]
+
+# model keys must match those entered in self_config.py
+class OpenAI_Model:
+    gpt35_deployment_name = self_config_openai_api["gpt_engine_350613_deployment_name"]
+    codex_deployment_name = self_config_openai_api["codex_engine_002_deployment_name"]
+    davincitext_deployment_name = self_config_openai_api["davincitext_003_deployment_name"]
+
+    gpt35_model_name = self_config_openai_api["gpt_engine_350613_name"]
+    codex_model_name = self_config_openai_api["codex_engine_002_name"]
+    davincitext_model_name = self_config_openai_api["davincitext_engine_003_name"]
+
+##---Required to be set by user---
+#set API that corresponds to model
+request_argparse_api=Model_API.AZURE_OPENAI_API
+request_custom_req_api=Model_API.AZURE_OPENAI_API
+request_debuglogs_api=Model_API.AZURE_OPENAI_API
+request_docstrings_api=Model_API.AZURE_OPENAI_API
+request_excpt_and_logs_api=Model_API.AZURE_OPENAI_API
+request_rawcode_api=Model_API.AZURE_OPENAI_API
+
+#set model for each request feature
+model_request_argparse = (Azure_OpenAI_Model.gpt35_deployment_name,Azure_OpenAI_Model.gpt35_model_name)
+model_request_custom_req = (Azure_OpenAI_Model.gpt35_deployment_name,Azure_OpenAI_Model.gpt35_model_name)
+model_request_debuglogs = (Azure_OpenAI_Model.codex_deployment_name,Azure_OpenAI_Model.codex_model_name)
+model_request_docstrings = (Azure_OpenAI_Model.gpt35_deployment_name,Azure_OpenAI_Model.gpt35_model_name)
+model_request_excpt_and_logs = (Azure_OpenAI_Model.gpt35_deployment_name,Azure_OpenAI_Model.gpt35_model_name)
+model_request_rawcode = (Azure_OpenAI_Model.gpt35_deployment_name,Azure_OpenAI_Model.gpt35_model_name)
+
+#set model temperature
+model_request_argparse_temperature = 0.7
+model_request_custom_req_temperature = 0.7
+model_request_debuglogs_temperature = 0.4
+model_request_docstrings_temperature = 0.7
+model_request_excpt_and_logs_temperature = 0.2
+model_request_rawcode_temperature = 0.7
+##---End Required to be set by user---
+
+#dir names
+initial_dir = os.getcwd()
+root = os.getenv("HOME")
+prompt_dirname = config_data["folder_locations"]["prompt_dirname"]
+project_dirname = config_data["folder_locations"]["project_dirname"]
+json_dirname = config_data["folder_locations"]["json_dirname"]
+custom_json_format_dirname = config_data["folder_locations"]["custom_json_format_dirname"]
+
+# full dir paths
+full_prompt_dirname = f"{initial_dir}/{prompt_dirname}"
+full_project_dirname = f"{initial_dir}/{project_dirname}"
+full_json_dir = f"{initial_dir}/{json_dirname}"
+full_custom_json_format_dirname = f"{initial_dir}/{custom_json_format_dirname}"
+
+# filenames
+module_script_fname = config_data["file_names"]["module_script_fname"]
+log_fname = config_data["file_names"]["log_fname"]
+module_utest_name = config_data["file_names"]["module_utest_name"]
+json_fname = config_data["file_names"]["json_fname"]
+custom_json_format_fname = config_data["file_names"]["custom_json_format_fname"]
+
+#full path files
+full_custom_json_format_fname = f"{initial_dir}/{custom_json_format_dirname}/{custom_json_format_fname}"
+full_path_module = f"{full_project_dirname}/{module_script_fname}"
+full_path_logfile = f"{full_project_dirname}/{log_fname}"
+
+#key in json file to get the code
+code_key_in_json = module_script_fname.split(".")[0]
+
+# program language
+program_language = config_data["program_language"]
+language_version = config_data["language_version"]
+
+#unit test cli key TODO
+unittest_cli_command_key = config_data["unittest_cli_command_key"]
+
+#openai tokens
+max_response_tokens=config_data["openai_tokens"]["max_response_tokens"]
+token_limit=config_data["openai_tokens"]["token_limit"]
+
+#python path with required environment
+python_env_path = config_data["python_env_path"]
+
+#show requests on terminal
+show_request = True
+
+
+
+
+
+
+
+================================================
+File: ft_operations/op_loadcode.py
+================================================
+#!/usr/bin/env python3
+#import utils
+import tools.file_management as fm
+#import config_dir
+from config_dir import config as config
+
+
+#user upload code from file
+class Op_Loadcode:
+
+    def __init__(self, common_instance):
+        self.common_instance = common_instance
+        self.full_path_to_script = None
+
+    def run_operation(self):
+        mssg = f"Enter Path to {config.program_language} Script: "
+        # call base
+        full_path_to_script = self.common_instance.get_file_path_from_user(mssg)
+
+        print()
+        mssg = f"Enter Short Program Description (used for requests): "
+        self.common_instance.program_description = self.common_instance.user_interaction_instance.request_input_from_user(mssg)
+
+        # call common
+        user_script = self.common_instance.read_code_from_file(full_path_to_script)
+        # hack to step script as a gpt code response for continued conversation with gpt
+        self.common_instance.gpt_response = fm.insert_script_in_json(user_script)
+        # print loaded code
+        #code = ut.get_response_value_for_key(self.common_instance.gpt_response, self.common_instance.module_script_fname.split(".")[0])
+        #print(code); print()
+        print(f"\033[43mScript loaded.\033[0m")
+
+        return True
+    def process_successful_response(self):
+        #call base: process successful code upload
+        self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
+        return True
+
+
+
+================================================
+File: ft_operations/op_run_program.py
+================================================
+#!/usr/bin/env python3
+import shlex
+import subprocess
+
+# import utils
+import tools.file_management as fm
+# import request text
+import ft_requests.feature_request_debuglogs as req_deblogs
+# openai
+# import config_dir
+from config_dir import config as config
+
+
+# Request model to debug program with logs
+class Op_Run_Program:
+
+    def __init__(self, common_instance):
+        self.common_instance = common_instance
+        # error when running the program
+        self.error_mssg = None
+        # command when error occurred
+        self.command = None
+        self.request_debug_instance = req_deblogs.Feature_Request_DebugLogs(self.common_instance)
+
+    def run_operation(self):
+        if self.user_confirm_requirements_for_request():
+            while True:
+                user_comm_tail = self.get_user_command()
+                if user_comm_tail is False:
+                    return False
+
+                code_success = self.execute_code(user_comm_tail)
+                #exception
+                if not code_success:
+                    self.request_debug_instance.request_manager()
+
+                another_op = self.user_action_next_command_or_menu()
+                if another_op:
+                    continue
+                else:
+                    #back to menu
+                    return False
+        else:
+            #back to menu
+            return False
+
+    def user_action_next_command_or_menu(self):
+        #user choose another command or back to menu
+        mssg= "Run another (C)ommand or (M)enu: "
+        mssg_option3 = "\033[1;31m[WARNING]\033[0m Invalid choice."
+
+        user_choice = self.common_instance.user_interaction_instance.user_choice_two_options(mssg, mssg_option3=mssg_option3, option1="c",option2="m")
+        if user_choice == "c":
+            #execute program again
+            return True
+        else:
+            return False
+
+    def get_user_command(self):
+        #print(f"\033[44;97mJob: Your Custom Request:\033[0m")
+        # user ensure the code has the requirements to run this option
+        while True:
+            user_comm_tail = self.common_instance.user_interaction_instance.request_input_from_user(
+                f"\n(Q)uit or Enter the rest of the CLI command to execute program:\npython3 {config.full_path_module}: ")
+            if user_comm_tail.lower() == "q":
+                return False
+            else:
+                return user_comm_tail
+
+    def user_confirm_requirements_for_request(self):
+        # run the program with debug/logs loop
+        while True:
+            user_action = self.common_instance.user_interaction_instance.request_input_from_user(
+                f"\n\033[1;31m[WARNING]\033[0m Note on option requirements:\n\t=> Requires logging functionality, logs will be written to {config.initial_dir}/{config.log_fname}\n\t=> Program execution via CLI, you can add args to the code with the Argparse option.\n\n(C)ontinue or back to (M)Menu: \033[0m")
+            if user_action.lower() == "c":
+                return True
+            else:
+                #back to menu
+                return False
+
+    def execute_code(self, user_comm_tail):
+        # user enter cli comm and execute
+        print("-" * 40)
+        #self.command = self.request_debug_instance.command = ['python'] + shlex.split(config_dir.full_path_module) + shlex.split(user_comm_tail)
+        self.command = self.request_debug_instance.command = [config.python_env_path] + shlex.split(
+            config.full_path_module) + shlex.split(user_comm_tail)
+        exception_str = ""
+        try:
+            # truncate log file
+            fm.trunc_file(config.log_fname, config.full_project_dirname)
+            print()
+            print(f"Running command: {self.command}")
+            result = subprocess.run(self.command, check=True, capture_output=True, text=True)
+            if result.returncode != 0:
+                raise subprocess.CalledProcessError(result.returncode, result.args, result.stdout, result.stderr)
+            print("Command executed successfully")
+            print(f"Command output: {result.stdout}")
+            print(f"Command return code: {result.returncode}")
+            print(f"Command stderr: {result.stderr}")
+        except subprocess.CalledProcessError as e:
+            print("=" * 40)
+            print(f"\033[31mSubprocess Exception thrown, log:\033[0m")
+            print(f"Command failed with exit code {e.returncode}")
+            print(f"Command output: {e.output}")
+            print(f"Command error: {e.stderr}")
+            if e.stderr or e.returncode != 0 or "error" in e.output.lower():
+                exception_str += "subprocess.CalledProcessError command returncode:" + str(e.returncode) \
+                                 + f"\nsubprocess.CalledProcessError command error:" + str(e.stderr) \
+                                 + f"\nsubprocess.CalledProcessError command output:" + str(e.output)
+        except Exception as e:
+            print("=" * 40)
+            print(f"\033[31mProgram exception thrown, log in file:\033[0m {e}")
+            # print("RAW Exception",e);print()
+            # print log to logfile and screen
+            exception_str += e
+
+        if exception_str != "":
+            # add exception message to log_list_handler
+            self.common_instance.logger_instance.exception(exception_str)
+            # pop log exception
+            self.error_mssg = self.request_debug_instance.error_mssg = self.common_instance.log_list_handler_instance.pop()
+            # print exception on terminal
+            # log_list_handler.print_logs()
+            return False
+
+        return True
+
+    def process_successful_response(self):
+        self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
+        return True
+
+
+
+================================================
+File: ft_requests/feature_request_argparse.py
+================================================
+#!/usr/bin/env python3
+#import config_dir
+
+#import utils
+import tools.request_utils as ut
+#import request text
+import input_and_argparse_rq as input_and_argparse
+#openai
+#import config_dir
+import config_dir.config as config
+
+#request add argparse to code
+class Feature_Request_Argparse:
+    def __init__(self, common_instance):
+        self.common_instance = common_instance
+
+    def prerequest_args_process(self):
+        return True
+
+    def prepare_request_args(self):
+        #request args
+        summary_new_request = "Add User Input and Argparse functionality to the code."
+        sys_mssg = input_and_argparse.sys_mssg
+        request_to_gpt = f'''You will make specific changes to this JSON object: {self.common_instance.gpt_response}.
+        This is the description of what the program does in the the code found in the value for key 'module' of the JSON object':
+        {self.common_instance.program_description} \n\n{ut.concat_dict_to_string(input_and_argparse.input_and_argparse_instructions_dict)}'''
+        #call base
+        return self.common_instance.build_request_args(summary_new_request,sys_mssg,request_to_gpt)
+
+    #send request to model
+    def request_code(self, *request_args):
+        #override base instance vars
+        config.used_api=config.request_argparse_api
+        self.common_instance.model = config.model_request_argparse
+        self.common_instance.model_temp = config.model_request_argparse_temperature
+        #run base request implementation
+        return self.common_instance.request_code_enhancement(*request_args)
+
+    def process_successful_response(self):
+        #call base
+        self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
+        return True
+
+
+
+================================================
+File: ft_requests/feature_request_custom_req.py
+================================================
+#!/usr/bin/env python3
+#import request text
+import custom_req as c_r
+#import openai params
+#import config_dir
+from config_dir import config as config
+
+
+#custom request by user
+class Feature_Request_CustomRequest:
+
+	def __init__(self, common_instance):
+		self.common_instance = common_instance
+		self.custom_sys_req_input = None
+		self.custom_conv_req_input = None
+
+	def prerequest_args_process(self):
+		# send additional requests, not back to menu
+		# get user custom request
+		print(); print(f"\033[44;97mJob: Run Code With Custom Prompt.\033[0m")
+		print(
+			f"\n\033[1;31m[WARNING]\033[0m A custom request requires that code has been loaded.\033[0m")
+		print()
+		# update custom json request
+		prog_desc_choice = "y"
+		if self.common_instance.program_description is None:
+			print(f"No program description available but one is required.")
+		else:
+			mssg = f"Current Program Description: {self.common_instance.program_description} Update? y/n: "
+			mssg_option3 = f"Invalid choice. "
+			prog_desc_choice = self.common_instance.user_interaction_instance.user_choice_two_options(mssg=mssg, mssg_option1=None, mssg_option2=None, mssg_option3=mssg_option3)
+		if prog_desc_choice == "y":
+			self.common_instance.program_description = self.common_instance.user_interaction_instance.request_input_from_user(
+				"Enter Program Description: ")
+
+		print("Enter request to change the code:")
+		self.custom_sys_req_input = self.common_instance.user_interaction_instance.request_input_from_user(
+			"Part 1/2 - Enter Short System Prompt: ")
+		print()
+		self.custom_conv_req_input = self.common_instance.user_interaction_instance.request_input_from_user(
+			"Part 2/2 - Enter Request Prompt: ")
+		return True
+
+	def prepare_request_args(self):
+		#build args
+		summary_new_request = "Send a custom request to be applied on the code."
+		sys_mssg = c_r.sys_mssg + ". " + self.custom_sys_req_input
+		json_required_format = '''JSON Object Template:''' + c_r.json_required_format
+		request_to_gpt = str("Your job for this request: " + self.custom_conv_req_input.replace("\n","") + ". "
+		+ f"This is the description of what the program does in the the code found in the value for key 'module' of the JSON object':{self.common_instance.program_description}."
+		+ f"You will make specific changes to this JSON object: {self.common_instance.gpt_response}."
+		+ c_r.json_object_requirements + json_required_format + "\n"
+		+ c_r.comments)
+
+		#build request and send
+		return self.common_instance.build_request_args(summary_new_request,sys_mssg,request_to_gpt)
+
+	#send request to model
+	def request_code(self, *request_args):
+		#override base instance vars
+		config.used_api = config.request_custom_req_api
+		self.common_instance.model = config.model_request_custom_req
+		self.common_instance.model_temp = config.model_request_custom_req_temperature
+		#run base request implementation
+		return self.common_instance.request_code_enhancement(*request_args)
+
+	def process_successful_response(self):
+		#call base
+		self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
+		return True
+
+
+================================================
+File: ft_requests/feature_request_debuglogs.py
+================================================
+#!/usr/bin/env python3
+#import utils
+import tools.request_utils as ut
+#import request text
+import debug_rq as dg_r
+#openai
+#import config_dir
+from config_dir import config as config
+
+
+#Request model to debug program with logs
+class Feature_Request_DebugLogs:
+
+    def __init__(self, common_instance):
+        self.common_instance = common_instance
+        # error when running the program
+        self.error_mssg = None
+        # command when error occurred
+        self.command = None
+
+    def request_manager(self):
+        # # override base instance vars
+        # config.used_api = config.request_debuglogs_api
+        # self.common_instance.model = config.model_request_debuglogs
+        # self.common_instance.model_temp = config.model_request_debuglogs_temperature
+
+        if self.user_action_debug_or_not():
+            args = self.prepare_request_args()
+            request_success = self.request_code(args)
+            if request_success:
+                self.process_successful_response()
+                return True
+            else:
+                return False
+        return True
+
+    def prepare_request_args(self):
+        #request args
+        summary_new_request = "Change the code to correct errors shown in the log file."
+        sys_mssg = dg_r.sys_mssg
+        request_to_gpt = f'''You will make specific changes to the value of this JSON object which is the code: {self.common_instance.gpt_response}.
+                \nThis is the description of what the program does in the the code found in the value for key 'module' of the JSON object:\n{self.common_instance.program_description}.
+                \n{ut.concat_dict_to_string(dg_r.debug_instructions_dict)}\n\n{dg_r.command}{self.command}\n\n{dg_r.error}{self.error_mssg}'''
+
+        args_tpl = (summary_new_request, sys_mssg, request_to_gpt)
+        return args_tpl
+            
+    def user_action_debug_or_not(self):
+        while True:
+            print(); choice = input("Request debug with log? y/n: ")
+            match choice.lower():
+                case 'y':
+                    #set engine defaults
+                    config.used_api = config.request_debuglogs_api
+                    self.common_instance.model = config.model_request_debuglogs
+                    self.common_instance.model_temp = config.model_request_debuglogs_temperature
+                    #user set engine/temperature
+                    self.get_user_model_and_temp()
+                    return True
+                case 'n':
+                    return False
+                case _:
+                    print("Invalid selection.")
+                    continue
+
+    def get_user_model_and_temp(self):
+        attribute_name = [attr_name for attr_name, attr_value in vars(config.Model_API).items() if attr_value == config.used_api][0]
+        while True:
+            print(); print(f"Default Model: {attribute_name} {self.common_instance.model[1]} Temperature: {self.common_instance.model_temp}")
+            cont = self.common_instance.user_interaction_instance.request_input_from_user("(A)accept defaults or (C)hange? a/c: ")
+            if cont.lower() == "a":
+                print(f"Engine selected: {self.common_instance.model[1]} Temperature {self.common_instance.model_temp}")
+                return
+            elif cont.lower() == "c":
+                print();print(f"NOTE: Code-davinci-002 and text-davinci-003 models do not evaluate the logs but only debug the code.\nGpt-3.5 Turbo evaluates the error logs.")
+                while True:
+                    print();
+                    choice = input(f"1. {attribute_name} Gpt-3.5 Turbo\n2. {attribute_name} code-davinci-002\n3. {attribute_name} text-davinci-003\nChoose model? ")
+                    match choice:
+                        case '1':
+                            if config.used_api == config.Model_API.AZURE_OPENAI_API:
+                                self.common_instance.model = (config.Azure_OpenAI_Model.gpt35_deployment_name, config.Azure_OpenAI_Model.gpt35_model_name)
+                            elif config.used_api == config.Model_API.OPENAI_API:
+                                self.common_instance.model = (config.OpenAI_Model.gpt35_deployment_name, config.OpenAI_Model.gpt35_model_name)
+                            break
+                        case '2':
+                            if config.used_api == config.Model_API.AZURE_OPENAI_API:
+                                self.common_instance.model = (config.Azure_OpenAI_Model.codex_deployment_name,config.Azure_OpenAI_Model.codex_model_name)
+                            elif config.used_api == config.Model_API.OPENAI_API:
+                                self.common_instance.model = (config.OpenAI_Model.codex_deployment_name,config.OpenAI_Model.codex_model_name)
+                            break
+                        case '3':
+                            if config.used_api == config.Model_API.AZURE_OPENAI_API:
+                                self.common_instance.model = (config.Azure_OpenAI_Model.davincitext_deployment_name, config.Azure_OpenAI_Model.davincitext_model_name)
+                            elif config.used_api == config.Model_API.OPENAI_API:
+                                self.common_instance.model = (config.OpenAI_Model.davincitext_deployment_name, config.OpenAI_Model.davincitext_model_name)
+                            break
+                        case _:
+                            print("Invalid model selection.")
+                            continue
+            else:
+                print("Invalid selection.")
+                continue
+
+            while True:
+                print(); u_temp = self.common_instance.user_interaction_instance.request_input_from_user("Enter model temperature (float 0-1): ")
+                try:
+                    u_temp = float(u_temp)
+                except Exception as e:
+                    print(f"Invalid temperature {u_temp}. Value must be float or int value 0-1.")
+                    continue
+                if isinstance(u_temp,float) or isinstance(u_temp, int):
+                    if 0 <= u_temp <= 1.0:
+                        self.common_instance.model_temp = u_temp
+                        print(f"Model selected: {self.common_instance.model[1]} Temperature {self.common_instance.model_temp}")
+                        return
+                    else:
+                        print(f"Invalid temperature {u_temp}. Value must be float or int value 0-1.")
+                else:
+                    print(f"Invalid temperature {u_temp}. Value must be float or int value 0-1.")
+
+    #send request to model
+    def request_code(self, *request_args):
+        #run base request implementation
+        return self.common_instance.request_code_enhancement(*request_args, debug_mode=True)
+
+    def process_successful_response(self):
+        self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
+        return True
+
+
+================================================
+File: ft_requests/feature_request_docstrings.py
+================================================
+#!/usr/bin/env python3
+
+#import utils
+import tools.request_utils as ut
+#import request text
+import prompt_txt.docstrings_rq as docs_r
+#openai
+#import config_dir
+from config_dir import config as config
+
+
+#request add docstrings to code
+class Feature_Request_Docstrings:
+
+    def __init__(self, common_instance):
+        self.common_instance = common_instance
+
+    def prerequest_args_process(self):
+        return True, False
+
+    def prepare_request_args(self):
+        #request args
+        summary_new_request = "Add docstrings to the script."
+        sys_mssg = docs_r.sys_mssg
+        request_to_gpt = f'''You will make specific changes to the module key of this JSON object: {self.common_instance.gpt_response}.\n
+        {ut.concat_dict_to_string(docs_r.docstrings_instructions_dict)}'''
+        #call base
+        return self.common_instance.build_request_args(summary_new_request,sys_mssg,request_to_gpt)
+
+    #send request to model
+    def request_code(self, *request_args):
+        #override base instance vars
+        config.used_api = config.request_docstrings_api
+        self.common_instance.model = config.model_request_docstrings
+        self.common_instance.model_temp = config.model_request_docstrings_temperature
+        #run base request implementation
+        return self.common_instance.request_code_enhancement(*request_args)
+
+    def process_successful_response(self):
+        #call base
+        self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
+        return True
+
+
+
+================================================
+File: ft_requests/feature_request_excpt_and_log.py
+================================================
+#!/usr/bin/env python3
+
+#import utils
+import tools.request_utils as ut
+#import request text
+import error_hndl_logging_rq as error_log_hndl
+#openai
+#import config_dir
+from config_dir import config as config
+
+
+#request model raw code from description
+class Feature_Request_ExceptionHndl_and_Logging:
+
+    def __init__(self, common_instance):
+        self.common_instance = common_instance
+
+    def prerequest_args_process(self):
+        # send additional requests, not back to menu
+        return True, False
+
+    def prepare_request_args(self):
+        #request args
+        summary_new_request = "Add Logs and Exception Handling to the code."
+        sys_mssg = error_log_hndl.sys_mssg
+        request_to_gpt = f'''You will make specific changes to this JSON object: {self.common_instance.gpt_response}.
+        \nThis is the description of what the program does in the the code found in the value for key 'module' of the JSON object:\n
+        {self.common_instance.program_description}\n\n{ut.concat_dict_to_string(error_log_hndl.err_hndl_instructions_dict)}'''
+        #call base
+        return self.common_instance.build_request_args(summary_new_request,sys_mssg,request_to_gpt)
+
+    #send request to model
+    def request_code(self, *request_args):
+        #override base instance vars
+        config.used_api = config.request_excpt_and_logs_api
+        self.common_instance.model = config.model_request_excpt_and_logs
+        self.common_instance.model_temp = config.model_request_excpt_and_logs_temperature
+        #call base
+        return self.common_instance.request_code_enhancement(*request_args)
+
+    def process_successful_response(self):
+        #call base
+        self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
+        return True
+
+
+
+================================================
+File: ft_requests/feature_request_rawcode.py
+================================================
+#!/usr/bin/env python3
+
+#import config_dir
+from config_dir import config as config
+#import utils
+import tools.request_utils as ut
+# import openai libs/modules
+#import request text
+import raw_code_rq as raw_code
+
+#request model raw code from description
+class Feature_Request_Rawcode:
+    def __init__(self, common_instance):
+        self.common_instance = common_instance
+
+    def prerequest_args_process(self):
+        mssg = "Enter Program Description and Features: "
+        self.common_instance.program_description = self.common_instance.user_interaction_instance.request_input_from_user(mssg)
+        # send additional requests, not back to menu
+        return True, False
+
+    def prepare_request_args(self):
+        #build args
+        summary_new_request = "Request the program code for the program description provided."
+        sys_mssg = raw_code.sys_mssg
+        request_to_gpt = ut.concat_dict_to_string(raw_code.raw_instructions_dict) + "\n\n" + "Program Description:" + self.common_instance.program_description
+        #call base
+        return self.common_instance.build_request_args(summary_new_request, sys_mssg, request_to_gpt)
+
+    #send request to model
+    def request_code(self, *request_args):
+        #override base instance vars
+        config.used_api = config.request_rawcode_api
+        self.common_instance.model = config.model_request_rawcode
+        self.common_instance.model_temp = config.model_request_rawcode_temperature
+        #run base request implementation
+        return self.common_instance.request_code_enhancement(*request_args)
+
+    def process_successful_response(self):
+        self.common_instance.valid_response_file_management(config.module_script_fname, config.full_project_dirname, self.common_instance.gpt_response)
+        return True
+
+
+
+================================================
+File: prompt_txt/custom_req.py
+================================================
+#!/usr/bin/env python3
+#import config_dir
+from config_dir import config as config
+
+#user custom request to gpt
+sys_mssg = f'''Apply the following changes to a script written in {config.program_language} I give you.
+Your response to this request is exclusively a JSON object using the JSON Object Template provided.
+You must validate the JSON object construct for syntax and parsing the JSON object would not raise an error exception 
+according to {config.program_language}'s built-in JSON module.
+Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+Do not use multi-line in the code you create.
+Escape every special character in the code for json.load to read the JSON object correctly.
+'''
+#Multi-line strings within the code must be enclosed in triple quotes.
+
+json_object_requirements = f'''Your response to this request is exclusively:
+(a) a JSON object with the template described in JSON Object Template.
+(b) You ensure parsing the JSON object using {config.program_language}'s built-in JSON module would not raise an error exception.
+(c) You add nothing else to your response of this request but the JSON object.
+(d) escape every special character in the code for json.load to read the JSON object correctly.
+(e) Do not use multi-line in the code you create
+'''
+
+comments = '''.Your response meets these Comment Requirements:
+(1) Your response only includes the JSON object.
+(2) You make no comments in your response. 
+(3) Keep comments within the code to the bare minimum"
+'''
+
+json_required_format ='''
+{
+"module":"Insert here the code you produced as described in Program Description leaving no spaces from the beginning to the first character inserted"
+}
+'''
+
+
+================================================
+File: prompt_txt/debug_rq.py
+================================================
+#!/usr/bin/env python3
+#import config_dir
+from config_dir import config as config
+
+#send logs to debug program
+sys_mssg = f'''You will change the code to correct the error shown in Error for the script written in {config.program_language} I give you.
+You will keep the changes to the minimum maintaining the structure of the code I give you. Remove any exit() statement from the code.
+Your response to this request is exclusively a JSON object using the JSON Object Template provided.
+You must validate the JSON object construct for syntax and parsing the JSON object would not raise an error exception 
+according to {config.program_language}'s built-in JSON module .
+Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+Escape every special character in the code for json.load to read the JSON object correctly.
+Do not use multi-line in the code you create.
+'''
+
+command = '''The program throws an error when running the script with this command from a linux terminal:'''
+
+error = '''This is the Error thrown when executing the command in linux:'''
+
+gpt_task = f'''Your Task:
+You will change the code to correct the error shown in Error for the script written in {config.program_language} I give you.
+Remove any exit() statement  from the code.
+You will keep the changes to the minimum maintaining the structure of the code I give you.
+Do not use multi-line in the code you create.
+'''
+#Multi-line strings within the code are enclosed in triple quotes.
+json_object_requirements = f'''Your response to this request is exclusively:
+(a) a JSON object with the template described in JSON Object Template.
+(b) you do not return in your JSON response the Error I sent you.
+(c) You ensure the JSON object is correctly constructed and parsing the JSON object using {config.program_language}'s built-in JSON module does not raise an error exception.
+(d) You add nothing else to your response of this request but the JSON object.
+(e) escape every special character in the code for json.load to read the JSON object correctly.
+'''
+
+comments = '''Your response meets these Comment Requirements:
+(1) Your response only includes the JSON object.
+(2) You make no comments in your response. 
+(3) Keep comments within the code to the bare minimum"
+'''
+
+json_required_format ='''JSON Object Template:
+{
+"module":"Insert here the code with the changes you make leaving no spaces from the beginning to the first character inserted"
+}
+'''
+
+debug_instructions_dict = {
+    "gpt_task":gpt_task.replace("\n",""),
+    "json_object_requirements":json_object_requirements.replace("\n",""),
+    "comments": comments.replace("\n",""),
+    "json_required_format": json_required_format.replace("\n",""),
+}
+
+
+================================================
+File: prompt_txt/docstrings_rq.py
+================================================
+#!/usr/bin/env python3
+#import config_dir
+from config_dir import config as config
+
+#add docstrings
+sys_mssg = f'''You are going to add docstrings to a script written in {config.program_language} I give you.
+You will not delete any of the code I give you.
+Your response to this request is exclusively a JSON object using the JSON Object Template provided.
+Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+Do not use multi-line in the code you create. Escape every special character in the code for json.load to read the JSON object correctly.
+You must validate the JSON object construct in your response for syntax. Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+You ensure parsing the JSON object in your response using {config.program_language}'s built-in JSON module would not raise an error exception.
+'''
+#Multi-line strings within the code must be enclosed in triple quotes.
+gpt_task = f'''Specifications for your Task to add docstrings to the script:
+Purpose: Every function, class, and module should start with a concise summary of its purpose or behavior. This should be a brief, one-line explanation.
+Parameters: For functions or methods, describe each input parameter (name and expected type), explaining what it represents and any assumptions or constraints about its value.
+Return Value: Describe the type and meaning of the value returned by the function or method. If the function doesn't return anything (returns None), this should also be mentioned.
+Exceptions: Document any errors that the function or method can raise. Explain the conditions under which they are raised.
+Usage Examples: Include a simple example showing a common usage of the function or method. This can be particularly useful for complex functions.
+Remember, the goal of the docstring is to help other developers understand the purpose and usage of the code without having to read the actual implementation.
+Do not use multi-line anywhere in the code.
+'''
+
+json_object_requirements = f'''Your response to this request is exclusively:
+(a) a JSON object with the template described in JSON Object Template.
+(b) You ensure parsing the JSON object using {config.program_language}'s built-in JSON module would not raise an error exception.
+(c) escape every special character in the code for json.load to read the JSON object correctly.
+(d) You add nothing else to your response of this request but the JSON object.
+'''
+
+json_required_format ='''JSON Object Template:
+{
+"module":"Insert here the code with the enhancements you make leaving no spaces from the beginning to the first character inserted",
+"unittest_cli_1":"Insert the command line command to trigger the execution of the corresponding unittest function"
+}
+'''
+
+docstrings_instructions_dict = {
+    "gpt_task":gpt_task.replace("\n",""),
+    "json_object_requirements": json_object_requirements.replace("\n",""),
+    "json_required_format": json_required_format.replace("\n",""),
+}
+
+
+
+================================================
+File: prompt_txt/error_hndl_logging_rq.py
+================================================
+#!/usr/bin/env python3
+
+#import config_dir
+from config_dir import config as config
+
+#add logging and exception handling to code
+sys_mssg = f'''You are going to add error and exception handling and logging functionality to a script written in {config.program_language} I give you.
+If there is an exception the program terminates gracefully with an error message.
+You will not delete any of the code I give you.
+Your response to this request is exclusively a JSON object using the JSON Object Template provided.
+Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+Do not use multi-line in the code you create. Escape every special character in the code for json.load to read the JSON object correctly.
+You must validate the JSON object construct for syntax and parsing the JSON object would not raise an error exception 
+according to {config.program_language}'s built-in JSON module. Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+'''
+#Multi-line strings within the code must be enclosed in triple quotes.
+gpt_task = f'''Your Task: Do not use multi-line in the code you create.
+**Exception Handling**:
+(1) add error and exception handling functionality, found in {config.program_language}'s built in packages, to the code found in this JSON object's value for key 'module' 
+without leaving no spaces from the beginning to the first character inserted.
+(2) Add code to catch and handle exceptions for every function and no system exit occurs during the program.
+(3) If there is an exception the program terminates gracefully with an error message.
+(4) Error handling for Input Validation: The program should validate all input and be prepared to handle invalid or unexpected input in a robust way.
+**Logging**:
+(1) Without removing any print statements from the code, add the necessary handlers to write log records to a file named {config.full_path_logfile}
+(2) Without removing any print statements from the code, record to the log file all program errors info and exceptions and user actions. Add argument exc_info=True to every logging call.
+(3) Set log level to debug.
+(4) use the built-in logging package
+(5) Add Log message format to include the line number in the code where the log statement occurs.
+'''
+
+json_object_requirements = f'''Your response to this request is exclusively:
+(a) a JSON object with the template described in JSON Object Template.
+(b) You ensure parsing the JSON object using {config.program_language}'s built-in JSON module would not raise an error exception.
+(c) You add nothing else to your response of this request but the JSON object.
+(d) escape every special character in the code for json.load to read the JSON object correctly.
+'''
+
+comments = '''Your response meets these Comment Requirements:
+(1) Your response only includes the JSON object.
+(2) You make no comments in your response. 
+(3) Keep comments within the code to the bare minimum"
+'''
+
+json_required_format ='''JSON Object Template:
+{
+"module":"Insert here the code with the enhancements you make leaving no spaces from the beginning to the first character inserted"
+}
+'''
+
+err_hndl_instructions_dict = {
+    "gpt_task":gpt_task.replace("\n",""),
+    "json_object_requirements":json_object_requirements.replace("\n",""),
+    "comments": comments.replace("\n",""),
+    "json_required_format": json_required_format.replace("\n",""),
+}
+
+
+
+================================================
+File: prompt_txt/input_and_argparse_rq.py
+================================================
+#!/usr/bin/env python3
+#import config_dir
+from config_dir import config as config
+
+#add input and argparse
+sys_mssg = f'''You are going to add argparse arguments functionality to a script written in {config.program_language} version above {config.language_version} I give you.
+Important: Do not include required=True in argparse's add_argument(), e.g. parser.add_argument('num1', type=float, help='First number').
+You will not delete any of the code I give you.
+Do not add arguments of the form parser.add_argument -foo and --foo.
+Your response to this request is exclusively a JSON object using the JSON Object Template provided.
+You must validate the JSON object construct for syntax.
+You ensure parsing the JSON object using {config.program_language}'s built-in JSON module would not raise an error exception.
+Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+Do not use multi-line in the code you create. Escape every special character in the code for json.load to read the JSON object correctly.
+'''
+#Multi-line strings within the code must be enclosed in triple quotes.
+gpt_task = f'''Your Task:
+(1) add argparse arguments functionality for the program to run to the code found in this JSON object's value for key 'module' 
+without leaving no spaces from the beginning to the first character inserted.
+(2) Important: Do not include required=True in argparse's add_argument(), e.g. parser.add_argument('num1', type=float, help='First number').
+(3) Do not add arguments of the form parser.add_argument -foo and --foo.
+(4) Add the code for the function program() to have user input and be executed in a statement __name__ == '__main__'.
+(5) Add Argparse arguments for version (version = 1.0) and help only for program() arguments.
+Create the argparse input help for each individual argument in program().
+(6) Code argparse to display help with the arguments to execute program() and a description for these arguements.
+(7) Do not use multi-line in the code you create.
+'''
+
+json_object_requirements = f'''Your response to this request is exclusively:
+(a) a JSON object with the template described in JSON Object Template.
+(b) You ensure parsing the JSON object using {config.program_language}'s built-in JSON module would not raise an error exception.
+(c) You add nothing else to your response of this request but the JSON object.
+(d) escape every special character in the code for json.load to read the JSON object correctly.
+'''
+
+comments = '''Your response meets these Comment Requirements:
+(1) Your response only includes the JSON object.
+(2) You make no comments in your response. 
+(3) Keep comments within the code to the bare minimum"
+'''
+
+json_required_format ='''JSON Object Template:
+{
+"module":"Insert here the code with the enhancements you make leaving no spaces from the beginning to the first character inserted"
+}
+'''
+
+input_and_argparse_instructions_dict = {
+    "gpt_task":gpt_task.replace("\n",""),
+    "json_object_requirements":json_object_requirements.replace("\n",""),
+    "comments": comments.replace("\n",""),
+    "json_required_format": json_required_format.replace("\n",""),
+}
+
+
+
+================================================
+File: prompt_txt/raw_code_rq.py
+================================================
+#!/usr/bin/env python3
+#import config_dir
+from config_dir import config as config
+
+sys_mssg = f'''You program in {config.program_language}.
+You create the code that implements the description in Program Description and that follows these specific requirements as outlined in Requirements.
+Add statement __name__ == '__main__' to the code module .
+You insert the code in a JSON object. Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+Do not use multi-line in the code you create. Escape every special character in the code you create. Load to read the JSON object correctly.
+Your response to this request is exclusively a JSON object using the JSON Object Template provided.
+You must validate the JSON object construct for syntax.
+You ensure parsing the JSON object using {config.program_language}'s built-in JSON module would not raise an error exception.
+'''
+#You make no comments in your response.
+
+gpt_task = f'''Your Task:
+(1) To create the code for a single module (.py file) named {config.module_script_fname} in {config.program_language}.
+(2) The code you create implements the Program Description.
+(3) Your response to this request meets the Requirements.
+'''
+
+json_object_requirements = f'''Your response to this request is exclusively:
+(a) a JSON object with the template described in JSON Required Format Template.
+(b) You ensure parsing the JSON object using {config.program_language}'s built-in JSON module would not raise an error exception.
+(c) You add nothing else to your response of this request but the JSON object.
+(d) Escape every special characters throughout the code for json.load to read the JSON object correctly.
+'''
+
+task_requirements = '''Your response to this request meets every requirement. Requirements:
+(1) the JSON object you create meets each and every requirement in:
+(a) JSON Required Format Template
+(b) the Comment Requirements
+(2) your code meets each and every requirement in the:
+(a) Program Description
+(b) Code Requirements
+(b) Comment Requirements
+'''
+
+comments = '''Comment Requirements:
+(1) Your response only includes the JSON object.
+(2) You make no comments in your response. 
+(3) Keep comments within the code to the bare minimum"
+'''
+
+module_requirements = '''Code Requirements:
+(1) each method in the module is atomic, for example a calculator has different methods to sum, divide, multiply or subtract
+(2) create in the code a function named program(arguments) with the required arguments for program to execute the main program
+(3) create the code to print on screen program results
+(4) Add statement __name__ == '__main__' to the code module.
+(5) the code meets the requirements described in:'Comment Requirements'
+(6) place every module you import are at the top of the code and not inside any function you create
+(7) Do not enclose anything either at the beginning or the end in the JSON Object with three double or single quotes
+(8) Do not use multi-line in the code you create
+'''
+#(8) Multi-line strings within the code must be enclosed in triple quotes.
+json_required_format ='''JSON Required Format Template:
+{
+"module":"Insert here the code you produced as described in Program Description leaving no spaces from the beginning to the first character inserted. Escape every special character in the code you create."
+}
+'''
+
+example_code_1 = '''Example Code for a summing calculator:
+def sum(a, b):
+    return a + b
+
+def program(a=None, b=None, op=None):
+    if a is None:
+        a = float(input('Enter first number: '))
+    if b is None:
+        b = float(input('Enter second number: '))
+    if op is None:
+        op = input('Enter operation (+): ')
+    else:
+        return 'Error: invalid operation'
+    return result
+'''
+
+example_code_2 = '''Example Code for a word counter:
+
+def count_words(input_str):
+    words = input_str.split()
+    return len(words)
+
+def program(input_str=None):
+    if input_str is None:
+        input_str = input('Enter a sentence or paragraph: ')
+    return count_words(input_str)
+'''
+
+example_code_3 = '''Example Code where the program generates a random number, and the user is prompted to guess the number. The program provides feedback on whether the guess is too high, too low, or correct.:
+import random
+
+import random
+
+def get_random_number():
+    return random.randint(1, 100)
+
+def guess_number(user_guess=None, random_number=None):
+    while True:
+        if user_guess is None:
+            user_guess = int(input('Guess the number between 1 and 100: '))
+        if random_number is None:
+            random_number = get_random_number()
+        if user_guess == random_number:
+            return 'Congratulations! You guessed the correct number!'
+        elif user_guess > random_number:
+            return 'Too high, try again.'
+        else:
+            return 'Too low, try again.'
+
+#Every input of the program function is an optional argument.
+#So that user input input() is disabled when a backtest_cli calls any module function
+
+def program(user_guess=None, random_number=None):
+    if user_guess is None and random_number is None:
+        guess_number()
+    else:
+        guess_number(user_guess,random_number)
+
+#Test every statement in the program function by hard-coding input values and the expected output  in the backtest function
+def backtest_cli_1():
+    user_guess = 3
+    random_number = 4
+    expected_output = 'Too low, try again.'
+    assert guess_number(user_guess,random_number) == expected_output, 'Fail'
+'''
+
+raw_instructions_dict = {
+    "gpt_task":gpt_task.replace("\n",""),
+    "json_object_requirements":json_object_requirements.replace("\n",""),
+    "task_requirements":task_requirements.replace("\n",""),
+    "module_requirements":module_requirements.replace("\n",""),
+    "comments": comments.replace("\n",""),
+    "json_required_format": json_required_format.replace("\n","")
+}
+
+
+================================================
+File: prompt_txt/unittest_cli_comm_rq.py
+================================================
+#!/usr/bin/env python3
+#import config_dir
+from config_dir import config as config
+
+#add unittest
+sys_mssg = f'''You are going to generate the cli commands to execute in linux for existing unittest functions in code I give you.
+Every cli command makes a call with the exact name of a unit test or test case function and capitalized where appropiate.
+Write the unit test methods within a unittest.TestCase subclass.
+You will not make any changes whatsoever to the code I give you.
+Your response to this request is exclusively a JSON object using the JSON Object Template provided.
+Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+Escape every special character in the code for json.load to read the JSON object correctly.
+You must validate the JSON object construct for syntax and parsing the JSON object would not raise an error exception 
+according to {config.program_language}'s built-in JSON module.
+'''
+
+#It is very important you do not nest or define the test case unittest.TestCase function inside any other function.
+
+gpt_task = f'''You should know the code for a program is the value in the JSON Object's key 'module.
+Your Task:
+(a) Each unittest function you find in the code has a name that is a key in the JSON Object Template with name 'unittest_cli_' with ascending numbers for each starting at 1.
+You will replace the value of the unittest_cli_ keys in the JSON object with its corresponding linux cli command to execute the unittest function.
+(b) Write the unit test methods within a unittest.TestCase subclass.
+(c) re-insert the code you have received in this request which is the value for key 'module' and make no changes to it in the JSON Object Template's value for key 'module' 
+without leaving no spaces from the beginning to the first character inserted.
+'''
+
+#(b) Every cli command makes a call with the exact name of a unit test or test case function and capitalized where appropiate.
+#It is very important you do not nest or define the test case unittest.TestCase function inside inside any other function.
+
+json_object_requirements = f'''Your response to this request is exclusively:
+(a) a JSON object with the template described in JSON Object Template.
+(b) You ensure parsing the JSON object using {config.program_language}'s built-in JSON module would not raise an error exception.
+(c) You add nothing else to your response of this request but the JSON object.
+(d) escape every special character in the code for json.load to read the JSON object correctly.
+'''
+
+comments = '''Your response meets these Comment Requirements:
+(1) Your response only includes the JSON object.
+(2) You make no comments in your response. 
+'''
+
+json_required_format ='''JSON Object Template:
+{
+"module":"Insert here the code with the enhancements you make leaving no spaces from the beginning to the first character inserted",
+"unittest_cli_1":"Insert the command line command to trigger the execution of the corresponding unittest function"
+}
+'''
+
+unittest_regen_cli_comm_instructions_dict = {
+    "gpt_task":gpt_task.replace("\n",""),
+    "json_object_requirements":json_object_requirements.replace("\n",""),
+    "comments": comments.replace("\n",""),
+    "json_required_format": json_required_format.replace("\n",""),
+}
+
+
+
+
+================================================
+File: prompt_txt/unittest_rq.py
+================================================
+#!/usr/bin/env python3
+#import config_dir
+from config_dir import config as config
+
+#add unittest
+sys_mssg = f'''You are going to add unit testing functionality using {config.program_language}'s built-in unittest package to a script written in {config.program_language} I give you.
+Insert the linux cli command to execute every unit test case function in the JSON Object Template provided, and for each use JSON key {config.unittest_cli_command_key} with ascending number.
+Write the unit test methods within a unittest.TestCase subclass. Design the unit tests to mark each test case as a success and no test failure occurs.
+If there is an exception the program terminates gracefully with an error message.
+You will not delete any of the code I give you.
+The name of the module (.py file) is {config.module_utest_name}.
+Your response to this request is exclusively a JSON object using the JSON Object Template provided.
+Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+Escape every special character in the code for json.load to read the JSON object correctly.
+You must validate the JSON object construct for syntax and parsing the JSON object would not raise an error exception 
+according to {config.program_language}'s built-in JSON module. Do not enclose anything either at the beginning or the end in the JSON Object with three double (""") or single quotes.
+'''
+#Unittest test cases must be defined at the top level of the module (not inside a function) so they can be discovered and run.
+#It is very important you do not nest or define the test case unittest.TestCase function inside inside any other function.
+gpt_task = f'''Your Task:
+(a) Each function in the module has one or multiple corresponding unittest function to unit-test.
+(b) Each unittest function tests every statement of its corresponding function in the module.
+Hence a module function may have multiple corresponding unittest functions.
+(c) Create multiple unittest functions to test the program() function, where you specifically design each unittest function to test each single statement of the program function.
+(d) Write the unit test methods within a unittest.TestCase subclass.
+(e) Design the unit tests to mark each test case as a success and avoid the test failure
+(f) If there is an exception the program terminates gracefully with an error message.
+(g) Properly structure each test method as a test case starting with "test_" prefix
+(h) Ensure logging captures expected messages attending to the correct logging level used for the code; use assertLogs in unit tests to validate the occurrence of specific log entries.
+(i) you name every unittest function {config.unittest_cli_command_key} with ascending numbers for each starting at 1. Insert every unit test case function 
+name as a key in the JSON Object Template
+(j) For each of these unittest function keys add as value in the JSON Object Template the corresponding linux cli command 
+to trigger the execution of that {config.unittest_cli_command_key} function.
+(k) insert the code for the module including unittest in the JSON Object Template's value for key 'module' 
+without leaving no spaces from the beginning to the first character inserted.
+(l) Create in the code a function named program(arguments) with the required arguments for program to execute the main program
+(m) Change main() to execute the unit test cases
+'''
+
+json_object_requirements = f'''Your response to this request is exclusively:
+(a) a JSON object with the template described in JSON Object Template.
+(b) You ensure parsing the JSON object using {config.program_language}'s built-in JSON module would not raise an error exception.
+(c) You add nothing else to your response of this request but the JSON object.
+(d) escape every special character in the code for json.load to read the JSON object correctly.
+'''
+
+comments = '''Your response meets these Comment Requirements:
+(1) Your response only includes the JSON object.
+(2) You make no comments in your response. 
+(3) Keep comments within the code to the bare minimum"
+'''
+
+json_required_format ='''JSON Object Template:
+{
+"module":"Insert here the code with the enhancements you make leaving no spaces from the beginning to the first character inserted",
+"unittest_cli_1":"Insert the command line command to trigger the execution of the corresponding unit test case function"
+}
+'''
+
+unittest_instructions_dict = {
+    "gpt_task":gpt_task.replace("\n",""),
+    "json_object_requirements":json_object_requirements.replace("\n",""),
+    "comments": comments.replace("\n",""),
+    "json_required_format": json_required_format.replace("\n",""),
+}
+
+
+
+================================================
+File: tools/file_management.py
+================================================
+#!/usr/bin/env python3
+
+import os
+import subprocess
+import shutil
+import json
+from pathlib import Path
+#import my utils
+import tools.request_utils as ut
+#import config_dir
+from config_dir import config as config
+
+
+def create_empty_module(module_name, ini_dir):
+	#change to modules dir
+	print()
+	os.chdir(config.full_project_dirname)
+
+	#create module file and chmod
+	path_and_fn = Path(config.full_project_dirname) / config.module_script_fname
+	path_and_fn.touch()
+	print("-"*40)
+	print(f"File created: {path_and_fn}")
+	
+	#return back to initial dir
+	os.chdir(ini_dir)
+
+def get_unlabelled_dict(labelled_list, target_label):
+	for pos, ele in enumerate(labelled_list):
+		if ele[0] == target_label:
+			mod_desc = {}
+			for mod,desc in ele[1].items():
+				mod_desc[mod] = desc
+			return mod_desc
+
+def get_unlabelled_list(labelled_list, target_label):
+	unlabelled_list = []
+	for pos, ele in enumerate(labelled_list):
+		if ele[0] == target_label:
+			for e in labelled_list[pos]:
+				if e != target_label:
+					unlabelled_list.append(e)
+			return unlabelled_list
+
+def write_snippet_to_file(filename,path,snippet):
+	if len(snippet) > 0:
+		full_path = os.path.join(path, filename)
+		Path(full_path).write_text(snippet)
+		print(Path(full_path).read_text())
+
+def clean_up_module(code):
+	code = code.replace("```", "")
+	return code
+
+def trunc_file(filename, path):
+	#check file exists else create
+	if not os.path.exists(os.path.join(path, filename)):
+		create_empty_module(filename, path)
+	#truncate file
+	path_to_file = Path(path,filename)
+	with path_to_file.open("w") as f:
+		f.truncate(0)
+
+def write_to_file(filename,path,content, access_mode):
+	if len(content) > 0:
+		print("-"*40)
+		path_to_file = Path(path,filename)
+		ext = path_to_file.name.split(".")[1]
+		full_path=os.path.join(path, filename)
+		if ext == "py" or ext == "log":
+			if access_mode != "a":
+				#Path(full_path).write_text(f"#!/usr/bin/env python3\n\n{content}")
+				Path(full_path).write_text(content)
+			else:
+				with Path(full_path).open(access_mode) as f:
+					f.write(content)
+
+			if ext == "py":
+				comm = ["sudo", "chmod", "+x", full_path]
+				subprocess.run(comm)
+				print(f"Executed command {comm}")
+				print("-"*40); print()
+				print(f"\033[43mCode saved to module file {full_path}\033[0m")
+		elif ext == "json":
+			#overwrite only
+			with Path(full_path).open("w") as target: 
+				json.dump(content, target)
+				print(); print(f"\033[43mResponse saved to JSON file {full_path}\033[0m")
+
+def get_dict_value_save_to_file(gpt_response, ini_dir, filename, header=""):
+	print(); print("-"*40)
+	#code = ut.get_response_value_for_key(gpt_response, raw_code.module_name.split(".")[0])
+	code = get_code_from_dict(gpt_response, config.code_key_in_json)
+	#print("Code:"); print(); print(code)
+	destination_full_name = os.path.join(config.full_project_dirname, filename)
+	if not os.path.exists(destination_full_name):
+		create_empty_module(filename, ini_dir)
+	#add bash to script
+	code = header + code
+	write_to_file(filename, config.full_project_dirname, code, "w")
+
+def get_code_from_dict(gpt_response, dict_key):
+	return ut.get_response_value_for_key(gpt_response, dict_key)
+
+def version_file(path_original_fn, original_fn, path_dest_fn):
+	original_full_path_fn = os.path.join(path_original_fn, original_fn)
+	extension = original_fn.split(".")[1]
+	fn = original_fn.split(".")[0]
+	counter = 1
+
+	while True:
+		new_filename = f"{fn}_{counter}.{extension}"
+		destination_full_name = os.path.join(path_dest_fn, new_filename)
+		if not os.path.exists(original_full_path_fn):
+			break
+		elif os.path.exists(destination_full_name):
+			counter += 1
+		else:
+			break
+
+	print(); print("-" * 40); print()
+	try:
+		shutil.copy(original_full_path_fn, destination_full_name)
+		print(f"\033[43mVersion saved: {destination_full_name}\033[0m")
+	except FileNotFoundError as e:
+		print(f"\033[43mNo versioning at this point.\033[0m")
+		pass
+
+def read_file_stored_to_buffer(filename, path):
+	full_path = os.path.join(path, filename)
+	path_to_file = Path(path, filename)
+	# if not os.path.isfile(path_to_file):
+	# 	print(f"\033[1;31m[ERROR]\033[0m Cannot Find Script File {path_to_file}\033[0m")
+	ext = path_to_file.name.split(".")[1]
+
+	if ext != "json":
+		return Path(full_path).read_text()
+
+	#thanks to https://gist.github.com/tomschr/86a8c6f52b81e35ac4723fef8435ec43
+	with Path(full_path).open(encoding="UTF-8") as buff:
+		return json.load(buff)
+
+def print_json_on_screen(json_data):
+	print(json.dumps(json_data, indent=2, separators=(',', ':')))
+
+def insert_script_in_json(a_script):
+	script_dict = {"module": a_script}
+	return script_dict
+
+def delete_all_dir_files(target_dir):
+	#del all project module files
+	if os.path.exists(target_dir):
+		with os.scandir(target_dir) as this_dir:
+			for file_name in this_dir:
+				if file_name.is_file():
+					os.remove(os.path.join(config.full_project_dirname, file_name))
+
+def create_dir(target_dir):
+	#os.makedirs(target_dir, exist_ok=True)
+	target_dir.mkdir(parents=False, exist_ok=True)
+
+def validate_filepath(full_path_to_script):
+	if not os.path.isfile(full_path_to_script):
+		print(f"\033[1;31m[ERROR]\033[0m Cannot Find File {full_path_to_script}\033[0m")
+		return False
+	else:
+		print("File Found.")
+		if os.access(full_path_to_script, os.R_OK):
+			return True
+		else:
+			print(f"\033[1;31m[ERROR]\033[0m File {full_path_to_script} not readable\033[0m")
+			return False
+
+
+
+
+
+
+================================================
+File: tools/request_utils.py
+================================================
+#!/usr/bin/env python3
+
+import tiktoken
+import time
+#import config_dir
+from config_dir import config as config
+
+
+#calculate tokens in messages list
+def num_tokens_from_messages(messages, model):
+    encoding = tiktoken.encoding_for_model(model)
+    num_tokens = 0
+    for message in messages:
+        num_tokens += 4  # every message follows <im_start>{role/name}\n{content}<im_end>\n
+        for key, value in message.items():
+            num_tokens += len(encoding.encode(value))
+            if key == "name":  # if there's a name, the role is omitted
+                num_tokens += -1  # role is always required and always 1 token
+    num_tokens += 2  # every reply is primed with <im_start>assistant
+    return num_tokens
+
+#read from gpt-response the list of modules to create, create these in directory
+def get_response_value_for_key(gpt_response, key):
+    return gpt_response[key]
+
+def count_values_for_keycontain(gpt_response, thiskeycontain):
+    count = 0
+    for k, v in gpt_response.items():
+        if thiskeycontain in k:
+            count += 1
+    return count
+
+#concatinate dict values to a string
+def concat_dict_to_string(mydict):
+    all_concat_values = "\n\n".join(this_value for this_value in mydict.values())
+    return all_concat_values
+
+def token_limit(tokens_used_snapshot):
+    if tokens_used_snapshot >= config.token_limit:
+        print(f"Reached max tokens {tokens_used_snapshot} of {config.token_limit}. Continue (c) or any key to exit.")
+        cont = input("")
+        if cont.lower() != "c":
+            print(); print("Exiting at user request.")
+            exit()
+
+def spinning_timer(message, stop_evt):
+    spinner = "|/-\\"
+    idx = 0
+    while not stop_evt.is_set():
+        print('\r\033[92m' + message + spinner[idx] + '\033[0m', end='')
+        idx = (idx + 1) % len(spinner)
+        time.sleep(0.17) #secs
+
+#get list of cli command to execute unit tests
+def create_unittest_cli_list(unittest_cli_c_list, gpt_response_utest, unittest_cli_command_key):
+    #Create Unittest cli command List
+    num_unittests = count_values_for_keycontain(gpt_response_utest,unittest_cli_command_key)
+    print(); print("Gather list of unit test cli commands to run.")
+    for index in range(1, int(num_unittests)+1):
+        unittest_cli_c = get_response_value_for_key(gpt_response_utest,"".join([unittest_cli_command_key, str(index)]))
+        #print("cli test",unittest_cli_c)
+        if len(unittest_cli_c) > 0:
+            unittest_cli_c_list.append(unittest_cli_c)
+    
+    print(f"\033[43mUnit testing CLI Command List Complete.\033[0m") if len(unittest_cli_c_list) > 0 else print("\033[41m[ERROR] Failed to gather Unittesting CLI commands.\033[0m")
+    return  unittest_cli_c_list
+
+
+
+

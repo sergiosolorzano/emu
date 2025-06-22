@@ -4,7 +4,7 @@
   </a>
 </p>
 
-<b>Git digest</b> for performing LLM ingestion: ./gitingest/emu_digest.txt
+<p align="center"><b>Git digest</b> for performing LLM ingestion: ./gitingest/emu_digest.txt</p>
 
 Generates the code for a program description requested by the user using Azure OpenAI API gpt-3.5-turbo.
 
